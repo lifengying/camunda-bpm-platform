@@ -263,7 +263,7 @@ public class RepositoryServiceTest extends PluggableProcessEngineTest {
     } catch (Exception e) {
       // Exception expected when deleting deployment with running process
       // assert (e.getMessage().contains("Exception when output mapping is executed"));
-      assertTextPresent("Exception when output mapping is executed", e.getMessage());
+      testHelper.assertTextPresent("Exception when output mapping is executed", e.getMessage());
     }
 
     repositoryService.deleteDeployment(deploymentId, true, false, true);
@@ -274,7 +274,7 @@ public class RepositoryServiceTest extends PluggableProcessEngineTest {
       repositoryService.deleteDeployment(null);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("deploymentId is null", ae.getMessage());
+      testHelper.assertTextPresent("deploymentId is null", ae.getMessage());
     }
   }
 
@@ -283,7 +283,7 @@ public class RepositoryServiceTest extends PluggableProcessEngineTest {
       repositoryService.deleteDeployment(null, true);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("deploymentId is null", ae.getMessage());
+      testHelper.assertTextPresent("deploymentId is null", ae.getMessage());
     }
   }
 
@@ -333,7 +333,7 @@ public class RepositoryServiceTest extends PluggableProcessEngineTest {
       repositoryService.getDeploymentResourceNames(null);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("deploymentId is null", ae.getMessage());
+      testHelper.assertTextPresent("deploymentId is null", ae.getMessage());
     }
   }
 
@@ -343,7 +343,7 @@ public class RepositoryServiceTest extends PluggableProcessEngineTest {
       fail("ProcessEngineException expected");
     }
     catch (ProcessEngineException e) {
-      assertTextPresent("deploymentId is null", e.getMessage());
+      testHelper.assertTextPresent("deploymentId is null", e.getMessage());
     }
   }
 
@@ -370,7 +370,7 @@ public class RepositoryServiceTest extends PluggableProcessEngineTest {
       runtimeService.startProcessInstanceByKey("oneTaskProcess");
       fail();
     } catch (ProcessEngineException e) {
-      assertTextPresentIgnoreCase("suspended", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("suspended", e.getMessage());
     }
 
     List<Job> jobs = managementService.createJobQuery().list();
@@ -417,7 +417,7 @@ public class RepositoryServiceTest extends PluggableProcessEngineTest {
       runtimeService.startProcessInstanceByKey("oneTaskProcess");
       fail();
     } catch (ProcessEngineException e) {
-      assertTextPresentIgnoreCase("suspended", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("suspended", e.getMessage());
     }
 
     Job job = managementService.createJobQuery().singleResult();
@@ -450,7 +450,7 @@ public class RepositoryServiceTest extends PluggableProcessEngineTest {
       repositoryService.getResourceAsStream(deployment.getId(), "org/camunda/bpm/engine/test/api/unexistingProcess.bpmn.xml");
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("no resource found with name", ae.getMessage());
+      testHelper.assertTextPresent("no resource found with name", ae.getMessage());
     }
   }
 
@@ -461,7 +461,7 @@ public class RepositoryServiceTest extends PluggableProcessEngineTest {
       repositoryService.getResourceAsStream("unexistingdeployment", "org/camunda/bpm/engine/test/api/unexistingProcess.bpmn.xml");
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("no resource found with name", ae.getMessage());
+      testHelper.assertTextPresent("no resource found with name", ae.getMessage());
     }
   }
 
@@ -471,14 +471,14 @@ public class RepositoryServiceTest extends PluggableProcessEngineTest {
       repositoryService.getResourceAsStream(null, "resource");
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("deploymentId is null", ae.getMessage());
+      testHelper.assertTextPresent("deploymentId is null", ae.getMessage());
     }
 
     try {
       repositoryService.getResourceAsStream("deployment", null);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("resourceName is null", ae.getMessage());
+      testHelper.assertTextPresent("resourceName is null", ae.getMessage());
     }
   }
 
@@ -499,14 +499,14 @@ public class RepositoryServiceTest extends PluggableProcessEngineTest {
     try {
       repositoryService.getCaseDefinition("invalid");
     } catch (NotFoundException e) {
-      assertTextPresent("no deployed case definition found with id 'invalid'", e.getMessage());
+      testHelper.assertTextPresent("no deployed case definition found with id 'invalid'", e.getMessage());
     }
 
     try {
       repositoryService.getCaseDefinition(null);
       fail();
     } catch (NotValidException e) {
-      assertTextPresent("caseDefinitionId is null", e.getMessage());
+      testHelper.assertTextPresent("caseDefinitionId is null", e.getMessage());
     }
   }
 
@@ -533,14 +533,14 @@ public class RepositoryServiceTest extends PluggableProcessEngineTest {
     try {
       repositoryService.getCaseModel("invalid");
     } catch (ProcessEngineException e) {
-      assertTextPresent("no deployed case definition found with id 'invalid'", e.getMessage());
+      testHelper.assertTextPresent("no deployed case definition found with id 'invalid'", e.getMessage());
     }
 
     try {
       repositoryService.getCaseModel(null);
       fail();
     } catch (NotValidException e) {
-      assertTextPresent("caseDefinitionId is null", e.getMessage());
+      testHelper.assertTextPresent("caseDefinitionId is null", e.getMessage());
     }
   }
 
@@ -562,14 +562,14 @@ public class RepositoryServiceTest extends PluggableProcessEngineTest {
       repositoryService.getDecisionDefinition("invalid");
       fail();
     } catch (NotFoundException e) {
-      assertTextPresent("no deployed decision definition found with id 'invalid'", e.getMessage());
+      testHelper.assertTextPresent("no deployed decision definition found with id 'invalid'", e.getMessage());
     }
 
     try {
       repositoryService.getDecisionDefinition(null);
       fail();
     } catch (NotValidException e) {
-      assertTextPresent("decisionDefinitionId is null", e.getMessage());
+      testHelper.assertTextPresent("decisionDefinitionId is null", e.getMessage());
     }
   }
 
@@ -591,14 +591,14 @@ public class RepositoryServiceTest extends PluggableProcessEngineTest {
       repositoryService.getDecisionRequirementsDefinition("invalid");
       fail();
     } catch (Exception e) {
-      assertTextPresent("no deployed decision requirements definition found with id 'invalid'", e.getMessage());
+      testHelper.assertTextPresent("no deployed decision requirements definition found with id 'invalid'", e.getMessage());
     }
 
     try {
       repositoryService.getDecisionRequirementsDefinition(null);
       fail();
     } catch (NotValidException e) {
-      assertTextPresent("decisionRequirementsDefinitionId is null", e.getMessage());
+      testHelper.assertTextPresent("decisionRequirementsDefinitionId is null", e.getMessage());
     }
   }
 
@@ -625,14 +625,14 @@ public class RepositoryServiceTest extends PluggableProcessEngineTest {
     try {
       repositoryService.getDecisionModel("invalid");
     } catch (ProcessEngineException e) {
-      assertTextPresent("no deployed decision definition found with id 'invalid'", e.getMessage());
+      testHelper.assertTextPresent("no deployed decision definition found with id 'invalid'", e.getMessage());
     }
 
     try {
       repositoryService.getDecisionModel(null);
       fail();
     } catch (NotValidException e) {
-      assertTextPresent("decisionDefinitionId is null", e.getMessage());
+      testHelper.assertTextPresent("decisionDefinitionId is null", e.getMessage());
     }
   }
 
@@ -658,14 +658,14 @@ public class RepositoryServiceTest extends PluggableProcessEngineTest {
     try {
       repositoryService.getDecisionRequirementsModel("invalid");
     } catch (ProcessEngineException e) {
-      assertTextPresent("no deployed decision requirements definition found with id 'invalid'", e.getMessage());
+      testHelper.assertTextPresent("no deployed decision requirements definition found with id 'invalid'", e.getMessage());
     }
 
     try {
       repositoryService.getDecisionRequirementsModel(null);
       fail();
     } catch (NotValidException e) {
-      assertTextPresent("decisionRequirementsDefinitionId is null", e.getMessage());
+      testHelper.assertTextPresent("decisionRequirementsDefinitionId is null", e.getMessage());
     }
   }
 
@@ -687,13 +687,13 @@ public class RepositoryServiceTest extends PluggableProcessEngineTest {
     try {
       repositoryService.getDecisionRequirementsDiagram("invalid");
     } catch (ProcessEngineException e) {
-      assertTextPresent("no deployed decision requirements definition found with id 'invalid'", e.getMessage());
+      testHelper.assertTextPresent("no deployed decision requirements definition found with id 'invalid'", e.getMessage());
     }
 
     try {
       repositoryService.getDecisionRequirementsDiagram(null);
     } catch (ProcessEngineException e) {
-      assertTextPresent("decisionRequirementsDefinitionId is null", e.getMessage());
+      testHelper.assertTextPresent("decisionRequirementsDefinitionId is null", e.getMessage());
     }
   }
 

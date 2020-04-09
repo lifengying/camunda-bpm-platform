@@ -119,7 +119,7 @@ public class InputOutputEventTest extends PluggableProcessEngineTest {
         .deploy();
       fail("expected exception");
     } catch (ParseException e) {
-      assertTextPresent("camunda:inputOutput mapping unsupported for element type 'startEvent'", e.getMessage());
+      testHelper.assertTextPresent("camunda:inputOutput mapping unsupported for element type 'startEvent'", e.getMessage());
       assertThat(e.getResorceReports().get(0).getErrors().get(0).getMainElementId()).isEqualTo("start");
     }
   }
@@ -132,7 +132,7 @@ public class InputOutputEventTest extends PluggableProcessEngineTest {
         .deploy();
       fail("expected exception");
     } catch (ParseException e) {
-      assertTextPresent("camunda:outputParameter not allowed for element type 'endEvent'", e.getMessage());
+      testHelper.assertTextPresent("camunda:outputParameter not allowed for element type 'endEvent'", e.getMessage());
       assertThat(e.getResorceReports().get(0).getErrors().get(0).getMainElementId()).isEqualTo("endMapping");
     }
   }
@@ -242,7 +242,7 @@ public class InputOutputEventTest extends PluggableProcessEngineTest {
         .deploy();
       fail("expected exception");
     } catch (ParseException e) {
-      assertTextPresent("camunda:inputOutput mapping unsupported for element type 'boundaryEvent'", e.getMessage());
+      testHelper.assertTextPresent("camunda:inputOutput mapping unsupported for element type 'boundaryEvent'", e.getMessage());
       assertThat(e.getResorceReports().get(0).getErrors().get(0).getMainElementId()).isEqualTo("messageBoundary");
     }
   }

@@ -68,10 +68,10 @@ public class ActivityStatisticsAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(ONE_INCIDENT_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(ONE_INCIDENT_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 

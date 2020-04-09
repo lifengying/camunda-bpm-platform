@@ -709,7 +709,7 @@ public class CallActivityTest extends PluggableProcessEngineTest {
       deploymentId = repositoryService.createDeployment().addModelInstance("process.bpmn", modelInstance).deploy().getId();
       fail("Exception expected");
     } catch (ParseException e) {
-      assertTextPresent("Missing attribute 'target'", e.getMessage());
+      testHelper.assertTextPresent("Missing attribute 'target'", e.getMessage());
       assertThat(e.getResorceReports().get(0).getErrors().get(0).getMainElementId()).isEqualTo("callActivity");
     } finally {
       if (deploymentId != null) {
@@ -1012,7 +1012,7 @@ public class CallActivityTest extends PluggableProcessEngineTest {
       taskService.complete(beforeSecondCallActivityTask.getId());
       fail("expected exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot resolve identifier 'globalVariable'", e.getMessage());
+      testHelper.assertTextPresent("Cannot resolve identifier 'globalVariable'", e.getMessage());
     }
   }
 

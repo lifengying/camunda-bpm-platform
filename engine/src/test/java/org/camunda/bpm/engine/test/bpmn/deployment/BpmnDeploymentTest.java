@@ -103,7 +103,7 @@ public class BpmnDeploymentTest extends PluggableProcessEngineTest {
         .deploy();
       fail();
     } catch (ProcessEngineException e) {
-      assertTextPresent("id can be maximum 64 characters", e.getMessage());
+      testHelper.assertTextPresent("id can be maximum 64 characters", e.getMessage());
     }
 
     // Verify that nothing is deployed
@@ -418,7 +418,7 @@ public class BpmnDeploymentTest extends PluggableProcessEngineTest {
     catch(ProcessEngineException expected) {
       // Check if no deployments are made
       assertEquals(0, repositoryService.createDeploymentQuery().count());
-      assertTextPresent("ENGINE-01009 Error while parsing process", expected.getMessage());
+      testHelper.assertTextPresent("ENGINE-01009 Error while parsing process", expected.getMessage());
     }
   }
 

@@ -58,7 +58,7 @@ public class ExternalScriptTaskTest extends PluggableProcessEngineTest {
       fail("Process variable 'scriptPath' not defined");
     }
     catch(ProcessEngineException e) {
-      assertTextPresentIgnoreCase("Cannot resolve identifier 'scriptPath'", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("Cannot resolve identifier 'scriptPath'", e.getMessage());
     }
   }
 
@@ -111,7 +111,7 @@ public class ExternalScriptTaskTest extends PluggableProcessEngineTest {
       fail("Resource does not exist in classpath");
     }
     catch (NotFoundException e) {
-      assertTextPresentIgnoreCase("unable to find resource at path classpath://org/camunda/bpm/engine/test/bpmn/scripttask/notexisting.py", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("unable to find resource at path classpath://org/camunda/bpm/engine/test/bpmn/scripttask/notexisting.py", e.getMessage());
     }
   }
 
@@ -176,7 +176,7 @@ public class ExternalScriptTaskTest extends PluggableProcessEngineTest {
       fail("Resource does not exist in classpath");
     }
     catch (NotFoundException e) {
-      assertTextPresentIgnoreCase("unable to find resource at path deployment://org/camunda/bpm/engine/test/bpmn/scripttask/notexisting.py", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("unable to find resource at path deployment://org/camunda/bpm/engine/test/bpmn/scripttask/notexisting.py", e.getMessage());
     }
   }
 
@@ -187,7 +187,7 @@ public class ExternalScriptTaskTest extends PluggableProcessEngineTest {
       fail("Should fail during script compilation");
     }
     catch (ScriptCompilationException e) {
-      assertTextPresentIgnoreCase("import unknown", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("import unknown", e.getMessage());
     }
   }
 

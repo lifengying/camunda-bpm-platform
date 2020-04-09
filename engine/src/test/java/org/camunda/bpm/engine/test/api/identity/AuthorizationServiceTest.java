@@ -79,7 +79,7 @@ public class AuthorizationServiceTest extends PluggableProcessEngineTest {
       fail("exception expected");
 
     } catch (Exception e) {
-      assertTextPresent("ENGINE-03028 Illegal value 'something' for userId for GLOBAL authorization. Must be '*'", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-03028 Illegal value 'something' for userId for GLOBAL authorization. Must be '*'", e.getMessage());
 
     }
 
@@ -92,7 +92,7 @@ public class AuthorizationServiceTest extends PluggableProcessEngineTest {
       fail("exception expected");
 
     } catch (Exception e) {
-      assertTextPresent("ENGINE-03027 Cannot use 'groupId' for GLOBAL authorization", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-03027 Cannot use 'groupId' for GLOBAL authorization", e.getMessage());
     }
   }
 
@@ -130,7 +130,7 @@ public class AuthorizationServiceTest extends PluggableProcessEngineTest {
       authorizationService.deleteAuthorization("nonExisiting");
       fail();
     } catch (Exception e) {
-      assertTextPresent("Authorization for Id 'nonExisiting' does not exist: authorization is null", e.getMessage());
+      testHelper.assertTextPresent("Authorization for Id 'nonExisiting' does not exist: authorization is null", e.getMessage());
     }
 
   }
@@ -208,7 +208,7 @@ public class AuthorizationServiceTest extends PluggableProcessEngineTest {
       authorizationService.saveAuthorization(authorization);
       fail("exception expected");
     } catch(ProcessEngineException e) {
-      assertTextPresent("Authorization must either have a 'userId' or a 'groupId'.", e.getMessage());
+      testHelper.assertTextPresent("Authorization must either have a 'userId' or a 'groupId'.", e.getMessage());
     }
 
     // case 3: no resourceType ////////////
@@ -526,7 +526,7 @@ public class AuthorizationServiceTest extends PluggableProcessEngineTest {
       authorization.isPermissionRevoked(READ);
       fail("Exception expected");
     } catch (IllegalStateException e) {
-      assertTextPresent("ENGINE-03026 Method 'isPermissionRevoked' cannot be used for authorization with type 'GRANT'.", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-03026 Method 'isPermissionRevoked' cannot be used for authorization with type 'GRANT'.", e.getMessage());
     }
 
   }
@@ -554,7 +554,7 @@ public class AuthorizationServiceTest extends PluggableProcessEngineTest {
       authorization.isPermissionRevoked(READ);
       fail("Exception expected");
     } catch (IllegalStateException e) {
-      assertTextPresent("ENGINE-03026 Method 'isPermissionRevoked' cannot be used for authorization with type 'GRANT'.", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-03026 Method 'isPermissionRevoked' cannot be used for authorization with type 'GRANT'.", e.getMessage());
     }
 
   }
@@ -578,7 +578,7 @@ public class AuthorizationServiceTest extends PluggableProcessEngineTest {
       authorization.isPermissionGranted(READ);
       fail("Exception expected");
     } catch (IllegalStateException e) {
-      assertTextPresent("ENGINE-03026 Method 'isPermissionGranted' cannot be used for authorization with type 'REVOKE'.", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-03026 Method 'isPermissionGranted' cannot be used for authorization with type 'REVOKE'.", e.getMessage());
     }
 
   }

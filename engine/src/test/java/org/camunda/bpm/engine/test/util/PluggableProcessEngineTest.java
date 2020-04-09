@@ -31,6 +31,8 @@ import org.camunda.bpm.engine.impl.test.AbstractProcessEngineTestCase;
 import org.camunda.bpm.engine.runtime.CaseExecution;
 import org.camunda.bpm.engine.runtime.CaseInstance;
 import org.camunda.bpm.engine.variable.VariableMap;
+import org.camunda.commons.testconainers.DatabaseContainerProvider;
+import org.junit.Rule;
 
 
 /**
@@ -41,6 +43,9 @@ public abstract class PluggableProcessEngineTest extends AbstractProcessEngineTe
   protected static ProcessEngine cachedProcessEngine;
   protected String engineConfigurationResource;
   protected Function engineConfigurator;
+
+  @Rule
+  public ProcessEngineTestRule testHelper = new ProcessEngineTestRule(processEngine);
 
   public PluggableProcessEngineTest() {
   }
@@ -60,7 +65,11 @@ public abstract class PluggableProcessEngineTest extends AbstractProcessEngineTe
 
   @Override
   protected void initializeProcessEngine() {
-    processEngine = getProcessEngine();
+    if (engineConfigurationResource != null) {
+      processEngine = getCustomProcessEngine();
+    } else {
+      processEngine = getProcessEngine();
+    }
   }
 
   protected static ProcessEngine getOrInitializeCachedProcessEngineWithTC() {
@@ -78,9 +87,40 @@ public abstract class PluggableProcessEngineTest extends AbstractProcessEngineTe
         }
       }
 
+      // bootstrap Testcontainers database
+      String jdbcUrl = processEngineConfiguration.getJdbcUrl();
+      if (!jdbcUrl.contains("h2")) {
+        DatabaseContainerProvider databaseProvider = new DatabaseContainerProvider();
+        databaseProvider.startDatabase();
+        if (databaseProvider.getDbContainer() != null) {
+          processEngineConfiguration.setJdbcUrl(databaseProvider.getJdbcUrl());
+        }
+      }
+
       cachedProcessEngine = processEngineConfiguration.buildProcessEngine();
     }
     return cachedProcessEngine;
+  }
+
+  protected ProcessEngine getCustomProcessEngine() {
+    processEngineConfiguration = (ProcessEngineConfigurationImpl) ProcessEngineConfiguration
+        .createProcessEngineConfigurationFromResource(engineConfigurationResource);
+
+    if (engineConfigurator != null) {
+      engineConfigurator.apply(processEngineConfiguration);
+    }
+
+    // bootstrap Testcontainers database
+    String jdbcUrl = processEngineConfiguration.getJdbcUrl();
+    if (!jdbcUrl.contains("h2")) {
+      DatabaseContainerProvider databaseProvider = new DatabaseContainerProvider();
+      databaseProvider.startDatabase();
+      if (databaseProvider.getDbContainer() != null) {
+        processEngineConfiguration.setJdbcUrl(databaseProvider.getJdbcUrl());
+      }
+    }
+
+    return processEngineConfiguration.buildProcessEngine();
   }
 
   @Override

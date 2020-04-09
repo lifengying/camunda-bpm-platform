@@ -164,7 +164,8 @@ public class MultiTenancyCaseInstanceQueryTest extends PluggableProcessEngineTes
     assertThat(query.count(), is(3L));
   }
 
-  protected void createCaseInstance(String tenantId) {
+  @Override
+  protected CaseInstance createCaseInstance(String tenantId) {
     String caseDefinitionId = null;
 
     CaseDefinitionQuery caseDefinitionQuery = repositoryService.createCaseDefinitionQuery().caseDefinitionKey("oneTaskCase");
@@ -174,7 +175,7 @@ public class MultiTenancyCaseInstanceQueryTest extends PluggableProcessEngineTes
       caseDefinitionId = caseDefinitionQuery.tenantIdIn(tenantId).singleResult().getId();
     }
 
-    caseService.withCaseDefinition(caseDefinitionId).create();
+    return caseService.withCaseDefinition(caseDefinitionId).create();
   }
 
 }

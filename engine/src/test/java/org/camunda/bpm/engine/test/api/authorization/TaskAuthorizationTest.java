@@ -331,7 +331,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'Task'", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'Task'", e.getMessage());
     }
   }
 
@@ -359,7 +359,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'Task'", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'Task'", e.getMessage());
     }
   }
 
@@ -421,7 +421,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN'", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN'", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -463,12 +463,12 @@ public class TaskAuthorizationTest extends AuthorizationTest {
 
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(task.getId(), message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(UPDATE_TASK.getName(), message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(task.getId(), message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_TASK.getName(), message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -604,7 +604,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to delete a task.");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have 'DELETE' permission on resource 'myTask' of type 'Task'", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have 'DELETE' permission on resource 'myTask' of type 'Task'", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -643,7 +643,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to delete tasks.");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have 'DELETE' permission on resource 'myTask1' of type 'Task'", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have 'DELETE' permission on resource 'myTask1' of type 'Task'", e.getMessage());
     }
 
     deleteTask(firstTaskId, true);
@@ -665,7 +665,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to delete tasks.");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have 'DELETE' permission on resource 'myTask2' of type 'Task'", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have 'DELETE' permission on resource 'myTask2' of type 'Task'", e.getMessage());
     }
 
     deleteTask(firstTaskId, true);
@@ -706,7 +706,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to set an assignee");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -762,12 +762,12 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(UPDATE_TASK.getName(), message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_TASK.getName(), message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -913,7 +913,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to set an owner");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -969,12 +969,12 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(UPDATE_TASK.getName(), message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_TASK.getName(), message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -1137,7 +1137,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to add a candidate user");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -1184,12 +1184,12 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(UPDATE_TASK.getName(), message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_TASK.getName(), message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -1232,7 +1232,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to add an user identity link");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
     }
   }
 
@@ -1451,7 +1451,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to add a candidate group");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -1525,12 +1525,12 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(UPDATE_TASK.getName(), message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_TASK.getName(), message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -1800,7 +1800,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to add an user identity link");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -1873,12 +1873,12 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(UPDATE_TASK.getName(), message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_TASK.getName(), message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -2096,7 +2096,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to add a group identity link");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -2143,12 +2143,12 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(UPDATE_TASK.getName(), message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_TASK.getName(), message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -2292,7 +2292,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to delete a candidate user");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -2357,12 +2357,12 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(UPDATE_TASK.getName(), message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_TASK.getName(), message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -2541,7 +2541,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to delete a candidate group");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -2606,12 +2606,12 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(UPDATE_TASK.getName(), message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_TASK.getName(), message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -2790,7 +2790,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to delete an user identity link");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -2855,12 +2855,12 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(UPDATE_TASK.getName(), message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_TASK.getName(), message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -3060,7 +3060,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to delete a group identity link");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -3103,12 +3103,12 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(UPDATE_TASK.getName(), message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_TASK.getName(), message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -3227,7 +3227,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to get identity links");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have 'READ' permission on resource 'myTask' of type 'Task'", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have 'READ' permission on resource 'myTask' of type 'Task'", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -3266,12 +3266,12 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(READ_TASK.getName(), message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(READ_TASK.getName(), message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -3369,7 +3369,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to claim the task.");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions:", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions:", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -3425,7 +3425,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to complete a task");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_WORK", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_WORK", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -3445,12 +3445,12 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(UPDATE_TASK.getName(), message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_TASK.getName(), message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -3517,7 +3517,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to complete a task");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_WORK", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_WORK", e.getMessage());
     }
 
   }
@@ -3601,7 +3601,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to complete a task");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_WORK", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_WORK", e.getMessage());
     }
 
   }
@@ -3651,7 +3651,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to complete a task");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_WORK", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_WORK", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -3709,12 +3709,12 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(UPDATE_TASK.getName(), message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_TASK.getName(), message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -3837,7 +3837,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to delegate a task");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -3893,12 +3893,12 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(UPDATE_TASK.getName(), message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_TASK.getName(), message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -4061,7 +4061,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to resolve a task");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_WORK", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_WORK", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -4101,12 +4101,12 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(UPDATE_TASK.getName(), message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_TASK.getName(), message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -4214,7 +4214,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to set a priority");
     } catch (AuthorizationException e) {
       // then
-      assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN'", e.getMessage());
+      testHelper.assertTextPresent("The user with id 'test' does not have one of the following permissions: 'TASK_ASSIGN'", e.getMessage());
     }
 
     deleteTask(taskId, true);
@@ -4270,12 +4270,12 @@ public class TaskAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(UPDATE_TASK.getName(), message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_TASK.getName(), message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -6130,7 +6130,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       taskService.saveTask(task);
       fail("it should not be possible to save a task with the generic resource id *");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot create default authorization for owner *: "
+      testHelper.assertTextPresent("Cannot create default authorization for owner *: "
           + "id cannot be *. * is a reserved identifier", e.getMessage());
     }
   }
@@ -6145,7 +6145,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       taskService.setOwner(task.getId(), "*");
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot create default authorization for owner *: "
+      testHelper.assertTextPresent("Cannot create default authorization for owner *: "
           + "id cannot be *. * is a reserved identifier", e.getMessage());
     }
 
@@ -6162,7 +6162,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       taskService.saveTask(task);
       fail("it should not be possible to save a task with the generic resource id *");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot create default authorization for assignee *: "
+      testHelper.assertTextPresent("Cannot create default authorization for assignee *: "
           + "id cannot be *. * is a reserved identifier", e.getMessage());
     }
   }
@@ -6177,7 +6177,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       taskService.setAssignee(task.getId(), "*");
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot create default authorization for assignee *: "
+      testHelper.assertTextPresent("Cannot create default authorization for assignee *: "
           + "id cannot be *. * is a reserved identifier", e.getMessage());
     }
 
@@ -6194,7 +6194,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       taskService.addUserIdentityLink(task.getId(), "*", "someLink");
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot grant default authorization for identity link to user *: "
+      testHelper.assertTextPresent("Cannot grant default authorization for identity link to user *: "
           + "id cannot be *. * is a reserved identifier.", e.getMessage());
     }
 
@@ -6211,7 +6211,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       taskService.addGroupIdentityLink(task.getId(), "*", "someLink");
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot grant default authorization for identity link to group *: "
+      testHelper.assertTextPresent("Cannot grant default authorization for identity link to group *: "
           + "id cannot be *. * is a reserved identifier.", e.getMessage());
     }
 
@@ -6228,7 +6228,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       taskService.addGroupIdentityLink(task.getId(), "*", "someLink");
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot grant default authorization for identity link to group *: "
+      testHelper.assertTextPresent("Cannot grant default authorization for identity link to group *: "
           + "id cannot be *. * is a reserved identifier.", e.getMessage());
     }
 
@@ -6245,14 +6245,14 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       taskService.addUserIdentityLink("*", "aUserId", "someLink");
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot find task with id *", e.getMessage());
+      testHelper.assertTextPresent("Cannot find task with id *", e.getMessage());
     }
 
     try {
       taskService.addGroupIdentityLink("*", "aGroupId", "someLink");
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot find task with id *", e.getMessage());
+      testHelper.assertTextPresent("Cannot find task with id *", e.getMessage());
     }
 
     deleteTask(task.getId(), true);
@@ -6268,14 +6268,14 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       taskService.addUserIdentityLink("*", "aUserId", "someLink");
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot find task with id *", e.getMessage());
+      testHelper.assertTextPresent("Cannot find task with id *", e.getMessage());
     }
 
     try {
       taskService.addGroupIdentityLink("*", "aGroupId", "someLink");
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot find task with id *", e.getMessage());
+      testHelper.assertTextPresent("Cannot find task with id *", e.getMessage());
     }
 
     deleteTask(task.getId(), true);
@@ -6290,7 +6290,7 @@ public class TaskAuthorizationTest extends AuthorizationTest {
       runtimeService.startProcessInstanceByKey("genericResourceIdAssignmentProcess");
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot create default authorization for assignee *: "
+      testHelper.assertTextPresent("Cannot create default authorization for assignee *: "
           + "id cannot be *. * is a reserved identifier.", e.getMessage());
     }
   }
@@ -6396,15 +6396,15 @@ public class TaskAuthorizationTest extends AuthorizationTest {
   }
 
   protected void verifyMessageIsValid(String taskId, String message) {
-    assertTextPresent(userId, message);
-    assertTextPresent(UPDATE.getName(), message);
-    assertTextPresent(UPDATE_VARIABLE.getName(), message);
-    assertTextPresent(taskId, message);
-    assertTextPresent(TASK.resourceName(), message);
-    assertTextPresent(UPDATE_TASK.getName(), message);
-    assertTextPresent(UPDATE_TASK_VARIABLE.getName(), message);
-    assertTextPresent(PROCESS_KEY, message);
-    assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+    testHelper.assertTextPresent(userId, message);
+    testHelper.assertTextPresent(UPDATE.getName(), message);
+    testHelper.assertTextPresent(UPDATE_VARIABLE.getName(), message);
+    testHelper.assertTextPresent(taskId, message);
+    testHelper.assertTextPresent(TASK.resourceName(), message);
+    testHelper.assertTextPresent(UPDATE_TASK.getName(), message);
+    testHelper.assertTextPresent(UPDATE_TASK_VARIABLE.getName(), message);
+    testHelper.assertTextPresent(PROCESS_KEY, message);
+    testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
   }
 
   protected void verifyVariableInstanceCountDisabledAuthorization(int count) {

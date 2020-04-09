@@ -109,7 +109,7 @@ public class CmmnDecisionTaskResultMappingTest extends PluggableProcessEngineTes
 
       fail("expect exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent("ENGINE-22001", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-22001", e.getMessage());
     }
   }
 
@@ -120,7 +120,7 @@ public class CmmnDecisionTaskResultMappingTest extends PluggableProcessEngineTes
 
       fail("expect exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent("ENGINE-22001", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-22001", e.getMessage());
     }
   }
 
@@ -131,7 +131,7 @@ public class CmmnDecisionTaskResultMappingTest extends PluggableProcessEngineTes
 
       fail("expect exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent("ENGINE-22001", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-22001", e.getMessage());
     }
   }
 
@@ -142,7 +142,7 @@ public class CmmnDecisionTaskResultMappingTest extends PluggableProcessEngineTes
 
       fail("expect exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent("ENGINE-22002", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-22002", e.getMessage());
     }
   }
 
@@ -163,7 +163,7 @@ public class CmmnDecisionTaskResultMappingTest extends PluggableProcessEngineTes
       fail("expect exception");
 
     } catch (ProcessEngineException e) {
-      assertTextPresent("transient variable with name decisionResult to non-transient", e.getMessage());
+      testHelper.assertTextPresent("transient variable with name decisionResult to non-transient", e.getMessage());
     }
   }
 

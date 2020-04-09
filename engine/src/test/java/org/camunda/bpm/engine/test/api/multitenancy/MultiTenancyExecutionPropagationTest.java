@@ -26,6 +26,7 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.camunda.bpm.engine.externaltask.ExternalTask;
 import org.camunda.bpm.engine.externaltask.LockedExternalTask;
+import org.camunda.bpm.engine.runtime.CaseInstance;
 import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.camunda.bpm.engine.management.JobDefinition;
 import org.camunda.bpm.engine.repository.CaseDefinition;
@@ -479,9 +480,10 @@ public class MultiTenancyExecutionPropagationTest extends PluggableProcessEngine
     runtimeService.startProcessInstanceById(processDefinition.getId());
   }
 
-  protected void createCaseInstance() {
+  @Override
+  protected CaseInstance createCaseInstance() {
     CaseDefinition caseDefinition = repositoryService.createCaseDefinitionQuery().singleResult();
-    caseService.createCaseInstanceById(caseDefinition.getId());
+    return caseService.createCaseInstanceById(caseDefinition.getId());
   }
 
 }

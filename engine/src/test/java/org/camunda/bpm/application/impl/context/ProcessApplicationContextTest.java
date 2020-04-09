@@ -167,7 +167,7 @@ public class ProcessApplicationContextTest extends PluggableProcessEngineTest {
         fail("should not succeed");
 
       } catch (ProcessEngineException e) {
-        assertTextPresent("A process application with name '" + nonExistingName + "' is not registered", e.getMessage());
+        testHelper.assertTextPresent("A process application with name '" + nonExistingName + "' is not registered", e.getMessage());
       }
 
     } finally {
@@ -191,7 +191,7 @@ public class ProcessApplicationContextTest extends PluggableProcessEngineTest {
       fail("should not succeed");
 
     } catch (ProcessEngineException e) {
-      assertTextPresent("A process application with name '" + nonExistingName + "' is not registered", e.getMessage());
+      testHelper.assertTextPresent("A process application with name '" + nonExistingName + "' is not registered", e.getMessage());
     }
 
   }

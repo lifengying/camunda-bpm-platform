@@ -1447,10 +1447,10 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(DELETE.getName(), message);
-      assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
-      assertTextPresent(CATEGORY_TASK_WORKER, message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(DELETE.getName(), message);
+      testHelper.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
+      testHelper.assertTextPresent(CATEGORY_TASK_WORKER, message);
     }
     
     deleteTask(taskId, true);
@@ -1474,10 +1474,10 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(DELETE.getName(), message);
-      assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
-      assertTextPresent(CATEGORY_TASK_WORKER, message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(DELETE.getName(), message);
+      testHelper.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
+      testHelper.assertTextPresent(CATEGORY_TASK_WORKER, message);
     }
     
     deleteTask(taskId, true);
@@ -1501,10 +1501,10 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(DELETE.getName(), message);
-      assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
-      assertTextPresent(CATEGORY_TASK_WORKER, message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(DELETE.getName(), message);
+      testHelper.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
+      testHelper.assertTextPresent(CATEGORY_TASK_WORKER, message);
     }
     
     deleteTask(taskId, true);
@@ -1569,13 +1569,13 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(DELETE_HISTORY.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
-      assertTextPresent(DELETE.getName(), message);
-      assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
-      assertTextPresent(CATEGORY_TASK_WORKER, message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(DELETE_HISTORY.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(DELETE.getName(), message);
+      testHelper.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
+      testHelper.assertTextPresent(CATEGORY_TASK_WORKER, message);
     }
   }
 
@@ -1705,10 +1705,10 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(DELETE.getName(), message);
-      assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
-      assertTextPresent(CATEGORY_TASK_WORKER, message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(DELETE.getName(), message);
+      testHelper.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
+      testHelper.assertTextPresent(CATEGORY_TASK_WORKER, message);
     }
   }
   
@@ -1731,10 +1731,10 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(DELETE.getName(), message);
-      assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
-      assertTextPresent(CATEGORY_TASK_WORKER, message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(DELETE.getName(), message);
+      testHelper.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
+      testHelper.assertTextPresent(CATEGORY_TASK_WORKER, message);
     }
   }
   
@@ -1757,10 +1757,10 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(DELETE.getName(), message);
-      assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
-      assertTextPresent(CATEGORY_TASK_WORKER, message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(DELETE.getName(), message);
+      testHelper.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
+      testHelper.assertTextPresent(CATEGORY_TASK_WORKER, message);
     }
   }
   
@@ -1834,7 +1834,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
 
     // then
-    assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
+    testHelper.assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
   }
 
   public void testUpdateEntryWithUpdateHistoryPermissionOnAnyProcessDefinition() {
@@ -1867,7 +1867,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
 
     // then
-    assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
+    testHelper.assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
   }
 
 
@@ -1894,10 +1894,10 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
-      assertTextPresent(CATEGORY_TASK_WORKER, message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
+      testHelper.assertTextPresent(CATEGORY_TASK_WORKER, message);
     }
 
     // cleanup
@@ -1934,7 +1934,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
 
     // then
-    assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
+    testHelper.assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
   }
 
   public void testUpdateEntryRelatedToProcessDefinitionWithUpdatePermissionOnAnyCategory() {
@@ -1967,7 +1967,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
 
     // then
-    assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
+    testHelper.assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
   }
 
   public void testUpdateEntryWithoutAuthorization() {
@@ -1991,10 +1991,10 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
-      assertTextPresent(CATEGORY_TASK_WORKER, message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
+      testHelper.assertTextPresent(CATEGORY_TASK_WORKER, message);
     }
 
     // cleanup
@@ -2028,7 +2028,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
 
     // then
-    assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
+    testHelper.assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
 
     // cleanup
     deleteTask("aTaskId", true);
@@ -2061,7 +2061,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
 
     // then
-    assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
+    testHelper.assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
 
     // cleanup
     deleteTask("aTaskId", true);

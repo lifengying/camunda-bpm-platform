@@ -432,7 +432,7 @@ public class ScriptTaskTest extends PluggableProcessEngineTest {
       fail("Process variable 'scriptSource' not defined");
     }
     catch (ProcessEngineException e) {
-      assertTextPresentIgnoreCase("Cannot resolve identifier 'scriptSource'", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("Cannot resolve identifier 'scriptSource'", e.getMessage());
     }
   }
 
@@ -531,7 +531,7 @@ public class ScriptTaskTest extends PluggableProcessEngineTest {
       fail("Should fail during script compilation");
     }
     catch (ScriptCompilationException e) {
-      assertTextPresentIgnoreCase("import unknown", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("import unknown", e.getMessage());
     }
   }
 
@@ -546,7 +546,7 @@ public class ScriptTaskTest extends PluggableProcessEngineTest {
       fail("Should fail during script evaluation");
     }
     catch (ScriptEvaluationException e) {
-      assertTextPresentIgnoreCase("import unknown", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("import unknown", e.getMessage());
     }
     finally {
       // re-enable script compilation
@@ -673,7 +673,7 @@ public class ScriptTaskTest extends PluggableProcessEngineTest {
     try {
       runtimeService.startProcessInstanceByKey("Process_1");
     } catch (ScriptEvaluationException e) {
-      assertTextPresent("Unable to evaluate script while executing activity 'Failing' in the process definition with id '" + processDefinition.getId() + "'", e.getMessage());
+      testHelper.assertTextPresent("Unable to evaluate script while executing activity 'Failing' in the process definition with id '" + processDefinition.getId() + "'", e.getMessage());
     }
   }
 }

@@ -180,7 +180,7 @@ public class ProcessInstantiationAtActivitiesTest extends PluggableProcessEngine
       fail("should not succeed");
     } catch (NotValidException e) {
       // then
-      assertTextPresentIgnoreCase("element 'someNonExistingActivity' does not exist in process ", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("element 'someNonExistingActivity' does not exist in process ", e.getMessage());
     }
   }
 
@@ -277,14 +277,14 @@ public class ProcessInstantiationAtActivitiesTest extends PluggableProcessEngine
       runtimeService.createProcessInstanceById("I don't exist").startBeforeActivity("start").execute();
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("no deployed process definition found with id", e.getMessage());
+      testHelper.assertTextPresent("no deployed process definition found with id", e.getMessage());
     }
 
     try {
       runtimeService.createProcessInstanceByKey("I don't exist either").startBeforeActivity("start").execute();
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("no processes deployed with key", e.getMessage());
+      testHelper.assertTextPresent("no processes deployed with key", e.getMessage());
     }
   }
 

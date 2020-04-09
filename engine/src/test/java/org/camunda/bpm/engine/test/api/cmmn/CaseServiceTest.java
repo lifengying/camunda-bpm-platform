@@ -1363,7 +1363,7 @@ public class CaseServiceTest extends PluggableProcessEngineTest {
         .execute();
     } catch (NotValidException e) {
       // then
-      assertTextPresent("Cannot set and remove a variable with the same variable name: 'aVariableName' within a command.", e.getMessage());
+      testHelper.assertTextPresent("Cannot set and remove a variable with the same variable name: 'aVariableName' within a command.", e.getMessage());
     }
   }
 
@@ -1398,7 +1398,7 @@ public class CaseServiceTest extends PluggableProcessEngineTest {
         .execute();
     } catch (NotValidException e) {
       // then
-      assertTextPresent("Cannot set and remove a variable with the same variable name: 'aVariableName' within a command.", e.getMessage());
+      testHelper.assertTextPresent("Cannot set and remove a variable with the same variable name: 'aVariableName' within a command.", e.getMessage());
     }
   }
 

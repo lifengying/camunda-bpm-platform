@@ -173,10 +173,10 @@ public class HistoricExternalTaskLogAuthorizationTest extends AuthorizationTest 
     } catch (AuthorizationException e) {
       // then
       String exceptionMessage = e.getMessage();
-      assertTextPresent(userId, exceptionMessage);
-      assertTextPresent(READ_HISTORY.getName(), exceptionMessage);
-      assertTextPresent(DEFAULT_PROCESS_KEY, exceptionMessage);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), exceptionMessage);
+      testHelper.assertTextPresent(userId, exceptionMessage);
+      testHelper.assertTextPresent(READ_HISTORY.getName(), exceptionMessage);
+      testHelper.assertTextPresent(DEFAULT_PROCESS_KEY, exceptionMessage);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), exceptionMessage);
     }
   }
 

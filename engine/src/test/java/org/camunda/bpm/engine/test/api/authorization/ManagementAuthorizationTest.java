@@ -48,7 +48,7 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
     }
   }
 
@@ -75,7 +75,7 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
     }
   }
 
@@ -103,7 +103,7 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
     }
   }
 
@@ -130,7 +130,7 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
     }
 
   }
@@ -159,7 +159,7 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
     }
   }
 
@@ -186,7 +186,7 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
     }
   }
 
@@ -202,7 +202,7 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
     }
   }
 
@@ -216,7 +216,7 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
     }
   }
 
@@ -230,7 +230,7 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
     }
   }
 

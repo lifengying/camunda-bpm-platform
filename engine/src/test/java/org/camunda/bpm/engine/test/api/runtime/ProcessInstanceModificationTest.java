@@ -236,7 +236,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
       fail();
     } catch (NotValidException e) {
       // happy path
-      assertTextPresent("Cannot perform instruction: " + "Start before activity 'subProcess' with ancestor activity instance 'noValidActivityInstanceId'; "
+      testHelper.assertTextPresent("Cannot perform instruction: " + "Start before activity 'subProcess' with ancestor activity instance 'noValidActivityInstanceId'; "
           + "Ancestor activity instance 'noValidActivityInstanceId' does not exist", e.getMessage());
     }
 
@@ -245,7 +245,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
       fail();
     } catch (NotValidException e) {
       // happy path
-      assertTextPresent("ancestorActivityInstanceId is null", e.getMessage());
+      testHelper.assertTextPresent("ancestorActivityInstanceId is null", e.getMessage());
     }
 
     ActivityInstance tree = runtimeService.getActivityInstance(processInstanceId);
@@ -256,7 +256,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
       fail("should not succeed because subProcessTask is a child of subProcess");
     } catch (NotValidException e) {
       // happy path
-      assertTextPresent("Cannot perform instruction: " + "Start before activity 'subProcess' with ancestor activity instance '" + subProcessTaskId + "'; "
+      testHelper.assertTextPresent("Cannot perform instruction: " + "Start before activity 'subProcess' with ancestor activity instance '" + subProcessTaskId + "'; "
           + "Scope execution for '" + subProcessTaskId + "' cannot be found in parent hierarchy of flow element 'subProcess'", e.getMessage());
     }
   }
@@ -272,7 +272,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
       fail("should not succeed");
     } catch (NotValidException e) {
       // then
-      assertTextPresentIgnoreCase("element 'someNonExistingActivity' does not exist in process ", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("element 'someNonExistingActivity' does not exist in process ", e.getMessage());
     }
   }
 
@@ -417,7 +417,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
       fail();
     } catch (NotValidException e) {
       // happy path
-      assertTextPresent("Cannot perform instruction: " + "Start transition 'flow5' with ancestor activity instance 'noValidActivityInstanceId'; "
+      testHelper.assertTextPresent("Cannot perform instruction: " + "Start transition 'flow5' with ancestor activity instance 'noValidActivityInstanceId'; "
           + "Ancestor activity instance 'noValidActivityInstanceId' does not exist", e.getMessage());
     }
 
@@ -426,7 +426,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
       fail();
     } catch (NotValidException e) {
       // happy path
-      assertTextPresent("ancestorActivityInstanceId is null", e.getMessage());
+      testHelper.assertTextPresent("ancestorActivityInstanceId is null", e.getMessage());
     }
 
     ActivityInstance tree = runtimeService.getActivityInstance(processInstanceId);
@@ -437,7 +437,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
       fail("should not succeed because subProcessTask is a child of subProcess");
     } catch (NotValidException e) {
       // happy path
-      assertTextPresent("Cannot perform instruction: " + "Start transition 'flow5' with ancestor activity instance '" + subProcessTaskId + "'; "
+      testHelper.assertTextPresent("Cannot perform instruction: " + "Start transition 'flow5' with ancestor activity instance '" + subProcessTaskId + "'; "
           + "Scope execution for '" + subProcessTaskId + "' cannot be found in parent hierarchy of flow element 'flow5'", e.getMessage());
     }
   }
@@ -479,7 +479,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
 
     } catch (ProcessEngineException e) {
       // happy path
-      assertTextPresent("Cannot perform instruction: " + "Start transition 'invalidFlowId'; " + "Element 'invalidFlowId' does not exist in process '"
+      testHelper.assertTextPresent("Cannot perform instruction: " + "Start transition 'invalidFlowId'; " + "Element 'invalidFlowId' does not exist in process '"
           + processInstance.getProcessDefinitionId() + "'", e.getMessage());
     }
   }
@@ -598,7 +598,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
       fail();
     } catch (NotValidException e) {
       // happy path
-      assertTextPresent(
+      testHelper.assertTextPresent(
           "Cannot perform instruction: " + "Start after activity 'innerSubProcessStart' with ancestor activity instance 'noValidActivityInstanceId'; "
               + "Ancestor activity instance 'noValidActivityInstanceId' does not exist",
           e.getMessage());
@@ -609,7 +609,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
       fail();
     } catch (NotValidException e) {
       // happy path
-      assertTextPresent("ancestorActivityInstanceId is null", e.getMessage());
+      testHelper.assertTextPresent("ancestorActivityInstanceId is null", e.getMessage());
     }
 
     ActivityInstance tree = runtimeService.getActivityInstance(processInstanceId);
@@ -620,7 +620,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
       fail("should not succeed because subProcessTask is a child of subProcess");
     } catch (NotValidException e) {
       // happy path
-      assertTextPresent("Cannot perform instruction: " + "Start after activity 'innerSubProcessStart' with ancestor activity instance '" + subProcessTaskId
+      testHelper.assertTextPresent("Cannot perform instruction: " + "Start after activity 'innerSubProcessStart' with ancestor activity instance '" + subProcessTaskId
           + "'; " + "Scope execution for '" + subProcessTaskId + "' cannot be found in parent hierarchy of flow element 'flow5'", e.getMessage());
     }
   }
@@ -637,7 +637,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
 
     } catch (ProcessEngineException e) {
       // happy path
-      assertTextPresent("activity has more than one outgoing sequence flow", e.getMessage());
+      testHelper.assertTextPresent("activity has more than one outgoing sequence flow", e.getMessage());
     }
   }
 
@@ -653,7 +653,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
 
     } catch (ProcessEngineException e) {
       // happy path
-      assertTextPresent("activity has no outgoing sequence flow to take", e.getMessage());
+      testHelper.assertTextPresent("activity has no outgoing sequence flow to take", e.getMessage());
     }
   }
 
@@ -668,7 +668,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
       fail("should not succeed");
     } catch (NotValidException e) {
       // then
-      assertTextPresentIgnoreCase("Cannot perform instruction: " + "Start after activity 'someNonExistingActivity'; "
+      testHelper.assertTextPresentIgnoreCase("Cannot perform instruction: " + "Start after activity 'someNonExistingActivity'; "
           + "Activity 'someNonExistingActivity' does not exist: activity is null", e.getMessage());
     }
   }
@@ -1335,7 +1335,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
 
       fail("should not succeed");
     } catch (ProcessEngineException e) {
-      assertTextPresent("compensation boundary event", e.getMessage());
+      testHelper.assertTextPresent("compensation boundary event", e.getMessage());
     }
 
     try {
@@ -1343,7 +1343,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
 
       fail("should not succeed");
     } catch (ProcessEngineException e) {
-      assertTextPresent("no outgoing sequence flow", e.getMessage());
+      testHelper.assertTextPresent("no outgoing sequence flow", e.getMessage());
     }
   }
 
@@ -1403,7 +1403,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
       runtimeService.createProcessInstanceModification(instance.getId()).cancelActivityInstance("nonExistingActivityInstance").execute();
       fail("should not succeed");
     } catch (NotValidException e) {
-      assertTextPresent("Cannot perform instruction: Cancel activity instance 'nonExistingActivityInstance'; "
+      testHelper.assertTextPresent("Cannot perform instruction: Cancel activity instance 'nonExistingActivityInstance'; "
           + "Activity instance 'nonExistingActivityInstance' does not exist", e.getMessage());
     }
 
@@ -1419,7 +1419,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
       runtimeService.createProcessInstanceModification(instance.getId()).cancelTransitionInstance("nonExistingActivityInstance").execute();
       fail("should not succeed");
     } catch (NotValidException e) {
-      assertTextPresent("Cannot perform instruction: Cancel transition instance 'nonExistingActivityInstance'; "
+      testHelper.assertTextPresent("Cannot perform instruction: Cancel transition instance 'nonExistingActivityInstance'; "
           + "Transition instance 'nonExistingActivityInstance' does not exist", e.getMessage());
     }
 
@@ -1446,7 +1446,7 @@ public class ProcessInstanceModificationTest extends PluggableProcessEngineTest 
       runtimeService.createProcessInstanceModification(null).startBeforeActivity("someActivity").execute();
       fail("should not succeed");
     } catch (NotValidException e) {
-      assertTextPresent("processInstanceId is null", e.getMessage());
+      testHelper.assertTextPresent("processInstanceId is null", e.getMessage());
     }
   }
 

@@ -71,7 +71,7 @@ public class TaskQueryDisabledStoredExpressionsTest extends PluggableProcessEngi
     try {
       filterService.saveFilter(filter);
     } catch (ProcessEngineException e) {
-      assertTextPresent(EXPECTED_STORED_QUERY_FAILURE_MESSAGE, e.getMessage());
+      testHelper.assertTextPresent(EXPECTED_STORED_QUERY_FAILURE_MESSAGE, e.getMessage());
     }
     assertTrue(fieldIsUnchanged());
   }
@@ -90,7 +90,7 @@ public class TaskQueryDisabledStoredExpressionsTest extends PluggableProcessEngi
     try {
       filterService.saveFilter(filter);
     } catch (ProcessEngineException e) {
-      assertTextPresent(EXPECTED_STORED_QUERY_FAILURE_MESSAGE, e.getMessage());
+      testHelper.assertTextPresent(EXPECTED_STORED_QUERY_FAILURE_MESSAGE, e.getMessage());
     }
     assertTrue(fieldIsUnchanged());
 
@@ -128,7 +128,7 @@ public class TaskQueryDisabledStoredExpressionsTest extends PluggableProcessEngi
     try {
       filterService.list(filterId, query);
     } catch (BadUserRequestException e) {
-      assertTextPresent(EXPECTED_STORED_QUERY_FAILURE_MESSAGE, e.getMessage());
+      testHelper.assertTextPresent(EXPECTED_STORED_QUERY_FAILURE_MESSAGE, e.getMessage());
     }
 
     assertTrue(fieldIsUnchanged());
@@ -136,7 +136,7 @@ public class TaskQueryDisabledStoredExpressionsTest extends PluggableProcessEngi
     try {
       filterService.count(filterId, query);
     } catch (BadUserRequestException e) {
-      assertTextPresent(EXPECTED_STORED_QUERY_FAILURE_MESSAGE, e.getMessage());
+      testHelper.assertTextPresent(EXPECTED_STORED_QUERY_FAILURE_MESSAGE, e.getMessage());
     }
 
     assertTrue(fieldIsUnchanged());

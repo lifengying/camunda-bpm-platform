@@ -117,7 +117,7 @@ public class InclusiveGatewayTest extends PluggableProcessEngineTest {
       runtimeService.startProcessInstanceByKey("inclusiveGwNoSeqFlowSelected", CollectionUtil.singletonMap("input", 4));
       fail();
     } catch (ProcessEngineException e) {
-      assertTextPresent("ENGINE-02004 No outgoing sequence flow for the element with id 'inclusiveGw' could be selected for continuing the process.", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-02004 No outgoing sequence flow for the element with id 'inclusiveGw' could be selected for continuing the process.", e.getMessage());
     }
   }
 
@@ -185,7 +185,7 @@ public class InclusiveGatewayTest extends PluggableProcessEngineTest {
       runtimeService.startProcessInstanceByKey("inclusiveGwDiverging", CollectionUtil.singletonMap("iinput", 1));
       fail();
     } catch (ProcessEngineException e) {
-      assertTextPresent("Unknown property used in expression", e.getMessage());
+      testHelper.assertTextPresent("Unknown property used in expression", e.getMessage());
     }
   }
 
@@ -289,7 +289,7 @@ public class InclusiveGatewayTest extends PluggableProcessEngineTest {
       runtimeService.startProcessInstanceByKey("inclusiveInvalidMethodExpression", CollectionUtil.singletonMap("order", new InclusiveGatewayTestOrder(50)));
       fail();
     } catch (ProcessEngineException e) {
-      assertTextPresent("Unknown method used in expression", e.getMessage());
+      testHelper.assertTextPresent("Unknown method used in expression", e.getMessage());
     }
   }
 

@@ -178,10 +178,10 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -210,10 +210,10 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -242,10 +242,10 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -275,10 +275,10 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -307,10 +307,10 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -339,10 +339,10 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -372,11 +372,11 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(ProcessDefinitionPermissions.SUSPEND.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(ProcessDefinitionPermissions.SUSPEND.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -420,11 +420,11 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(ProcessDefinitionPermissions.SUSPEND.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(ProcessDefinitionPermissions.SUSPEND.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -471,14 +471,14 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(ProcessInstancePermissions.SUSPEND.getName(), message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(SUSPEND_INSTANCE.getName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(ProcessInstancePermissions.SUSPEND.getName(), message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -497,14 +497,14 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(ProcessInstancePermissions.SUSPEND.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(SUSPEND_INSTANCE.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(ProcessInstancePermissions.SUSPEND.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -619,14 +619,14 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(ProcessInstancePermissions.SUSPEND.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(SUSPEND_INSTANCE.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(ProcessInstancePermissions.SUSPEND.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -646,14 +646,14 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(ProcessInstancePermissions.SUSPEND.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(SUSPEND_INSTANCE.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(ProcessInstancePermissions.SUSPEND.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -769,11 +769,11 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(ProcessDefinitionPermissions.SUSPEND.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(ProcessDefinitionPermissions.SUSPEND.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -814,11 +814,11 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(ProcessDefinitionPermissions.SUSPEND.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(ProcessDefinitionPermissions.SUSPEND.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -861,14 +861,14 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(ProcessDefinitionPermissions.SUSPEND.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(SUSPEND_INSTANCE.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(ProcessDefinitionPermissions.SUSPEND.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -886,14 +886,14 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(ProcessInstancePermissions.SUSPEND.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(SUSPEND_INSTANCE.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(ProcessInstancePermissions.SUSPEND.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -1003,14 +1003,14 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(ProcessInstancePermissions.SUSPEND.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(SUSPEND_INSTANCE.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(ProcessInstancePermissions.SUSPEND.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -1029,14 +1029,14 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(ProcessInstancePermissions.SUSPEND.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(SUSPEND_INSTANCE.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(ProcessInstancePermissions.SUSPEND.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -1164,10 +1164,10 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
 
   }

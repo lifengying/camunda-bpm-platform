@@ -1438,7 +1438,7 @@ public class CaseCallActivityTest extends PluggableProcessEngineTest {
       taskService.complete(beforeSecondCallActivityTask.getId());
       fail("expected exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot resolve identifier 'globalVariable'", e.getMessage());
+      testHelper.assertTextPresent("Cannot resolve identifier 'globalVariable'", e.getMessage());
     }
   }
 

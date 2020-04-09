@@ -113,10 +113,10 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -162,10 +162,10 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -214,12 +214,12 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -238,12 +238,12 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -326,12 +326,12 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -351,12 +351,12 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -438,10 +438,10 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -487,10 +487,10 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -540,12 +540,12 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -564,12 +564,12 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -652,12 +652,12 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -677,12 +677,12 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -763,10 +763,10 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -809,10 +809,10 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -859,12 +859,12 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -882,12 +882,12 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -966,12 +966,12 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -990,12 +990,12 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 

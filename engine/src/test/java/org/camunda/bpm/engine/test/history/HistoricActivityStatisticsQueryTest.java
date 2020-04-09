@@ -963,7 +963,7 @@ public class HistoricActivityStatisticsQueryTest extends PluggableProcessEngineT
       fail("exception expected");
     } catch (NullValueException e) {
       // then 1
-      assertTextPresent("processInstanceIds is null", e.getMessage());
+      testHelper.assertTextPresent("processInstanceIds is null", e.getMessage());
     }
 
     // when 2
@@ -972,7 +972,7 @@ public class HistoricActivityStatisticsQueryTest extends PluggableProcessEngineT
       fail("exception expected");
     } catch (NullValueException e) {
       // then 2
-      assertTextPresent("processInstanceIds contains null value", e.getMessage());
+      testHelper.assertTextPresent("processInstanceIds contains null value", e.getMessage());
     }
   }
 

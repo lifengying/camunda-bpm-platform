@@ -51,7 +51,7 @@ public class ConditionalScriptSequenceFlowTest extends PluggableProcessEngineTes
       runtimeService.startProcessInstanceByKey("process");
       fail("expected exception: invalid return value in script");
     } catch (ProcessEngineException e) {
-      assertTextPresent("condition script returns non-Boolean", e.getMessage());
+      testHelper.assertTextPresent("condition script returns non-Boolean", e.getMessage());
     }
   }
 

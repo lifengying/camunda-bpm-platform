@@ -96,7 +96,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
         .deploy();
       fail("deploying a process with malformed priority should not succeed");
     } catch (ParseException e) {
-      assertTextPresentIgnoreCase("value 'NOTaNumber' for attribute 'taskPriority' "
+      testHelper.assertTextPresentIgnoreCase("value 'NOTaNumber' for attribute 'taskPriority' "
           + "is not a valid number", e.getMessage());
       assertThat(e.getResorceReports().get(0).getErrors().get(0).getMainElementId()).isEqualTo("externalTaskWithPrio");
     }
@@ -325,7 +325,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
         .execute();
       fail("expected exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent("topicName is null", e.getMessage());
+      testHelper.assertTextPresent("topicName is null", e.getMessage());
     }
   }
 
@@ -341,7 +341,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
         .execute();
       fail("expected exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent("workerId is null", e.getMessage());
+      testHelper.assertTextPresent("workerId is null", e.getMessage());
     }
   }
 
@@ -357,7 +357,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
         .execute();
       fail("expected exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent("maxResults is not greater than or equal to 0", e.getMessage());
+      testHelper.assertTextPresent("maxResults is not greater than or equal to 0", e.getMessage());
     }
   }
 
@@ -387,7 +387,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
         .execute();
       fail("expected exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent("lockTime is not greater than 0", e.getMessage());
+      testHelper.assertTextPresent("lockTime is not greater than 0", e.getMessage());
     }
   }
 
@@ -403,7 +403,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
         .execute();
       fail("expected exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent("lockTime is not greater than 0", e.getMessage());
+      testHelper.assertTextPresent("lockTime is not greater than 0", e.getMessage());
     }
   }
 
@@ -1085,7 +1085,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       externalTaskService.complete(externalTasks.get(0).getId(), "someCrazyWorkerId");
       fail("exception expected");
     } catch (BadUserRequestException e) {
-      assertTextPresent("cannot be completed by worker 'someCrazyWorkerId'. It is locked by worker '" + WORKER_ID + "'.", e.getMessage());
+      testHelper.assertTextPresent("cannot be completed by worker 'someCrazyWorkerId'. It is locked by worker '" + WORKER_ID + "'.", e.getMessage());
     }
   }
 
@@ -1095,7 +1095,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       fail("exception expected");
     } catch (NotFoundException e) {
       // not found exception lets client distinguish this from other failures
-      assertTextPresent("Cannot find external task with id nonExistingTaskId", e.getMessage());
+      testHelper.assertTextPresent("Cannot find external task with id nonExistingTaskId", e.getMessage());
     }
   }
 
@@ -1104,7 +1104,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       externalTaskService.complete(null, WORKER_ID);
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot find external task with id " + null, e.getMessage());
+      testHelper.assertTextPresent("Cannot find external task with id " + null, e.getMessage());
     }
   }
 
@@ -1122,7 +1122,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       externalTaskService.complete(task.getId(), null);
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("workerId is null", e.getMessage());
+      testHelper.assertTextPresent("workerId is null", e.getMessage());
     }
   }
 
@@ -1144,7 +1144,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       externalTaskService.complete(task.getId(), WORKER_ID);
       fail("expected exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent("ExternalTask with id '" + task.getId() + "' is suspended", e.getMessage());
+      testHelper.assertTextPresent("ExternalTask with id '" + task.getId() + "' is suspended", e.getMessage());
     }
 
     assertProcessNotEnded(processInstance.getId());
@@ -1235,7 +1235,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       externalTaskService.complete(externalTasks.get(0).getId(), WORKER_ID);
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("cannot be completed by worker '" + WORKER_ID + "'. It is locked by worker 'anotherWorkerId'.", e.getMessage());
+      testHelper.assertTextPresent("cannot be completed by worker '" + WORKER_ID + "'. It is locked by worker 'anotherWorkerId'.", e.getMessage());
     }
 
     // and the second worker can
@@ -1359,7 +1359,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       fail("expected exception");
     } catch (NotFoundException e) {
       // not found exception lets client distinguish this from other failures
-      assertTextPresent("Cannot find external task with id nonExistingId", e.getMessage());
+      testHelper.assertTextPresent("Cannot find external task with id nonExistingId", e.getMessage());
     }
   }
 
@@ -1607,7 +1607,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       externalTaskService.handleFailure(externalTasks.get(0).getId(), "someCrazyWorkerId", "error", 5, LOCK_TIME);
       fail("exception expected");
     } catch (BadUserRequestException e) {
-      assertTextPresent("Failure of External Task " + externalTasks.get(0).getId()
+      testHelper.assertTextPresent("Failure of External Task " + externalTasks.get(0).getId()
           + " cannot be reported by worker 'someCrazyWorkerId'. It is locked by worker '" + WORKER_ID + "'.",
         e.getMessage());
     }
@@ -1620,7 +1620,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       fail("exception expected");
     } catch (NotFoundException e) {
       // not found exception lets client distinguish this from other failures
-      assertTextPresent("Cannot find external task with id nonExistingTaskId", e.getMessage());
+      testHelper.assertTextPresent("Cannot find external task with id nonExistingTaskId", e.getMessage());
     }
   }
 
@@ -1630,7 +1630,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       externalTaskService.handleFailure(null, WORKER_ID, "error", 5, LOCK_TIME);
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot find external task with id " + null, e.getMessage());
+      testHelper.assertTextPresent("Cannot find external task with id " + null, e.getMessage());
     }
   }
 
@@ -1649,7 +1649,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       externalTaskService.handleFailure(externalTasks.get(0).getId(), null, "error", 5, LOCK_TIME);
       fail("exception expected");
     } catch (NullValueException e) {
-      assertTextPresent("workerId is null", e.getMessage());
+      testHelper.assertTextPresent("workerId is null", e.getMessage());
     }
 
   }
@@ -1669,7 +1669,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       externalTaskService.handleFailure(externalTasks.get(0).getId(), WORKER_ID, "error", 5, - LOCK_TIME);
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("retryDuration is not greater than or equal to 0", e.getMessage());
+      testHelper.assertTextPresent("retryDuration is not greater than or equal to 0", e.getMessage());
     }
   }
 
@@ -1688,7 +1688,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       externalTaskService.handleFailure(externalTasks.get(0).getId(), WORKER_ID, "error", -5, LOCK_TIME);
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("retries is not greater than or equal to 0", e.getMessage());
+      testHelper.assertTextPresent("retries is not greater than or equal to 0", e.getMessage());
     }
   }
 
@@ -1730,7 +1730,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       externalTaskService.handleFailure(externalTasks.get(0).getId(), WORKER_ID, "error", 5, LOCK_TIME);
       fail("expected exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent("ExternalTask with id '" + task.getId() + "' is suspended", e.getMessage());
+      testHelper.assertTextPresent("ExternalTask with id '" + task.getId() + "' is suspended", e.getMessage());
     }
 
     assertProcessNotEnded(processInstance.getId());
@@ -1892,7 +1892,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       externalTaskService.setRetries(externalTasks.get(0).getId(), -5);
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("retries is not greater than or equal to 0", e.getMessage());
+      testHelper.assertTextPresent("retries is not greater than or equal to 0", e.getMessage());
     }
   }
 
@@ -1902,7 +1902,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       fail("expected exception");
     } catch (NotFoundException e) {
       // not found exception lets client distinguish this from other failures
-      assertTextPresent("externalTask is null", e.getMessage());
+      testHelper.assertTextPresent("externalTask is null", e.getMessage());
     }
   }
 
@@ -1940,7 +1940,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       fail("expected exception");
     } catch (NotFoundException e) {
       // not found exception lets client distinguish this from other failures
-      assertTextPresent("externalTask is null", e.getMessage());
+      testHelper.assertTextPresent("externalTask is null", e.getMessage());
     }
   }
 
@@ -2137,7 +2137,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       externalTaskService.handleBpmnError(externalTasks.get(0).getId(), WORKER_ID, "ERROR-OCCURED");
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Bpmn error of External Task " + externalTasks.get(0).getId() + " cannot be reported by worker '" + WORKER_ID + "'. It is locked by worker 'anotherWorkerId'.", e.getMessage());
+      testHelper.assertTextPresent("Bpmn error of External Task " + externalTasks.get(0).getId() + " cannot be reported by worker '" + WORKER_ID + "'. It is locked by worker 'anotherWorkerId'.", e.getMessage());
       if (includeVariables) {
         List<VariableInstance> list = runtimeService.createVariableInstanceQuery().list();
         assertEquals(0, list.size());
@@ -2159,7 +2159,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       fail("exception expected");
     } catch (NotFoundException e) {
       // not found exception lets client distinguish this from other failures
-      assertTextPresent("Cannot find external task with id nonExistingTaskId", e.getMessage());
+      testHelper.assertTextPresent("Cannot find external task with id nonExistingTaskId", e.getMessage());
     }
   }
 
@@ -2168,7 +2168,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       externalTaskService.handleBpmnError(null, WORKER_ID, "ERROR-OCCURED");
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot find external task with id " + null, e.getMessage());
+      testHelper.assertTextPresent("Cannot find external task with id " + null, e.getMessage());
     }
   }
 
@@ -2189,7 +2189,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       externalTaskService.handleBpmnError(task.getId(), WORKER_ID, null);
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("errorCode is null", e.getMessage());
+      testHelper.assertTextPresent("errorCode is null", e.getMessage());
     }
   }
 
@@ -2207,7 +2207,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       externalTaskService.handleBpmnError(task.getId(), null,"ERROR-OCCURED");
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("workerId is null", e.getMessage());
+      testHelper.assertTextPresent("workerId is null", e.getMessage());
     }
   }
 
@@ -2229,7 +2229,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
       externalTaskService.handleBpmnError(task.getId(), WORKER_ID, "ERROR-OCCURED");
       fail("expected exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent("ExternalTask with id '" + task.getId() + "' is suspended", e.getMessage());
+      testHelper.assertTextPresent("ExternalTask with id '" + task.getId() + "' is suspended", e.getMessage());
     }
   }
 

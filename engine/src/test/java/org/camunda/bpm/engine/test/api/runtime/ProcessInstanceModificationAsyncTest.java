@@ -260,7 +260,7 @@ public class ProcessInstanceModificationAsyncTest extends PluggableProcessEngine
         .execute();
       fail("should not succeed");
     } catch (ProcessEngineException e) {
-      assertTextPresent("activityInstance is null", e.getMessage());
+      testHelper.assertTextPresent("activityInstance is null", e.getMessage());
     }
   }
 
@@ -790,7 +790,7 @@ public class ProcessInstanceModificationAsyncTest extends PluggableProcessEngine
         .execute();
       fail("should not be possible to cancel the first instance twice");
     } catch (NotValidException e) {
-      assertTextPresentIgnoreCase("Cannot perform instruction: Cancel transition instance '" + transitionInstanceId
+      testHelper.assertTextPresentIgnoreCase("Cannot perform instruction: Cancel transition instance '" + transitionInstanceId
           + "'; Transition instance '" + transitionInstanceId + "' does not exist: transitionInstance is null",
           e.getMessage());
     }
@@ -830,7 +830,7 @@ public class ProcessInstanceModificationAsyncTest extends PluggableProcessEngine
       fail("should not be possible to cancel the first instance twice");
     } catch (NotValidException e) {
       String transitionInstanceId = transitionInstances[1].getId();
-      assertTextPresentIgnoreCase("Cannot perform instruction: Cancel transition instance '" + transitionInstanceId
+      testHelper.assertTextPresentIgnoreCase("Cannot perform instruction: Cancel transition instance '" + transitionInstanceId
           + "'; Transition instance '" + transitionInstanceId + "' does not exist: transitionInstance is null",
           e.getMessage());
     }

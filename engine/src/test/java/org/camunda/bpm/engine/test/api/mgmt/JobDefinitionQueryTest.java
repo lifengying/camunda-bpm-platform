@@ -271,14 +271,14 @@ public class JobDefinitionQueryTest extends PluggableProcessEngineTest {
       managementService.createJobDefinitionQuery().orderByJobDefinitionId().list();
       fail();
     } catch (ProcessEngineException e) {
-      assertTextPresent("call asc() or desc() after using orderByXX()", e.getMessage());
+      testHelper.assertTextPresent("call asc() or desc() after using orderByXX()", e.getMessage());
     }
 
     try {
       managementService.createJobQuery().asc();
       fail();
     } catch (ProcessEngineException e) {
-      assertTextPresent("You should call any of the orderBy methods first before specifying a direction", e.getMessage());
+      testHelper.assertTextPresent("You should call any of the orderBy methods first before specifying a direction", e.getMessage());
     }
   }
 

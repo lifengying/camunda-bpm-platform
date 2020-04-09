@@ -128,7 +128,7 @@ public class DeploymentAwareJobExecutorTest extends PluggableProcessEngineTest {
       processEngine.getManagementService().registerDeploymentForJobExecutor(nonExistingDeploymentId);
       Assert.fail("Registering a non-existing deployment should not succeed");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Deployment " + nonExistingDeploymentId + " does not exist", e.getMessage());
+      testHelper.assertTextPresent("Deployment " + nonExistingDeploymentId + " does not exist", e.getMessage());
       // happy path
     }
   }

@@ -53,16 +53,6 @@ public class MultiTenancyDelegateCaseExecutionTest extends PluggableProcessEngin
     createCaseInstance("oneCaseTaskCase");
   }
 
-  protected void createCaseInstance(String caseDefinitionKey) {
-    CaseDefinition caseDefinition = repositoryService
-        .createCaseDefinitionQuery()
-        .caseDefinitionKey(caseDefinitionKey)
-        .latestVersion()
-        .singleResult();
-
-    caseService.createCaseInstanceById(caseDefinition.getId());
-  }
-
   @Override
   protected void tearDown() throws Exception {
     AssertingCaseExecutionListener.clear();
@@ -70,13 +60,7 @@ public class MultiTenancyDelegateCaseExecutionTest extends PluggableProcessEngin
   }
 
   protected static DelegateCaseExecutionAsserter hasTenantId(final String expectedTenantId) {
-    return new DelegateCaseExecutionAsserter() {
-
-      @Override
-      public void doAssert(DelegateCaseExecution execution) {
-        assertThat(execution.getTenantId(), is(expectedTenantId));
-      }
-    };
+    return execution -> assertThat(execution.getTenantId(), is(expectedTenantId));
   }
 
 }

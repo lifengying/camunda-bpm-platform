@@ -241,7 +241,7 @@ public class SingleProcessInstanceModificationAsyncTest extends PluggableProcess
       fail("should not succeed");
     } catch (NotValidException e) {
       // then
-      assertTextPresentIgnoreCase("element 'someNonExistingActivity' does not exist in process ", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("element 'someNonExistingActivity' does not exist in process ", e.getMessage());
     }
   }
 
@@ -354,7 +354,7 @@ public class SingleProcessInstanceModificationAsyncTest extends PluggableProcess
 
     } catch (ProcessEngineException e) {
       // happy path
-      assertTextPresent("Cannot perform instruction: " + "Start transition 'invalidFlowId'; " + "Element 'invalidFlowId' does not exist in process '"
+      testHelper.assertTextPresent("Cannot perform instruction: " + "Start transition 'invalidFlowId'; " + "Element 'invalidFlowId' does not exist in process '"
           + processInstance.getProcessDefinitionId() + "'", e.getMessage());
     }
   }
@@ -437,7 +437,7 @@ public class SingleProcessInstanceModificationAsyncTest extends PluggableProcess
       fail("should not suceed since 'fork' has more than one outgoing sequence flow");
     } catch (ProcessEngineException e) {
       // happy path
-      assertTextPresent("activity has more than one outgoing sequence flow", e.getMessage());
+      testHelper.assertTextPresent("activity has more than one outgoing sequence flow", e.getMessage());
     }
   }
 
@@ -457,7 +457,7 @@ public class SingleProcessInstanceModificationAsyncTest extends PluggableProcess
 
     } catch (ProcessEngineException e) {
       // happy path
-      assertTextPresent("activity has no outgoing sequence flow to take", e.getMessage());
+      testHelper.assertTextPresent("activity has no outgoing sequence flow to take", e.getMessage());
     }
   }
 
@@ -477,7 +477,7 @@ public class SingleProcessInstanceModificationAsyncTest extends PluggableProcess
       fail("should not succeed");
     } catch (NotValidException e) {
       // then
-      assertTextPresentIgnoreCase("Cannot perform instruction: " + "Start after activity 'someNonExistingActivity'; "
+      testHelper.assertTextPresentIgnoreCase("Cannot perform instruction: " + "Start after activity 'someNonExistingActivity'; "
           + "Activity 'someNonExistingActivity' does not exist: activity is null", e.getMessage());
     }
   }
@@ -734,7 +734,7 @@ public class SingleProcessInstanceModificationAsyncTest extends PluggableProcess
       executeSeedAndBatchJobs(modificationBatch);
       fail("should not succeed");
     } catch (NotValidException e) {
-      assertTextPresent("Cannot perform instruction: Cancel activity instance 'nonExistingActivityInstance'; "
+      testHelper.assertTextPresent("Cannot perform instruction: Cancel activity instance 'nonExistingActivityInstance'; "
           + "Activity instance 'nonExistingActivityInstance' does not exist", e.getMessage());
     }
 
@@ -755,7 +755,7 @@ public class SingleProcessInstanceModificationAsyncTest extends PluggableProcess
       executeSeedAndBatchJobs(modificationBatch);
       fail("should not succeed");
     } catch (NotValidException e) {
-      assertTextPresent("Cannot perform instruction: Cancel transition instance 'nonExistingActivityInstance'; "
+      testHelper.assertTextPresent("Cannot perform instruction: Cancel transition instance 'nonExistingActivityInstance'; "
           + "Transition instance 'nonExistingActivityInstance' does not exist", e.getMessage());
     }
 
@@ -791,7 +791,7 @@ public class SingleProcessInstanceModificationAsyncTest extends PluggableProcess
       executeSeedAndBatchJobs(modificationBatch);
       fail("should not succeed");
     } catch (NotValidException e) {
-      assertTextPresent("processInstanceId is null", e.getMessage());
+      testHelper.assertTextPresent("processInstanceId is null", e.getMessage());
     }
   }
 

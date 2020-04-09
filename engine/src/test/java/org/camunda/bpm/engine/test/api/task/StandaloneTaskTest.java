@@ -125,7 +125,7 @@ public class StandaloneTaskTest extends PluggableProcessEngineTest {
       taskService.saveTask(task);
       fail("it should not be possible to save a task with the generic resource id *");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Entity Task[*] has an invalid id: id cannot be *. * is a reserved identifier", e.getMessage());
+      testHelper.assertTextPresent("Entity Task[*] has an invalid id: id cannot be *. * is a reserved identifier", e.getMessage());
     }
   }
 

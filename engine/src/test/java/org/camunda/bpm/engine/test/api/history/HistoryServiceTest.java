@@ -206,7 +206,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       historyService.createHistoricProcessInstanceQuery().processInstanceIds(new HashSet<String>());
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      assertTextPresent("Set of process instance ids is empty", re.getMessage());
+      testHelper.assertTextPresent("Set of process instance ids is empty", re.getMessage());
     }
   }
 
@@ -215,7 +215,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       historyService.createHistoricProcessInstanceQuery().processInstanceIds(null);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      assertTextPresent("Set of process instance ids is null", re.getMessage());
+      testHelper.assertTextPresent("Set of process instance ids is null", re.getMessage());
     }
   }
 
@@ -651,7 +651,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       historyService.deleteHistoricProcessInstance(processInstance.getId());
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("Process instance is still running, cannot delete historic process instance", ae.getMessage());
+      testHelper.assertTextPresent("Process instance is still running, cannot delete historic process instance", ae.getMessage());
     }
   }
 
@@ -660,7 +660,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       historyService.deleteHistoricProcessInstance("aFake");
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("No historic process instance found with id", ae.getMessage());
+      testHelper.assertTextPresent("No historic process instance found with id", ae.getMessage());
     }
   }
 
@@ -674,7 +674,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       historyService.deleteHistoricProcessInstance(null);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("processInstanceId is null", ae.getMessage());
+      testHelper.assertTextPresent("processInstanceId is null", ae.getMessage());
     }
   }
 
@@ -970,7 +970,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
       // then
-      assertTextPresent("No historic variable instance found with id: fakeID", ae.getMessage());
+      testHelper.assertTextPresent("No historic variable instance found with id: fakeID", ae.getMessage());
     }
   }
 
@@ -981,7 +981,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
       // then
-      assertTextPresent("variableInstanceId is null", ae.getMessage());
+      testHelper.assertTextPresent("variableInstanceId is null", ae.getMessage());
     }
   }
 
@@ -1156,7 +1156,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
       // then
-      assertTextPresent("No historic process instance found with id: fakeID", ae.getMessage());
+      testHelper.assertTextPresent("No historic process instance found with id: fakeID", ae.getMessage());
     }
   }
 
@@ -1167,7 +1167,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
       // then
-      assertTextPresent("processInstanceId is null", ae.getMessage());
+      testHelper.assertTextPresent("processInstanceId is null", ae.getMessage());
     }
   }
 

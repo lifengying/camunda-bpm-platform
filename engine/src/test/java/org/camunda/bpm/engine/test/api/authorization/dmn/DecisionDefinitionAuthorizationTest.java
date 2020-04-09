@@ -111,10 +111,10 @@ public class DecisionDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(DECISION_DEFINITION_KEY, message);
-      assertTextPresent(DECISION_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(DECISION_DEFINITION_KEY, message);
+      testHelper.assertTextPresent(DECISION_DEFINITION.resourceName(), message);
     }
   }
 
@@ -142,10 +142,10 @@ public class DecisionDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(DECISION_DEFINITION_KEY, message);
-      assertTextPresent(DECISION_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(DECISION_DEFINITION_KEY, message);
+      testHelper.assertTextPresent(DECISION_DEFINITION.resourceName(), message);
     }
   }
 
@@ -174,10 +174,10 @@ public class DecisionDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(DECISION_DEFINITION_KEY, message);
-      assertTextPresent(DECISION_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(DECISION_DEFINITION_KEY, message);
+      testHelper.assertTextPresent(DECISION_DEFINITION.resourceName(), message);
     }
   }
 
@@ -205,10 +205,10 @@ public class DecisionDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(DECISION_DEFINITION_KEY, message);
-      assertTextPresent(DECISION_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(DECISION_DEFINITION_KEY, message);
+      testHelper.assertTextPresent(DECISION_DEFINITION.resourceName(), message);
     }
   }
 
@@ -248,10 +248,10 @@ public class DecisionDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(DECISION_DEFINITION_KEY, message);
-      assertTextPresent(DECISION_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(DECISION_DEFINITION_KEY, message);
+      testHelper.assertTextPresent(DECISION_DEFINITION.resourceName(), message);
     }
 
   }

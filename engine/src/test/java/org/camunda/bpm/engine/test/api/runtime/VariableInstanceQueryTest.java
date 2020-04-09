@@ -2434,7 +2434,7 @@ public class VariableInstanceQueryTest extends PluggableProcessEngineTest {
         typedValue.getValue();
       }
       catch(IllegalStateException e) {
-        assertTextPresent("Object is not deserialized", e.getMessage());
+        testHelper.assertTextPresent("Object is not deserialized", e.getMessage());
       }
       assertNotNull(typedValue.getValueSerialized());
     }

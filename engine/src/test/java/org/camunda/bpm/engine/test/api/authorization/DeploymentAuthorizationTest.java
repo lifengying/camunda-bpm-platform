@@ -170,9 +170,9 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(CREATE.getName(), message);
-      assertTextPresent(DEPLOYMENT.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(CREATE.getName(), message);
+      testHelper.assertTextPresent(DEPLOYMENT.resourceName(), message);
     }
   }
 
@@ -208,9 +208,9 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(DELETE.getName(), message);
-      assertTextPresent(DEPLOYMENT.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(DELETE.getName(), message);
+      testHelper.assertTextPresent(DEPLOYMENT.resourceName(), message);
     }
 
     deleteDeployment(deploymentId);
@@ -263,9 +263,9 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(DEPLOYMENT.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(DEPLOYMENT.resourceName(), message);
     }
 
     deleteDeployment(deploymentId);
@@ -318,9 +318,9 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(DEPLOYMENT.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(DEPLOYMENT.resourceName(), message);
     }
 
     deleteDeployment(deploymentId);
@@ -369,9 +369,9 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(DEPLOYMENT.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(DEPLOYMENT.resourceName(), message);
     }
 
     deleteDeployment(deploymentId);
@@ -423,9 +423,9 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(DEPLOYMENT.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(DEPLOYMENT.resourceName(), message);
     }
 
     deleteDeployment(deploymentId);
@@ -539,7 +539,7 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       //then
       String message = e.getMessage();
-      assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
 
     }
 
@@ -580,7 +580,7 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       //then
       String message = e.getMessage();
-      assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
 
     }
 
@@ -621,7 +621,7 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       //then
       String message = e.getMessage();
-      assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
 
     }
 
@@ -659,7 +659,7 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       //then
       String message = e.getMessage();
-      assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
 
     }
 
@@ -694,7 +694,7 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       //then
       String message = e.getMessage();
-      assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
 
     }
 
@@ -729,7 +729,7 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       //then
       String message = e.getMessage();
-      assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
 
     }
 

@@ -77,7 +77,7 @@ public class MultiTenancyTaskServiceTest extends PluggableProcessEngineTest {
       fail("Expected an exception");
     }
     catch(ProcessEngineException e) {
-      assertTextPresent("ENGINE-03072 Cannot change tenantId of Task", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-03072 Cannot change tenantId of Task", e.getMessage());
     }
 
     // Finally, delete task
@@ -103,7 +103,7 @@ public class MultiTenancyTaskServiceTest extends PluggableProcessEngineTest {
       fail("Expected an exception");
     }
     catch(ProcessEngineException e) {
-      assertTextPresent("ENGINE-03072 Cannot change tenantId of Task", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-03072 Cannot change tenantId of Task", e.getMessage());
     }
 
     // Finally, delete task
@@ -129,7 +129,7 @@ public class MultiTenancyTaskServiceTest extends PluggableProcessEngineTest {
       fail("Exception expected.");
     }
     catch(ProcessEngineException e) {
-      assertTextPresent("ENGINE-03073 Cannot set different tenantId on subtask than on parent Task", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-03073 Cannot set different tenantId on subtask than on parent Task", e.getMessage());
     }
     // Finally, delete task
     deleteTasks(task);
@@ -153,7 +153,7 @@ public class MultiTenancyTaskServiceTest extends PluggableProcessEngineTest {
       fail("Exception expected.");
     }
     catch(ProcessEngineException e) {
-      assertTextPresent("ENGINE-03073 Cannot set different tenantId on subtask than on parent Task", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-03073 Cannot set different tenantId on subtask than on parent Task", e.getMessage());
     }
     // Finally, delete task
     deleteTasks(task);

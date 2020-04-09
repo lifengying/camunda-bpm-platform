@@ -264,7 +264,7 @@ public class JobDefinitionPriorityTest extends PluggableProcessEngineTest {
       fail("should not succeed");
     } catch (NotFoundException e) {
       // happy path
-      assertTextPresentIgnoreCase("job definition with id 'someNonExistingJobDefinitionId' does not exist",
+      testHelper.assertTextPresentIgnoreCase("job definition with id 'someNonExistingJobDefinitionId' does not exist",
           e.getMessage());
     }
 
@@ -273,7 +273,7 @@ public class JobDefinitionPriorityTest extends PluggableProcessEngineTest {
       fail("should not succeed");
     } catch (NotFoundException e) {
       // happy path
-      assertTextPresentIgnoreCase("job definition with id 'someNonExistingJobDefinitionId' does not exist",
+      testHelper.assertTextPresentIgnoreCase("job definition with id 'someNonExistingJobDefinitionId' does not exist",
           e.getMessage());
     }
   }
@@ -284,7 +284,7 @@ public class JobDefinitionPriorityTest extends PluggableProcessEngineTest {
       fail("should not succeed");
     } catch (NotFoundException e) {
       // happy path
-      assertTextPresentIgnoreCase("job definition with id 'someNonExistingJobDefinitionId' does not exist",
+      testHelper.assertTextPresentIgnoreCase("job definition with id 'someNonExistingJobDefinitionId' does not exist",
           e.getMessage());
     }
   }
@@ -295,7 +295,7 @@ public class JobDefinitionPriorityTest extends PluggableProcessEngineTest {
       fail("should not succeed");
     } catch (NotValidException e) {
       // happy path
-      assertTextPresentIgnoreCase("jobDefinitionId is null", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("jobDefinitionId is null", e.getMessage());
     }
 
     try {
@@ -303,7 +303,7 @@ public class JobDefinitionPriorityTest extends PluggableProcessEngineTest {
       fail("should not succeed");
     } catch (NotValidException e) {
       // happy path
-      assertTextPresentIgnoreCase("jobDefinitionId is null", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("jobDefinitionId is null", e.getMessage());
     }
   }
 
@@ -313,7 +313,7 @@ public class JobDefinitionPriorityTest extends PluggableProcessEngineTest {
       fail("should not succeed");
     } catch (NotValidException e) {
       // happy path
-      assertTextPresentIgnoreCase("jobDefinitionId is null", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("jobDefinitionId is null", e.getMessage());
     }
   }
 

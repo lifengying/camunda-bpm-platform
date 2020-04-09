@@ -65,7 +65,7 @@ public class TimerRecalculationTest extends PluggableProcessEngineTest {
       fail("The recalculation with an unknown job ID should not be possible");
     } catch (ProcessEngineException pe) {
       // then
-      assertTextPresent("No job found with id '" + "unknownID", pe.getMessage());
+      testHelper.assertTextPresent("No job found with id '" + "unknownID", pe.getMessage());
     }
   }
   
@@ -76,7 +76,7 @@ public class TimerRecalculationTest extends PluggableProcessEngineTest {
       fail("The recalculation with an unknown job ID should not be possible");
     } catch (ProcessEngineException pe) {
       // then
-      assertTextPresent("The job id is mandatory: jobId is empty", pe.getMessage());
+      testHelper.assertTextPresent("The job id is mandatory: jobId is empty", pe.getMessage());
     }
   }
   
@@ -87,7 +87,7 @@ public class TimerRecalculationTest extends PluggableProcessEngineTest {
       fail("The recalculation with an unknown job ID should not be possible");
     } catch (ProcessEngineException pe) {
       // then
-      assertTextPresent("The job id is mandatory: jobId is null", pe.getMessage());
+      testHelper.assertTextPresent("The job id is mandatory: jobId is null", pe.getMessage());
     }
   }
 
@@ -117,7 +117,7 @@ public class TimerRecalculationTest extends PluggableProcessEngineTest {
       fail("The recalculation of a finished job should not be possible");
     } catch (ProcessEngineException pe) {
       // then
-      assertTextPresent("No job found with id '" + jobId, pe.getMessage());
+      testHelper.assertTextPresent("No job found with id '" + jobId, pe.getMessage());
     }
   }
   
@@ -151,7 +151,7 @@ public class TimerRecalculationTest extends PluggableProcessEngineTest {
       fail("The recalculation with an unsupported type should not be possible");
     } catch (ProcessEngineException pe) {
       // then
-      assertTextPresent("Only timer jobs can be recalculated, but the job with id '" + job.getId() + "' is of type '" + type, pe.getMessage());
+      testHelper.assertTextPresent("Only timer jobs can be recalculated, but the job with id '" + job.getId() + "' is of type '" + type, pe.getMessage());
     }
   }
 

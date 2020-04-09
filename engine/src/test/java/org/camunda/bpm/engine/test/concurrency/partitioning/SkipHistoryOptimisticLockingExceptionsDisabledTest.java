@@ -64,7 +64,7 @@ public class SkipHistoryOptimisticLockingExceptionsDisabledTest extends Abstract
     asyncThread.waitUntilDone();
 
     // then
-    assertTextPresent("Entity was updated by another transaction concurrently.", asyncThread.getException().getMessage());
+    testHelper.assertTextPresent("Entity was updated by another transaction concurrently.", asyncThread.getException().getMessage());
   }
 
   public class AsyncThread extends ControllableCommand<Void> {

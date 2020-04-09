@@ -95,7 +95,7 @@ public class MessageBoundaryEventTest extends PluggableProcessEngineTest {
           .deploy();
       fail("Deployment should fail because Activiti cannot handle two boundary message events with same messageId.");
     } catch (ParseException e) {
-      assertTextPresent("Cannot have more than one message event subscription with name 'messageName' for scope 'task'", e.getMessage());
+      testHelper.assertTextPresent("Cannot have more than one message event subscription with name 'messageName' for scope 'task'", e.getMessage());
       assertEquals(0, repositoryService.createDeploymentQuery().count());
       List<Problem> errors = e.getResorceReports().get(0).getErrors();
       assertThat(errors).hasSize(1);
@@ -134,7 +134,7 @@ public class MessageBoundaryEventTest extends PluggableProcessEngineTest {
       runtimeService.messageEventReceived("messageName_2", execution2.getId());
       fail();
     } catch (ProcessEngineException e) {
-      assertTextPresent("does not have a subscription to a message event with name 'messageName_2'", e.getMessage());
+      testHelper.assertTextPresent("does not have a subscription to a message event with name 'messageName_2'", e.getMessage());
     }
 
     userTask = taskService.createTaskQuery().singleResult();
@@ -193,7 +193,7 @@ public class MessageBoundaryEventTest extends PluggableProcessEngineTest {
       runtimeService.messageEventReceived("messageName_2", execution2.getId());
       fail();
     } catch (ProcessEngineException e) {
-      assertTextPresent("does not have a subscription to a message event with name 'messageName_2'", e.getMessage());
+      testHelper.assertTextPresent("does not have a subscription to a message event with name 'messageName_2'", e.getMessage());
     }
 
     // only process instance left

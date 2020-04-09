@@ -128,7 +128,7 @@ public class DmnBusinessRuleTaskResultMappingTest extends PluggableProcessEngine
 
       fail("expect exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent("ENGINE-22001", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-22001", e.getMessage());
     }
   }
 
@@ -139,7 +139,7 @@ public class DmnBusinessRuleTaskResultMappingTest extends PluggableProcessEngine
 
       fail("expect exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent("ENGINE-22001", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-22001", e.getMessage());
     }
   }
 
@@ -150,7 +150,7 @@ public class DmnBusinessRuleTaskResultMappingTest extends PluggableProcessEngine
 
       fail("expect exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent("ENGINE-22001", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-22001", e.getMessage());
     }
   }
 
@@ -161,7 +161,7 @@ public class DmnBusinessRuleTaskResultMappingTest extends PluggableProcessEngine
 
       fail("expect exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent("ENGINE-22002", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-22002", e.getMessage());
     }
   }
 
@@ -175,7 +175,7 @@ public class DmnBusinessRuleTaskResultMappingTest extends PluggableProcessEngine
 
       fail("expect parse exception");
     } catch (ParseException e) {
-      assertTextPresent("No decision result mapper found for name 'invalid'", e.getMessage());
+      testHelper.assertTextPresent("No decision result mapper found for name 'invalid'", e.getMessage());
       assertThat(e.getResorceReports().get(0).getErrors().size()).isEqualTo(1);
       assertThat(e.getResorceReports().get(0).getErrors().get(0).getMainElementId()).isEqualTo("ruleTask");
     }
@@ -200,7 +200,7 @@ public class DmnBusinessRuleTaskResultMappingTest extends PluggableProcessEngine
       fail("expect exception");
 
     } catch (ProcessEngineException e) {
-      assertTextPresent("transient variable with name decisionResult to non-transient", e.getMessage());
+      testHelper.assertTextPresent("transient variable with name decisionResult to non-transient", e.getMessage());
     }
   }
 

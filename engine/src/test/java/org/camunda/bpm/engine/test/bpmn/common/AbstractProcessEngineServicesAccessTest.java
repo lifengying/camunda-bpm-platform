@@ -106,7 +106,7 @@ public abstract class AbstractProcessEngineServicesAccessTest extends PluggableP
       runtimeService.startProcessInstanceByKey(PROCESS_DEF_KEY);
       fail("exception expected");
     } catch(RuntimeException e) {
-      assertTextPresent("BOOOM", e.getMessage());
+      testHelper.assertTextPresent("BOOOM", e.getMessage());
     }
 
     // then

@@ -375,63 +375,63 @@ public class ExternalTaskQueryTest extends PluggableProcessEngineTest {
       externalTaskService.createExternalTaskQuery().externalTaskId(null).list();
       fail("expected exception");
     } catch (NullValueException e) {
-      assertTextPresent("externalTaskId is null", e.getMessage());
+      testHelper.assertTextPresent("externalTaskId is null", e.getMessage());
     }
 
     try {
       externalTaskService.createExternalTaskQuery().activityId(null).list();
       fail("expected exception");
     } catch (NullValueException e) {
-      assertTextPresent("activityId is null", e.getMessage());
+      testHelper.assertTextPresent("activityId is null", e.getMessage());
     }
 
     try {
       externalTaskService.createExternalTaskQuery().executionId(null).list();
       fail("expected exception");
     } catch (NullValueException e) {
-      assertTextPresent("executionId is null", e.getMessage());
+      testHelper.assertTextPresent("executionId is null", e.getMessage());
     }
 
     try {
       externalTaskService.createExternalTaskQuery().lockExpirationAfter(null).list();
       fail("expected exception");
     } catch (NullValueException e) {
-      assertTextPresent("lockExpirationAfter is null", e.getMessage());
+      testHelper.assertTextPresent("lockExpirationAfter is null", e.getMessage());
     }
 
     try {
       externalTaskService.createExternalTaskQuery().lockExpirationBefore(null).list();
       fail("expected exception");
     } catch (NullValueException e) {
-      assertTextPresent("lockExpirationBefore is null", e.getMessage());
+      testHelper.assertTextPresent("lockExpirationBefore is null", e.getMessage());
     }
 
     try {
       externalTaskService.createExternalTaskQuery().processDefinitionId(null).list();
       fail("expected exception");
     } catch (NullValueException e) {
-      assertTextPresent("processDefinitionId is null", e.getMessage());
+      testHelper.assertTextPresent("processDefinitionId is null", e.getMessage());
     }
 
     try {
       externalTaskService.createExternalTaskQuery().processInstanceId(null).list();
       fail("expected exception");
     } catch (NullValueException e) {
-      assertTextPresent("processInstanceId is null", e.getMessage());
+      testHelper.assertTextPresent("processInstanceId is null", e.getMessage());
     }
 
     try {
       externalTaskService.createExternalTaskQuery().topicName(null).list();
       fail("expected exception");
     } catch (NullValueException e) {
-      assertTextPresent("topicName is null", e.getMessage());
+      testHelper.assertTextPresent("topicName is null", e.getMessage());
     }
 
     try {
       externalTaskService.createExternalTaskQuery().workerId(null).list();
       fail("expected exception");
     } catch (NullValueException e) {
-      assertTextPresent("workerId is null", e.getMessage());
+      testHelper.assertTextPresent("workerId is null", e.getMessage());
     }
   }
 

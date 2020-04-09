@@ -219,28 +219,28 @@ public class AuthorizationQueryTest extends PluggableProcessEngineTest {
       authorizationService.createAuthorizationQuery().orderByResourceType().list();
       fail("Exception expected");
     } catch(ProcessEngineException e) {
-      assertTextPresent("Invalid query: call asc() or desc() after using orderByXX()", e.getMessage());
+      testHelper.assertTextPresent("Invalid query: call asc() or desc() after using orderByXX()", e.getMessage());
     }
 
     try {
       authorizationService.createAuthorizationQuery().orderByResourceId().list();
       fail("Exception expected");
     } catch(ProcessEngineException e) {
-      assertTextPresent("Invalid query: call asc() or desc() after using orderByXX()", e.getMessage());
+      testHelper.assertTextPresent("Invalid query: call asc() or desc() after using orderByXX()", e.getMessage());
     }
 
     try {
       authorizationService.createAuthorizationQuery().orderByResourceId().orderByResourceType().list();
       fail("Exception expected");
     } catch(ProcessEngineException e) {
-      assertTextPresent("Invalid query: call asc() or desc() after using orderByXX()", e.getMessage());
+      testHelper.assertTextPresent("Invalid query: call asc() or desc() after using orderByXX()", e.getMessage());
     }
 
     try {
       authorizationService.createAuthorizationQuery().orderByResourceType().orderByResourceId().list();
       fail("Exception expected");
     } catch(ProcessEngineException e) {
-      assertTextPresent("Invalid query: call asc() or desc() after using orderByXX()", e.getMessage());
+      testHelper.assertTextPresent("Invalid query: call asc() or desc() after using orderByXX()", e.getMessage());
     }
   }
 
@@ -251,13 +251,13 @@ public class AuthorizationQueryTest extends PluggableProcessEngineTest {
     try {
       authorizationService.createAuthorizationQuery().groupIdIn("a").userIdIn("b").count();
     } catch(ProcessEngineException e) {
-      assertTextPresent("Cannot query for user and group authorizations at the same time.", e.getMessage());
+      testHelper.assertTextPresent("Cannot query for user and group authorizations at the same time.", e.getMessage());
     }
 
     try {
       authorizationService.createAuthorizationQuery().userIdIn("b").groupIdIn("a").count();
     } catch(ProcessEngineException e) {
-      assertTextPresent("Cannot query for user and group authorizations at the same time.", e.getMessage());
+      testHelper.assertTextPresent("Cannot query for user and group authorizations at the same time.", e.getMessage());
     }
 
   }

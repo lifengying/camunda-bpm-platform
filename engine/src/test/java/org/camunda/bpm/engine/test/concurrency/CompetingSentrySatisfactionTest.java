@@ -120,8 +120,8 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
     assertNotNull(threadTwo.exception);
 
     String message = threadTwo.exception.getMessage();
-    assertTextPresent("CaseSentryPartEntity", message);
-    assertTextPresent("was updated by another transaction concurrently", message);
+    testHelper.assertTextPresent("CaseSentryPartEntity", message);
+    testHelper.assertTextPresent("was updated by another transaction concurrently", message);
   }
 
   @Deployment(resources = {"org/camunda/bpm/engine/test/concurrency/CompetingSentrySatisfactionTest.testExitCriteriaWithAndSentry.cmmn"})
@@ -162,8 +162,8 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
     assertNotNull(threadTwo.exception);
 
     String message = threadTwo.exception.getMessage();
-    assertTextPresent("CaseSentryPartEntity", message);
-    assertTextPresent("was updated by another transaction concurrently", message);
+    testHelper.assertTextPresent("CaseSentryPartEntity", message);
+    testHelper.assertTextPresent("was updated by another transaction concurrently", message);
   }
 
   @Deployment(resources = {"org/camunda/bpm/engine/test/concurrency/CompetingSentrySatisfactionTest.testEntryCriteriaWithOrSentry.cmmn"})
@@ -204,8 +204,8 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
     assertNotNull(threadTwo.exception);
 
     String message = threadTwo.exception.getMessage();
-    assertTextPresent("CaseExecutionEntity", message);
-    assertTextPresent("was updated by another transaction concurrently", message);
+    testHelper.assertTextPresent("CaseExecutionEntity", message);
+    testHelper.assertTextPresent("was updated by another transaction concurrently", message);
   }
 
   @Deployment(resources = {"org/camunda/bpm/engine/test/concurrency/CompetingSentrySatisfactionTest.testExitCriteriaWithOrSentry.cmmn",
@@ -254,8 +254,8 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
     assertNotNull(threadTwo.exception);
 
     String message = threadTwo.exception.getMessage();
-    assertTextPresent("CaseExecutionEntity", message);
-    assertTextPresent("was updated by another transaction concurrently", message);
+    testHelper.assertTextPresent("CaseExecutionEntity", message);
+    testHelper.assertTextPresent("was updated by another transaction concurrently", message);
   }
 
 }

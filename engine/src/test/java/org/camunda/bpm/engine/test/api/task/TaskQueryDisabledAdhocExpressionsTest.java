@@ -109,7 +109,7 @@ public class TaskQueryDisabledAdhocExpressionsTest extends PluggableProcessEngin
     try {
       query.list();
     } catch (BadUserRequestException e) {
-      assertTextPresent(EXPECTED_ADHOC_QUERY_FAILURE_MESSAGE, e.getMessage());
+      testHelper.assertTextPresent(EXPECTED_ADHOC_QUERY_FAILURE_MESSAGE, e.getMessage());
     }
 
     assertTrue(fieldIsUnchanged());
@@ -117,7 +117,7 @@ public class TaskQueryDisabledAdhocExpressionsTest extends PluggableProcessEngin
     try {
       query.count();
     } catch (BadUserRequestException e) {
-      assertTextPresent(EXPECTED_ADHOC_QUERY_FAILURE_MESSAGE, e.getMessage());
+      testHelper.assertTextPresent(EXPECTED_ADHOC_QUERY_FAILURE_MESSAGE, e.getMessage());
     }
 
     assertTrue(fieldIsUnchanged());
@@ -127,7 +127,7 @@ public class TaskQueryDisabledAdhocExpressionsTest extends PluggableProcessEngin
     try {
       filterService.list(filter.getId(), query);
     } catch (BadUserRequestException e) {
-      assertTextPresent(EXPECTED_ADHOC_QUERY_FAILURE_MESSAGE, e.getMessage());
+      testHelper.assertTextPresent(EXPECTED_ADHOC_QUERY_FAILURE_MESSAGE, e.getMessage());
     }
 
     assertTrue(fieldIsUnchanged());
@@ -135,7 +135,7 @@ public class TaskQueryDisabledAdhocExpressionsTest extends PluggableProcessEngin
     try {
       filterService.count(filter.getId(), query);
     } catch (BadUserRequestException e) {
-      assertTextPresent(EXPECTED_ADHOC_QUERY_FAILURE_MESSAGE, e.getMessage());
+      testHelper.assertTextPresent(EXPECTED_ADHOC_QUERY_FAILURE_MESSAGE, e.getMessage());
     }
 
     assertTrue(fieldIsUnchanged());

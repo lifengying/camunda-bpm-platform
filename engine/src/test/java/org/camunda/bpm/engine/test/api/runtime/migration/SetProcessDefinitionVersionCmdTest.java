@@ -68,28 +68,28 @@ public class SetProcessDefinitionVersionCmdTest extends PluggableProcessEngineTe
       new SetProcessDefinitionVersionCmd(null, 23);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("The process instance id is mandatory: processInstanceId is null", ae.getMessage());
+      testHelper.assertTextPresent("The process instance id is mandatory: processInstanceId is null", ae.getMessage());
     }
 
     try {
       new SetProcessDefinitionVersionCmd("", 23);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("The process instance id is mandatory: processInstanceId is empty", ae.getMessage());
+      testHelper.assertTextPresent("The process instance id is mandatory: processInstanceId is empty", ae.getMessage());
     }
 
     try {
       new SetProcessDefinitionVersionCmd("42", null);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("The process definition version is mandatory: processDefinitionVersion is null", ae.getMessage());
+      testHelper.assertTextPresent("The process definition version is mandatory: processDefinitionVersion is null", ae.getMessage());
     }
 
     try {
       new SetProcessDefinitionVersionCmd("42", -1);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("The process definition version must be positive: processDefinitionVersion is not greater than 0", ae.getMessage());
+      testHelper.assertTextPresent("The process definition version must be positive: processDefinitionVersion is not greater than 0", ae.getMessage());
     }
   }
 
@@ -99,7 +99,7 @@ public class SetProcessDefinitionVersionCmdTest extends PluggableProcessEngineTe
       commandExecutor.execute(new SetProcessDefinitionVersionCmd("42", 23));
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("No process instance found for id = '42'.", ae.getMessage());
+      testHelper.assertTextPresent("No process instance found for id = '42'.", ae.getMessage());
     }
   }
 
@@ -117,7 +117,7 @@ public class SetProcessDefinitionVersionCmdTest extends PluggableProcessEngineTe
       commandExecutor.execute(command);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("A process instance id is required, but the provided id '"+execution.getId()+"' points to a child execution of process instance '"+pi.getId()+"'. Please invoke the "+command.getClass().getSimpleName()+" with a root execution id.", ae.getMessage());
+      testHelper.assertTextPresent("A process instance id is required, but the provided id '"+execution.getId()+"' points to a child execution of process instance '"+pi.getId()+"'. Please invoke the "+command.getClass().getSimpleName()+" with a root execution id.", ae.getMessage());
     }
   }
 
@@ -131,7 +131,7 @@ public class SetProcessDefinitionVersionCmdTest extends PluggableProcessEngineTe
       commandExecutor.execute(new SetProcessDefinitionVersionCmd(pi.getId(), 23));
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("no processes deployed with key = 'receiveTask', version = '23'", ae.getMessage());
+      testHelper.assertTextPresent("no processes deployed with key = 'receiveTask', version = '23'", ae.getMessage());
     }
   }
 
@@ -160,7 +160,7 @@ public class SetProcessDefinitionVersionCmdTest extends PluggableProcessEngineTe
       commandExecutor.execute(setProcessDefinitionVersionCmd);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("The new process definition (key = 'receiveTask') does not contain the current activity (id = 'waitState1') of the process instance (id = '", ae.getMessage());
+      testHelper.assertTextPresent("The new process definition (key = 'receiveTask') does not contain the current activity (id = 'waitState1') of the process instance (id = '", ae.getMessage());
     }
 
     // undeploy "manually" deployed process definition

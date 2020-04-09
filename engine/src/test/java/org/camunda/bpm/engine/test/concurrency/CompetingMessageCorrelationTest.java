@@ -150,7 +150,7 @@ public class CompetingMessageCorrelationTest extends ConcurrencyTest {
     thread2.waitForSync();
     assertTrue(thread2.getException() != null);
     assertTrue(thread2.getException() instanceof ProcessEngineException);
-    assertTextPresent("does not have a subscription to a message event with name 'Message'",
+    testHelper.assertTextPresent("does not have a subscription to a message event with name 'Message'",
         thread2.getException().getMessage());
 
     // the first thread ended successfully without an exception

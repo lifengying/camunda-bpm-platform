@@ -75,7 +75,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.getTableMetaData(null);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      assertTextPresent("tableName is null", re.getMessage());
+      testHelper.assertTextPresent("tableName is null", re.getMessage());
     }
   }
 
@@ -84,7 +84,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.executeJob(null);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      assertTextPresent("jobId is null", re.getMessage());
+      testHelper.assertTextPresent("jobId is null", re.getMessage());
     }
   }
 
@@ -93,7 +93,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.executeJob("unexistingjob");
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("No job found with id", ae.getMessage());
+      testHelper.assertTextPresent("No job found with id", ae.getMessage());
     }
   }
 
@@ -114,7 +114,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.executeJob(timerJob.getId());
       fail("RuntimeException from within the script task expected");
     } catch (RuntimeException re) {
-      assertTextPresent("This is an exception thrown from scriptTask", re.getMessage());
+      testHelper.assertTextPresent("This is an exception thrown from scriptTask", re.getMessage());
     }
 
     // Fetch the task to see that the exception that occurred is persisted
@@ -124,12 +124,12 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
 
     Assert.assertNotNull(timerJob);
     Assert.assertNotNull(timerJob.getExceptionMessage());
-    assertTextPresent("This is an exception thrown from scriptTask", timerJob.getExceptionMessage());
+    testHelper.assertTextPresent("This is an exception thrown from scriptTask", timerJob.getExceptionMessage());
 
     // Get the full stacktrace using the managementService
     String exceptionStack = managementService.getJobExceptionStacktrace(timerJob.getId());
     Assert.assertNotNull(exceptionStack);
-    assertTextPresent("This is an exception thrown from scriptTask", exceptionStack);
+    testHelper.assertTextPresent("This is an exception thrown from scriptTask", exceptionStack);
   }
 
   public void testgetJobExceptionStacktraceUnexistingJobId() {
@@ -137,7 +137,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.getJobExceptionStacktrace("unexistingjob");
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      assertTextPresent("No job found with id unexistingjob", re.getMessage());
+      testHelper.assertTextPresent("No job found with id unexistingjob", re.getMessage());
     }
   }
 
@@ -146,7 +146,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.getJobExceptionStacktrace(null);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      assertTextPresent("jobId is null", re.getMessage());
+      testHelper.assertTextPresent("jobId is null", re.getMessage());
     }
   }
 
@@ -274,7 +274,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.setJobRetries("unexistingjob", 5);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      assertTextPresent("No job found with id 'unexistingjob'.", re.getMessage());
+      testHelper.assertTextPresent("No job found with id 'unexistingjob'.", re.getMessage());
     }
   }
 
@@ -283,7 +283,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.setJobRetries("", 5);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      assertTextPresent("Either job definition id or job id has to be provided as parameter.", re.getMessage());
+      testHelper.assertTextPresent("Either job definition id or job id has to be provided as parameter.", re.getMessage());
     }
   }
 
@@ -292,7 +292,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.setJobRetries((String) null, 5);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      assertTextPresent("Either job definition id or job id has to be provided as parameter.", re.getMessage());
+      testHelper.assertTextPresent("Either job definition id or job id has to be provided as parameter.", re.getMessage());
     }
   }
 
@@ -301,7 +301,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.setJobRetries("unexistingjob", -1);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      assertTextPresent("The number of job retries must be a non-negative Integer, but '-1' has been provided.", re.getMessage());
+      testHelper.assertTextPresent("The number of job retries must be a non-negative Integer, but '-1' has been provided.", re.getMessage());
     }
   }
 
@@ -333,7 +333,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.setJobRetriesByJobDefinitionId("", 5);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      assertTextPresent("Either job definition id or job id has to be provided as parameter.", re.getMessage());
+      testHelper.assertTextPresent("Either job definition id or job id has to be provided as parameter.", re.getMessage());
     }
   }
 
@@ -342,7 +342,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.setJobRetriesByJobDefinitionId(null, 5);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      assertTextPresent("Either job definition id or job id has to be provided as parameter.", re.getMessage());
+      testHelper.assertTextPresent("Either job definition id or job id has to be provided as parameter.", re.getMessage());
     }
   }
 
@@ -351,7 +351,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.setJobRetries("unexistingjob", -1);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      assertTextPresent("The number of job retries must be a non-negative Integer, but '-1' has been provided.", re.getMessage());
+      testHelper.assertTextPresent("The number of job retries must be a non-negative Integer, but '-1' has been provided.", re.getMessage());
     }
   }
 
@@ -490,7 +490,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.deleteJob(null);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      assertTextPresent("jobId is null", re.getMessage());
+      testHelper.assertTextPresent("jobId is null", re.getMessage());
     }
   }
 
@@ -499,7 +499,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.deleteJob("unexistingjob");
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      assertTextPresent("No job found with id", ae.getMessage());
+      testHelper.assertTextPresent("No job found with id", ae.getMessage());
     }
   }
 
@@ -600,7 +600,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.setJobDuedate(null, new Date());
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      assertTextPresent("The job id is mandatory, but 'null' has been provided.", re.getMessage());
+      testHelper.assertTextPresent("The job id is mandatory, but 'null' has been provided.", re.getMessage());
     }
   }
 
@@ -609,7 +609,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.setJobDuedate("", new Date());
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      assertTextPresent("The job id is mandatory, but '' has been provided.", re.getMessage());
+      testHelper.assertTextPresent("The job id is mandatory, but '' has been provided.", re.getMessage());
     }
   }
 
@@ -618,7 +618,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.setJobDuedate("unexistingjob", new Date());
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      assertTextPresent("No job found with id 'unexistingjob'.", re.getMessage());
+      testHelper.assertTextPresent("No job found with id 'unexistingjob'.", re.getMessage());
     }
   }
 
@@ -702,7 +702,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.setJobPriority("nonExistingJob", 42);
       fail("should not succeed");
     } catch (NotFoundException e) {
-      assertTextPresentIgnoreCase("No job found with id 'nonExistingJob'", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("No job found with id 'nonExistingJob'", e.getMessage());
     }
   }
 
@@ -711,7 +711,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
       managementService.setJobPriority(null, 42);
       fail("should not succeed");
     } catch (NullValueException e) {
-      assertTextPresentIgnoreCase("Job id must not be null", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("Job id must not be null", e.getMessage());
     }
   }
 

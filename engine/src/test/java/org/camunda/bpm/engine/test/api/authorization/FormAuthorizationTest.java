@@ -82,10 +82,10 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(FORM_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(FORM_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -115,10 +115,10 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(RENDERED_FORM_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(RENDERED_FORM_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -147,10 +147,10 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(RENDERED_FORM_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(RENDERED_FORM_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -180,9 +180,9 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(CREATE.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(CREATE.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
     }
   }
 
@@ -198,10 +198,10 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(CREATE_INSTANCE.getName(), message);
-      assertTextPresent(FORM_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(CREATE_INSTANCE.getName(), message);
+      testHelper.assertTextPresent(FORM_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -217,9 +217,9 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(CREATE.getName(), message);
-      assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(CREATE.getName(), message);
+      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
     }
   }
 
@@ -250,10 +250,10 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
     }
 
     // given (2)
@@ -266,10 +266,10 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then (2)
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ_VARIABLE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ_VARIABLE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
     }
 
     deleteTask(taskId, true);
@@ -322,13 +322,13 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(READ_TASK.getName(), message);
-      assertTextPresent(FORM_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(READ_TASK.getName(), message);
+      testHelper.assertTextPresent(FORM_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
 
     // given (2)
@@ -341,13 +341,13 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then (2)
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ_VARIABLE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(READ_TASK_VARIABLE.getName(), message);
-      assertTextPresent(FORM_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ_VARIABLE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(READ_TASK_VARIABLE.getName(), message);
+      testHelper.assertTextPresent(FORM_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -447,10 +447,10 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
     }
 
     // given (2)
@@ -463,10 +463,10 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then (2)
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ_VARIABLE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ_VARIABLE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
     }
 
 
@@ -518,13 +518,13 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(READ_TASK.getName(), message);
-      assertTextPresent(RENDERED_FORM_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(READ_TASK.getName(), message);
+      testHelper.assertTextPresent(RENDERED_FORM_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
 
     // given (2)
@@ -537,13 +537,13 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then (2)
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ_VARIABLE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(READ_TASK_VARIABLE.getName(), message);
-      assertTextPresent(RENDERED_FORM_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ_VARIABLE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(READ_TASK_VARIABLE.getName(), message);
+      testHelper.assertTextPresent(RENDERED_FORM_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -643,10 +643,10 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
     }
 
     // given (2)
@@ -659,10 +659,10 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then (2)
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ_VARIABLE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ_VARIABLE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
     }
 
     deleteTask(taskId, true);
@@ -713,13 +713,13 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(READ_TASK.getName(), message);
-      assertTextPresent(RENDERED_FORM_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(READ_TASK.getName(), message);
+      testHelper.assertTextPresent(RENDERED_FORM_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
 
     // given (2)
@@ -732,13 +732,13 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then (2)
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ_VARIABLE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(READ_TASK_VARIABLE.getName(), message);
-      assertTextPresent(RENDERED_FORM_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ_VARIABLE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(READ_TASK_VARIABLE.getName(), message);
+      testHelper.assertTextPresent(RENDERED_FORM_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -844,10 +844,10 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
     }
 
     deleteTask(taskId, true);
@@ -883,13 +883,13 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(UPDATE.getName(), message);
-      assertTextPresent(taskId, message);
-      assertTextPresent(TASK.resourceName(), message);
-      assertTextPresent(UPDATE_TASK.getName(), message);
-      assertTextPresent(FORM_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testHelper.assertTextPresent(taskId, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(UPDATE_TASK.getName(), message);
+      testHelper.assertTextPresent(FORM_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -966,10 +966,10 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(FORM_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(FORM_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -998,10 +998,10 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(FORM_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(FORM_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -1040,10 +1040,10 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(FORM_PROCESS_KEY, message);
-      assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(FORM_PROCESS_KEY, message);
+      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
@@ -1072,10 +1072,10 @@ public class FormAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      assertTextPresent(userId, message);
-      assertTextPresent(READ.getName(), message);
-      assertTextPresent(FORM_PROCESS_KEY, message);
-      assertTextPresent(TASK.resourceName(), message);
+      testHelper.assertTextPresent(userId, message);
+      testHelper.assertTextPresent(READ.getName(), message);
+      testHelper.assertTextPresent(FORM_PROCESS_KEY, message);
+      testHelper.assertTextPresent(TASK.resourceName(), message);
     }
   }
 

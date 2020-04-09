@@ -2462,7 +2462,7 @@ public class CaseExecutionListenerTest extends PluggableProcessEngineTest {
     } catch (Exception e) {
       // then
       String message = e.getMessage();
-      assertTextPresent("ENGINE-05016 Class 'org.camunda.bpm.engine.test.cmmn.listener.NotCaseExecutionListener' doesn't implement '" + CaseExecutionListener.class.getName() + "'", message);
+      testHelper.assertTextPresent("ENGINE-05016 Class 'org.camunda.bpm.engine.test.cmmn.listener.NotCaseExecutionListener' doesn't implement '" + CaseExecutionListener.class.getName() + "'", message);
     }
 
   }
@@ -2480,7 +2480,7 @@ public class CaseExecutionListenerTest extends PluggableProcessEngineTest {
     } catch (Exception e) {
       // then
       String message = e.getMessage();
-      assertTextPresent("Delegate expression ${myListener} did not resolve to an implementation of interface "+CaseExecutionListener.class.getName(), message);
+      testHelper.assertTextPresent("Delegate expression ${myListener} did not resolve to an implementation of interface "+CaseExecutionListener.class.getName(), message);
     }
 
   }
@@ -2498,7 +2498,7 @@ public class CaseExecutionListenerTest extends PluggableProcessEngineTest {
     } catch (Exception e) {
       // then
       String message = e.getMessage();
-      assertTextPresent("Exception while instantiating class 'org.camunda.bpm.engine.test.cmmn.listener.NotExistingCaseExecutionListener'", message);
+      testHelper.assertTextPresent("Exception while instantiating class 'org.camunda.bpm.engine.test.cmmn.listener.NotExistingCaseExecutionListener'", message);
     }
 
   }

@@ -67,7 +67,7 @@ public class ExclusiveGatewayTest extends PluggableProcessEngineTest {
       runtimeService.startProcessInstanceByKey("exclusiveGwNoSeqFlowSelected", CollectionUtil.singletonMap("input", 4));
       fail();
     } catch (ProcessEngineException e) {
-      assertTextPresent("ENGINE-02004 No outgoing sequence flow for the element with id 'exclusiveGw' could be selected for continuing the process.", e.getMessage());
+      testHelper.assertTextPresent("ENGINE-02004 No outgoing sequence flow for the element with id 'exclusiveGw' could be selected for continuing the process.", e.getMessage());
     }
   }
 
@@ -89,7 +89,7 @@ public class ExclusiveGatewayTest extends PluggableProcessEngineTest {
             "exclusiveGwDiverging", CollectionUtil.singletonMap("iinput", 1));
       fail();
     } catch (ProcessEngineException e) {
-      assertTextPresent("Unknown property used in expression", e.getMessage());
+      testHelper.assertTextPresent("Unknown property used in expression", e.getMessage());
     }
   }
 
@@ -146,7 +146,7 @@ public class ExclusiveGatewayTest extends PluggableProcessEngineTest {
             CollectionUtil.singletonMap("order", new ExclusiveGatewayTestOrder(50)));
       fail();
     } catch (ProcessEngineException e) {
-      assertTextPresent("Unknown method used in expression", e.getMessage());
+      testHelper.assertTextPresent("Unknown method used in expression", e.getMessage());
     }
   }
 

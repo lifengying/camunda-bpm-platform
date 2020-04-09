@@ -308,7 +308,7 @@ public class FilterAuthorizationsTest extends PluggableProcessEngineTest {
       filterService.saveFilter(filter);
       fail("exception expected");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot create default authorization for filter owner *: "
+      testHelper.assertTextPresent("Cannot create default authorization for filter owner *: "
           + "id cannot be *. * is a reserved identifier.", e.getMessage());
     }
   }
@@ -329,7 +329,7 @@ public class FilterAuthorizationsTest extends PluggableProcessEngineTest {
       filterService.saveFilter(filter);
       fail("it should not be possible to save a filter with the generic owner id");
     } catch (ProcessEngineException e) {
-      assertTextPresent("foo", e.getMessage());
+      testHelper.assertTextPresent("foo", e.getMessage());
     }
   }
 

@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.camunda.bpm.engine.exception.NullValueException;
+import org.camunda.bpm.engine.runtime.CaseInstance;
 import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.camunda.bpm.engine.repository.CaseDefinitionQuery;
 import org.camunda.bpm.engine.runtime.CaseExecution;
@@ -167,7 +168,8 @@ public class MultiTenancyCaseExecutionQueryTest extends PluggableProcessEngineTe
     assertThat(query.count(), is(6L));
   }
 
-  protected void createCaseInstance(String tenantId) {
+  @Override
+  protected CaseInstance createCaseInstance(String tenantId) {
     String caseDefinitionId = null;
 
     CaseDefinitionQuery caseDefinitionQuery = repositoryService.createCaseDefinitionQuery().caseDefinitionKey("oneTaskCase");
@@ -177,7 +179,7 @@ public class MultiTenancyCaseExecutionQueryTest extends PluggableProcessEngineTe
       caseDefinitionId = caseDefinitionQuery.tenantIdIn(tenantId).singleResult().getId();
     }
 
-    caseService.withCaseDefinition(caseDefinitionId).create();
+    return caseService.withCaseDefinition(caseDefinitionId).create();
   }
 
 }

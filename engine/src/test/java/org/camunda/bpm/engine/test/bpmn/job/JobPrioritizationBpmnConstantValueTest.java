@@ -192,7 +192,7 @@ public class JobPrioritizationBpmnConstantValueTest extends PluggableProcessEngi
         .deploy();
       fail("deploying a process with malformed priority should not succeed");
     } catch (ParseException e) {
-      assertTextPresentIgnoreCase("value 'thisIsNotANumber' for attribute 'jobPriority' "
+      testHelper.assertTextPresentIgnoreCase("value 'thisIsNotANumber' for attribute 'jobPriority' "
           + "is not a valid number", e.getMessage());
       assertThat(e.getResorceReports().get(0).getErrors().get(0).getMainElementId()).isEqualTo("task2");
     }

@@ -628,7 +628,7 @@ public class ProcessInstanceModificationMultiInstanceTest extends PluggableProce
       .execute();
       fail("expect exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent(e.getMessage(), "Concurrent instantiation not possible for activities "
+      testHelper.assertTextPresent(e.getMessage(), "Concurrent instantiation not possible for activities "
           + "in scope miTasks#multiInstanceBody");
     }
 
@@ -649,7 +649,7 @@ public class ProcessInstanceModificationMultiInstanceTest extends PluggableProce
         .execute();
       fail("expect exception");
     } catch (ProcessEngineException e) {
-      assertTextPresent(e.getMessage(), "Concurrent instantiation not possible for activities "
+      testHelper.assertTextPresent(e.getMessage(), "Concurrent instantiation not possible for activities "
           + "in scope miSubProcess#multiInstanceBody");
     }
   }

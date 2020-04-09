@@ -748,7 +748,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       fail();
     } catch (SuspendedEntityInteractionException e) {
       // This is expected
-      assertTextPresent("is suspended", e.getMessage());
+      testHelper.assertTextPresent("is suspended", e.getMessage());
       assertTrue(e instanceof BadUserRequestException);
     }
 
@@ -757,7 +757,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       fail();
     } catch (SuspendedEntityInteractionException e) {
       // This is expected
-      assertTextPresent("is suspended", e.getMessage());
+      testHelper.assertTextPresent("is suspended", e.getMessage());
       assertTrue(e instanceof BadUserRequestException);
     }
   }
@@ -775,7 +775,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       fail();
     } catch (SuspendedEntityInteractionException e) {
       // This is expected
-      assertTextPresent("is suspended", e.getMessage());
+      testHelper.assertTextPresent("is suspended", e.getMessage());
       assertTrue(e instanceof BadUserRequestException);
     }
 
@@ -784,7 +784,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       fail();
     } catch (SuspendedEntityInteractionException e) {
       // This is expected
-      assertTextPresent("is suspended", e.getMessage());
+      testHelper.assertTextPresent("is suspended", e.getMessage());
       assertTrue(e instanceof BadUserRequestException);
     }
   }
@@ -802,7 +802,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       fail();
     } catch (SuspendedEntityInteractionException e) {
       // This is expected
-      assertTextPresent("is suspended", e.getMessage());
+      testHelper.assertTextPresent("is suspended", e.getMessage());
       assertTrue(e instanceof BadUserRequestException);
     }
 
@@ -811,7 +811,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       fail();
     } catch (SuspendedEntityInteractionException e) {
       // This is expected
-      assertTextPresent("is suspended", e.getMessage());
+      testHelper.assertTextPresent("is suspended", e.getMessage());
       assertTrue(e instanceof BadUserRequestException);
     }
   }
@@ -828,7 +828,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       fail();
     } catch (SuspendedEntityInteractionException e) {
       // This is expected
-      assertTextPresent("is suspended", e.getMessage());
+      testHelper.assertTextPresent("is suspended", e.getMessage());
     }
 
     try {
@@ -836,7 +836,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       fail();
     } catch (SuspendedEntityInteractionException e) {
       // This is expected
-      assertTextPresent("is suspended", e.getMessage());
+      testHelper.assertTextPresent("is suspended", e.getMessage());
     }
   }
 
@@ -852,7 +852,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       fail();
     } catch (SuspendedEntityInteractionException e) {
       // This is expected
-      assertTextPresent("is suspended", e.getMessage());
+      testHelper.assertTextPresent("is suspended", e.getMessage());
     }
 
     try {
@@ -860,7 +860,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       fail();
     } catch (SuspendedEntityInteractionException e) {
       // This is expected
-      assertTextPresent("is suspended", e.getMessage());
+      testHelper.assertTextPresent("is suspended", e.getMessage());
     }
   }
 
@@ -876,7 +876,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       fail();
     } catch (SuspendedEntityInteractionException e) {
       // This is expected
-      assertTextPresent("is suspended", e.getMessage());
+      testHelper.assertTextPresent("is suspended", e.getMessage());
     }
 
     try {
@@ -884,7 +884,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       fail();
     } catch (SuspendedEntityInteractionException e) {
       // This is expected
-      assertTextPresent("is suspended", e.getMessage());
+      testHelper.assertTextPresent("is suspended", e.getMessage());
     }
   }
 
@@ -913,7 +913,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       fail();
     } catch (SuspendedEntityInteractionException e) {
       // This is expected
-      assertTextPresent("is suspended", e.getMessage());
+      testHelper.assertTextPresent("is suspended", e.getMessage());
     }
 
     try {
@@ -921,7 +921,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       fail();
     } catch (SuspendedEntityInteractionException e) {
       // This is expected
-      assertTextPresent("is suspended", e.getMessage());
+      testHelper.assertTextPresent("is suspended", e.getMessage());
     }
 
     // Activate and try again
@@ -955,7 +955,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       fail();
     } catch (SuspendedEntityInteractionException e) {
       // This is expected
-      assertTextPresent("is suspended", e.getMessage());
+      testHelper.assertTextPresent("is suspended", e.getMessage());
     }
 
     try {
@@ -963,7 +963,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       fail();
     } catch (SuspendedEntityInteractionException e) {
       // This is expected
-      assertTextPresent("is suspended", e.getMessage());
+      testHelper.assertTextPresent("is suspended", e.getMessage());
     }
 
     // Activate and try again
@@ -1002,7 +1002,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       fail();
     } catch (SuspendedEntityInteractionException e) {
       // This is expected
-      assertTextPresent("is suspended", e.getMessage());
+      testHelper.assertTextPresent("is suspended", e.getMessage());
     }
 
     try {
@@ -1010,7 +1010,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       fail();
     } catch (SuspendedEntityInteractionException e) {
       // This is expected
-      assertTextPresent("is suspended", e.getMessage());
+      testHelper.assertTextPresent("is suspended", e.getMessage());
     }
 
     // Activate and try again
@@ -1934,7 +1934,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       runtimeService.createProcessInstanceModification(processInstance.getId()).startBeforeActivity("theTask").execute();
       fail("Exception is expected but not thrown");
     } catch(SuspendedEntityInteractionException e) {
-      assertTextPresentIgnoreCase("is suspended", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("is suspended", e.getMessage());
     }
   }
 
@@ -1954,7 +1954,7 @@ public class ProcessInstanceSuspensionTest extends PluggableProcessEngineTest {
       runtimeService.createProcessInstanceModification(processInstance.getId()).startAfterActivity("theTask").execute();
       fail("Exception is expected but not thrown");
     } catch(SuspendedEntityInteractionException e) {
-      assertTextPresentIgnoreCase("is suspended", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("is suspended", e.getMessage());
     }
   }
 

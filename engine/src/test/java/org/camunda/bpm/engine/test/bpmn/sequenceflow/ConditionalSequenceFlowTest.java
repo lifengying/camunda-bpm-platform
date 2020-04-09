@@ -83,7 +83,7 @@ public class ConditionalSequenceFlowTest extends PluggableProcessEngineTest {
       runtimeService.startProcessInstanceByKey("condSeqFlowUelExpr", variables);
       fail("Expected ProcessEngineException");
     } catch (ProcessEngineException e) {
-      assertTextPresent("No conditional sequence flow leaving the Flow Node 'theStart' could be selected for continuing the process", e.getMessage());
+      testHelper.assertTextPresent("No conditional sequence flow leaving the Flow Node 'theStart' could be selected for continuing the process", e.getMessage());
     }
   }
 

@@ -1278,7 +1278,7 @@ public class TaskListenerTest extends PluggableProcessEngineTest {
       // then
       Throwable cause = e.getCause();
       String message = cause.getMessage();
-      assertTextPresent("NotTaskListener doesn't implement "+TaskListener.class, message);
+      testHelper.assertTextPresent("NotTaskListener doesn't implement "+TaskListener.class, message);
     }
 
   }
@@ -1296,7 +1296,7 @@ public class TaskListenerTest extends PluggableProcessEngineTest {
       // then
       Throwable cause = e.getCause();
       String message = cause.getMessage();
-      assertTextPresent("Delegate expression ${myTaskListener} did not resolve to an implementation of interface "+TaskListener.class.getName(), message);
+      testHelper.assertTextPresent("Delegate expression ${myTaskListener} did not resolve to an implementation of interface "+TaskListener.class.getName(), message);
     }
 
   }
@@ -1314,7 +1314,7 @@ public class TaskListenerTest extends PluggableProcessEngineTest {
       // then
       Throwable cause = e.getCause();
       String message = cause.getMessage();
-      assertTextPresent("Exception while instantiating class 'org.camunda.bpm.engine.test.cmmn.tasklistener.util.NotExistingTaskListener'", message);
+      testHelper.assertTextPresent("Exception while instantiating class 'org.camunda.bpm.engine.test.cmmn.tasklistener.util.NotExistingTaskListener'", message);
     }
 
   }

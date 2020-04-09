@@ -186,7 +186,7 @@ public class ProcessDefinitionSuspensionTest extends PluggableProcessEngineTest 
       runtimeService.startProcessInstanceById(processDefinition.getId());
       fail("Exception is expected but not thrown");
     } catch(SuspendedEntityInteractionException e) {
-      assertTextPresentIgnoreCase("is suspended", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("is suspended", e.getMessage());
     }
 
     // By Key
@@ -194,7 +194,7 @@ public class ProcessDefinitionSuspensionTest extends PluggableProcessEngineTest 
       runtimeService.startProcessInstanceByKey(processDefinition.getKey());
       fail("Exception is expected but not thrown");
     } catch(SuspendedEntityInteractionException e) {
-      assertTextPresentIgnoreCase("is suspended", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("is suspended", e.getMessage());
     }
   }
 
@@ -247,7 +247,7 @@ public class ProcessDefinitionSuspensionTest extends PluggableProcessEngineTest 
         taskService.complete(task.getId());
         fail("A suspended task shouldn't be able to be continued");
       } catch(SuspendedEntityInteractionException e) {
-        assertTextPresentIgnoreCase("is suspended", e.getMessage());
+        testHelper.assertTextPresentIgnoreCase("is suspended", e.getMessage());
       }
     }
     assertEquals(nrOfProcessInstances, runtimeService.createProcessInstanceQuery().count());
@@ -275,14 +275,14 @@ public class ProcessDefinitionSuspensionTest extends PluggableProcessEngineTest 
       formService.submitStartForm(processDefinition.getId(), new HashMap<>());
       fail();
     } catch (ProcessEngineException e) {
-      assertTextPresentIgnoreCase("is suspended", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("is suspended", e.getMessage());
     }
 
     try {
       formService.submitStartForm(processDefinition.getId(), "someKey", new HashMap<>());
       fail();
     } catch (ProcessEngineException e) {
-      assertTextPresentIgnoreCase("is suspended", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("is suspended", e.getMessage());
     }
 
   }
@@ -334,7 +334,7 @@ public class ProcessDefinitionSuspensionTest extends PluggableProcessEngineTest 
       runtimeService.startProcessInstanceById(processDefinition.getId());
       fail();
     } catch (SuspendedEntityInteractionException e) {
-      assertTextPresentIgnoreCase("suspended", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("suspended", e.getMessage());
     }
     assertEquals(1, runtimeService.createProcessInstanceQuery().count());
     assertEquals(0, repositoryService.createProcessDefinitionQuery().active().count());
@@ -389,7 +389,7 @@ public class ProcessDefinitionSuspensionTest extends PluggableProcessEngineTest 
       runtimeService.startProcessInstanceById(processDefinition.getId());
       fail();
     } catch (SuspendedEntityInteractionException e) {
-      assertTextPresentIgnoreCase("suspended", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("suspended", e.getMessage());
     }
     assertEquals(nrOfProcessInstances, runtimeService.createProcessInstanceQuery().count());
     assertEquals(0, runtimeService.createProcessInstanceQuery().active().count());
@@ -424,7 +424,7 @@ public class ProcessDefinitionSuspensionTest extends PluggableProcessEngineTest 
       runtimeService.startProcessInstanceById(processDefinition.getId());
       fail();
     } catch (SuspendedEntityInteractionException e) {
-      assertTextPresentIgnoreCase("suspended", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("suspended", e.getMessage());
     }
     assertEquals(0, runtimeService.createProcessInstanceQuery().count());
     assertEquals(0, repositoryService.createProcessDefinitionQuery().active().count());
@@ -2270,7 +2270,7 @@ public class ProcessDefinitionSuspensionTest extends PluggableProcessEngineTest 
       runtimeService.createProcessInstanceModification(processInstance.getId()).startBeforeActivity("theTask").execute();
       fail("Exception is expected but not thrown");
     } catch(SuspendedEntityInteractionException e) {
-      assertTextPresentIgnoreCase("is suspended", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("is suspended", e.getMessage());
     }
   }
 
@@ -2290,7 +2290,7 @@ public class ProcessDefinitionSuspensionTest extends PluggableProcessEngineTest 
       runtimeService.createProcessInstanceModification(processInstance.getId()).startAfterActivity("theTask").execute();
       fail("Exception is expected but not thrown");
     } catch(SuspendedEntityInteractionException e) {
-      assertTextPresentIgnoreCase("is suspended", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("is suspended", e.getMessage());
     }
   }
 

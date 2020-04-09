@@ -85,7 +85,7 @@ public class BoundaryErrorEventTest extends PluggableProcessEngineTest {
         .deploy();
       fail("ProcessEngineException expected");
     } catch (ParseException e) {
-      assertTextPresent("'errorCode' is mandatory on errors referenced by throwing error event definitions", e.getMessage());
+      testHelper.assertTextPresent("'errorCode' is mandatory on errors referenced by throwing error event definitions", e.getMessage());
       assertThat(e.getResorceReports().get(0).getErrors().get(0).getMainElementId()).isEqualTo("theEnd");
     }
   }
@@ -97,7 +97,7 @@ public class BoundaryErrorEventTest extends PluggableProcessEngineTest {
         .deploy();
       fail("ProcessEngineException expected");
     } catch (ParseException e) {
-      assertTextPresent("'errorCode' is mandatory on errors referenced by throwing error event definitions", e.getMessage());
+      testHelper.assertTextPresent("'errorCode' is mandatory on errors referenced by throwing error event definitions", e.getMessage());
       assertThat(e.getResorceReports().get(0).getErrors().get(0).getMainElementId()).isEqualTo("theEnd");
     }
   }
@@ -273,7 +273,7 @@ public class BoundaryErrorEventTest extends PluggableProcessEngineTest {
       // which is never caught in the process
       taskService.complete(task.getId());
     } catch (BpmnError e) {
-      assertTextPresent("No catching boundary event found for error with errorCode 'myError', neither in same process nor in parent process", e.getMessage());
+      testHelper.assertTextPresent("No catching boundary event found for error with errorCode 'myError', neither in same process nor in parent process", e.getMessage());
     }
   }
 
@@ -292,7 +292,7 @@ public class BoundaryErrorEventTest extends PluggableProcessEngineTest {
       // which is never caught in the process
       taskService.complete(task.getId());
     } catch (BpmnError e) {
-      assertTextPresent("No catching boundary event found for error with errorCode 'myError', neither in same process nor in parent process", e.getMessage());
+      testHelper.assertTextPresent("No catching boundary event found for error with errorCode 'myError', neither in same process nor in parent process", e.getMessage());
     }
   }
 
@@ -447,7 +447,7 @@ public class BoundaryErrorEventTest extends PluggableProcessEngineTest {
     try {
       runtimeService.startProcessInstanceByKey("catchErrorThrownByJavaDelegateOnCallActivity-child");
     } catch (BpmnError e) {
-      assertTextPresent("No catching boundary event found for error with errorCode '23', neither in same process nor in parent process", e.getMessage());
+      testHelper.assertTextPresent("No catching boundary event found for error with errorCode '23', neither in same process nor in parent process", e.getMessage());
     }
   }
 
@@ -668,7 +668,7 @@ public class BoundaryErrorEventTest extends PluggableProcessEngineTest {
     try {
       runtimeService.startProcessInstanceByKey("uncaughtErrorThrownByJavaDelegateOnCallActivity-parent");
     } catch (BpmnError e) {
-      assertTextPresent("No catching boundary event found for error with errorCode '23', neither in same process nor in parent process", e.getMessage());
+      testHelper.assertTextPresent("No catching boundary event found for error with errorCode '23', neither in same process nor in parent process", e.getMessage());
     }
   }
 

@@ -107,7 +107,7 @@ public class JobPrioritizationBpmnExpressionValueTest extends PluggableProcessEn
       fail("this should not succeed since the priority variable is not defined");
     } catch (ProcessEngineException e) {
 
-      assertTextPresentIgnoreCase("Unknown property used in expression: ${priority}. "
+      testHelper.assertTextPresentIgnoreCase("Unknown property used in expression: ${priority}. "
           + "Cause: Cannot resolve identifier 'priority'",
           e.getMessage());
     }
@@ -139,7 +139,7 @@ public class JobPrioritizationBpmnExpressionValueTest extends PluggableProcessEn
         .execute();
       fail("this should not succeed since the priority variable is not defined");
     } catch (ProcessEngineException e) {
-      assertTextPresentIgnoreCase("Priority value is not an Integer", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("Priority value is not an Integer", e.getMessage());
     }
   }
 
@@ -154,7 +154,7 @@ public class JobPrioritizationBpmnExpressionValueTest extends PluggableProcessEn
         .execute();
       fail("this should not succeed since the priority must be integer");
     } catch (ProcessEngineException e) {
-      assertTextPresentIgnoreCase("Priority value is not an Integer", e.getMessage());
+      testHelper.assertTextPresentIgnoreCase("Priority value is not an Integer", e.getMessage());
     }
   }
 
@@ -169,7 +169,7 @@ public class JobPrioritizationBpmnExpressionValueTest extends PluggableProcessEn
         .execute();
       fail("this should not succeed since the priority must be integer");
     } catch (ProcessEngineException e) {
-      assertTextPresentIgnoreCase("Priority value must be either Short, Integer, or Long",
+      testHelper.assertTextPresentIgnoreCase("Priority value must be either Short, Integer, or Long",
           e.getMessage());
     }
   }
@@ -222,7 +222,7 @@ public class JobPrioritizationBpmnExpressionValueTest extends PluggableProcessEn
           .execute();
         fail("should not succeed due to missing variable");
       } catch (ProcessEngineException e) {
-        assertTextPresentIgnoreCase("unknown property used in expression", e.getMessage());
+        testHelper.assertTextPresentIgnoreCase("unknown property used in expression", e.getMessage());
       }
 
     } finally {

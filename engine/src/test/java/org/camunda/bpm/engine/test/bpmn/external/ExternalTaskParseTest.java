@@ -41,7 +41,7 @@ public class ExternalTaskParseTest extends PluggableProcessEngineTest {
       deploymentBuilder.deploy();
       fail("exception expected");
     } catch (ParseException e) {
-      assertTextPresent("External tasks must specify a 'topic' attribute in the camunda namespace", e.getMessage());
+      testHelper.assertTextPresent("External tasks must specify a 'topic' attribute in the camunda namespace", e.getMessage());
       assertThat(e.getResorceReports().get(0).getErrors().size()).isEqualTo(1);
       assertThat(e.getResorceReports().get(0).getErrors().get(0).getMainElementId()).isEqualTo("externalTask");
     }

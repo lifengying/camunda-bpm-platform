@@ -50,7 +50,7 @@ public class UncontrolledFlowTest extends PluggableProcessEngineTest {
       runtimeService.correlateMessage("Message1");
       fail("should not succeed");
     } catch (ProcessEngineException e) {
-      assertTextPresent("Cannot correlate message 'Message1'", e.getMessage());
+      testHelper.assertTextPresent("Cannot correlate message 'Message1'", e.getMessage());
     }
   }
 

@@ -4272,7 +4272,7 @@ public class TaskQueryTest extends PluggableProcessEngineTest {
       fail("this type is not supported");
     } catch (ProcessEngineException e) {
       // happy path
-      assertTextPresent("Cannot order by variables of type byte", e.getMessage());
+      testHelper.assertTextPresent("Cannot order by variables of type byte", e.getMessage());
     }
 
     try {
@@ -4280,7 +4280,7 @@ public class TaskQueryTest extends PluggableProcessEngineTest {
       fail("this type is not supported");
     } catch (ProcessEngineException e) {
       // happy path
-      assertTextPresent("Cannot order by variables of type null", e.getMessage());
+      testHelper.assertTextPresent("Cannot order by variables of type null", e.getMessage());
     }
 
     try {
@@ -4288,7 +4288,7 @@ public class TaskQueryTest extends PluggableProcessEngineTest {
       fail("this type is not supported");
     } catch (ProcessEngineException e) {
       // happy path
-      assertTextPresent("Cannot order by variables of type number", e.getMessage());
+      testHelper.assertTextPresent("Cannot order by variables of type number", e.getMessage());
     }
 
     try {
@@ -4296,7 +4296,7 @@ public class TaskQueryTest extends PluggableProcessEngineTest {
       fail("this type is not supported");
     } catch (ProcessEngineException e) {
       // happy path
-      assertTextPresent("Cannot order by variables of type object", e.getMessage());
+      testHelper.assertTextPresent("Cannot order by variables of type object", e.getMessage());
     }
 
     try {
@@ -4304,7 +4304,7 @@ public class TaskQueryTest extends PluggableProcessEngineTest {
       fail("this type is not supported");
     } catch (ProcessEngineException e) {
       // happy path
-      assertTextPresent("Cannot order by variables of type file", e.getMessage());
+      testHelper.assertTextPresent("Cannot order by variables of type file", e.getMessage());
     }
   }
 
