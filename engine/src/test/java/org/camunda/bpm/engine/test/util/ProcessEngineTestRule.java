@@ -30,7 +30,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.camunda.bpm.engine.ProcessEngine;
-import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.delegate.Expression;
 import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
@@ -60,23 +59,14 @@ public class ProcessEngineTestRule extends TestWatcher {
 
   protected ProcessEngineRule processEngineRule;
   protected ProcessEngine processEngine;
-  
-  protected ProcessEngineConfigurationImpl processEngineConfiguration;
-  protected RepositoryService repositoryService;
 
   public ProcessEngineTestRule(ProcessEngineRule processEngineRule) {
-    this(processEngineRule.getProcessEngine());
     this.processEngineRule = processEngineRule;
-  }
-
-  public ProcessEngineTestRule(ProcessEngine processEngine) {
-    this.processEngine = processEngine;
   }
 
   @Override
   protected void starting(Description description) {
-    this.processEngineConfiguration = (ProcessEngineConfigurationImpl) processEngine.getProcessEngineConfiguration();
-    this.repositoryService = processEngine.getRepositoryService();
+    this.processEngine = processEngineRule.getProcessEngine();
   }
 
   @Override
@@ -162,7 +152,7 @@ public class ProcessEngineTestRule extends TestWatcher {
   public ProcessDefinition deployForTenantAndGetDefinition(String tenant, String classpathResource) {
     Deployment deployment = deploy(createDeploymentBuilder().tenantId(tenant), Collections.<BpmnModelInstance>emptyList(), Collections.singletonList(classpathResource));
 
-    return repositoryService
+    return processEngineRule.getRepositoryService()
       .createProcessDefinitionQuery()
       .deploymentId(deployment.getId())
       .singleResult();
@@ -171,7 +161,7 @@ public class ProcessEngineTestRule extends TestWatcher {
   public ProcessDefinition deployForTenantAndGetDefinition(String tenant, BpmnModelInstance bpmnModel) {
     Deployment deployment = deploy(createDeploymentBuilder().tenantId(tenant), Collections.singletonList(bpmnModel), Collections.<String>emptyList());
 
-    return repositoryService
+    return processEngineRule.getRepositoryService()
       .createProcessDefinitionQuery()
       .deploymentId(deployment.getId())
       .singleResult();
@@ -322,22 +312,22 @@ public class ProcessEngineTestRule extends TestWatcher {
   }
 
   public boolean isHistoryLevelNone() {
-    HistoryLevel historyLevel = processEngineConfiguration.getHistoryLevel();
+    HistoryLevel historyLevel = processEngineRule.getProcessEngineConfiguration().getHistoryLevel();
     return HistoryLevel.HISTORY_LEVEL_NONE.equals(historyLevel);
   }
 
   public boolean isHistoryLevelActivity() {
-    HistoryLevel historyLevel = processEngineConfiguration.getHistoryLevel();
+    HistoryLevel historyLevel = processEngineRule.getProcessEngineConfiguration().getHistoryLevel();
     return HistoryLevel.HISTORY_LEVEL_ACTIVITY.equals(historyLevel);
   }
 
   public boolean isHistoryLevelAudit() {
-    HistoryLevel historyLevel = processEngineConfiguration.getHistoryLevel();
+    HistoryLevel historyLevel = processEngineRule.getProcessEngineConfiguration().getHistoryLevel();
     return HistoryLevel.HISTORY_LEVEL_AUDIT.equals(historyLevel);
   }
 
   public boolean isHistoryLevelFull() {
-    HistoryLevel historyLevel = processEngineConfiguration.getHistoryLevel();
+    HistoryLevel historyLevel = processEngineRule.getProcessEngineConfiguration().getHistoryLevel();
     return HistoryLevel.HISTORY_LEVEL_FULL.equals(historyLevel);
   }
 

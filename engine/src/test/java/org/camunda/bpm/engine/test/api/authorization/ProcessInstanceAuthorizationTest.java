@@ -26,14 +26,22 @@ import static org.camunda.bpm.engine.authorization.Permissions.READ;
 import static org.camunda.bpm.engine.authorization.Permissions.READ_INSTANCE;
 import static org.camunda.bpm.engine.authorization.Permissions.UPDATE;
 import static org.camunda.bpm.engine.authorization.Permissions.UPDATE_INSTANCE;
-import static org.camunda.bpm.engine.authorization.ProcessDefinitionPermissions.SUSPEND_INSTANCE;
 import static org.camunda.bpm.engine.authorization.ProcessDefinitionPermissions.READ_INSTANCE_VARIABLE;
+import static org.camunda.bpm.engine.authorization.ProcessDefinitionPermissions.SUSPEND_INSTANCE;
 import static org.camunda.bpm.engine.authorization.ProcessDefinitionPermissions.UPDATE_INSTANCE_VARIABLE;
 import static org.camunda.bpm.engine.authorization.ProcessInstancePermissions.SUSPEND;
 import static org.camunda.bpm.engine.authorization.ProcessInstancePermissions.UPDATE_VARIABLE;
 import static org.camunda.bpm.engine.authorization.Resources.PROCESS_DEFINITION;
 import static org.camunda.bpm.engine.authorization.Resources.PROCESS_INSTANCE;
 import static org.camunda.bpm.engine.authorization.Resources.TASK;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,6 +58,9 @@ import org.camunda.bpm.engine.runtime.VariableInstanceQuery;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.variable.VariableMap;
 import org.camunda.bpm.engine.variable.value.TypedValue;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Roman Smirnov
@@ -65,12 +76,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
   protected static final String THROW_WARNING_SIGNAL_PROCESS_KEY = "throwWarningSignalProcess";
   protected static final String THROW_ALERT_SIGNAL_PROCESS_KEY = "throwAlertSignalProcess";
 
-  protected String deploymentId;
   protected boolean ensureSpecificVariablePermission;
 
-  @Override
+  @Before
   public void setUp() throws Exception {
-    deploymentId = createDeployment(null,
+    testRule.deploy(
         "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml",
         "org/camunda/bpm/engine/test/api/authorization/messageStartEventProcess.bpmn20.xml",
         "org/camunda/bpm/engine/test/api/authorization/messageBoundaryEventProcess.bpmn20.xml",
@@ -78,20 +88,19 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
         "org/camunda/bpm/engine/test/api/authorization/signalStartEventProcess.bpmn20.xml",
         "org/camunda/bpm/engine/test/api/authorization/throwWarningSignalEventProcess.bpmn20.xml",
         "org/camunda/bpm/engine/test/api/authorization/throwAlertSignalEventProcess.bpmn20.xml"
-        ).getId();
+        );
     ensureSpecificVariablePermission = processEngineConfiguration.isEnforceSpecificVariablePermission();
-    super.setUp();
+
   }
 
-  @Override
+  @After
   public void tearDown() {
-    super.tearDown();
-    deleteDeployment(deploymentId);
     processEngineConfiguration.setEnforceSpecificVariablePermission(ensureSpecificVariablePermission);
   }
 
   // process instance query //////////////////////////////////////////////////////////
 
+  @Test
   public void testSimpleQueryWithoutAuthorization() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -103,6 +112,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testSimpleQueryWithReadPermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -119,6 +129,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(processInstanceId, instance.getId());
   }
 
+  @Test
   public void testSimpleQueryWithMultiple() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -132,6 +143,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 1);
   }
 
+  @Test
   public void testSimpleQueryWithReadPermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -148,6 +160,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(processInstanceId, instance.getId());
   }
 
+  @Test
   public void testSimpleQueryWithReadInstancesPermissionOnOneTaskProcess() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -164,6 +177,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(processInstanceId, instance.getId());
   }
 
+  @Test
   public void testSimpleQueryWithReadInstancesPermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -182,6 +196,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // process instance query (multiple process instances) ////////////////////////
 
+  @Test
   public void testQueryWithoutAuthorization() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -200,6 +215,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testQueryWithReadPermissionOnProcessInstance() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -224,6 +240,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(processInstanceId, instance.getId());
   }
 
+  @Test
   public void testQueryWithReadPermissionOnAnyProcessInstance() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -244,6 +261,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 7);
   }
 
+  @Test
   public void testQueryWithReadInstancesPermissionOnOneTaskProcess() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -264,6 +282,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 3);
   }
 
+  @Test
   public void testQueryWithReadInstancesPermissionOnAnyProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -286,6 +305,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // start process instance by key //////////////////////////////////////////////
 
+  @Test
   public void testStartProcessInstanceByKeyWithoutAuthorization() {
     // given
     // no authorization to start a process instance
@@ -297,10 +317,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceByKeyWithCreatePermissionOnProcessInstance() {
     // given
     createGrantAuthorization(PROCESS_INSTANCE, ANY, userId, CREATE);
@@ -312,10 +333,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'oneTaskProcess' of type 'ProcessDefinition'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'oneTaskProcess' of type 'ProcessDefinition'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceByKeyWithCreateInstancesPermissionOnProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, PROCESS_KEY, userId, CREATE_INSTANCE);
@@ -327,10 +349,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceByKey() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, PROCESS_KEY, userId, CREATE_INSTANCE);
@@ -348,6 +371,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // start process instance by id //////////////////////////////////////////////
 
+  @Test
   public void testStartProcessInstanceByIdWithoutAuthorization() {
     // given
     // no authorization to start a process instance
@@ -361,10 +385,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceByIdWithCreatePermissionOnProcessInstance() {
     // given
     createGrantAuthorization(PROCESS_INSTANCE, ANY, userId, CREATE);
@@ -378,10 +403,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'oneTaskProcess' of type 'ProcessDefinition'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'oneTaskProcess' of type 'ProcessDefinition'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceByIdWithCreateInstancesPermissionOnProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, PROCESS_KEY, userId, CREATE_INSTANCE);
@@ -395,10 +421,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceById() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, PROCESS_KEY, userId, CREATE_INSTANCE);
@@ -416,6 +443,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
   }
 
+  @Test
   public void testStartProcessInstanceAtActivitiesByKey() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, PROCESS_KEY, userId, CREATE_INSTANCE);
@@ -431,6 +459,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
   }
 
+  @Test
   public void testStartProcessInstanceAtActivitiesByKeyWithoutAuthorization() {
     // given
     // no authorization to start a process instance
@@ -442,10 +471,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceAtActivitiesByKeyWithCreatePermissionOnProcessInstance() {
     // given
     createGrantAuthorization(PROCESS_INSTANCE, ANY, userId, CREATE);
@@ -457,10 +487,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'oneTaskProcess' of type 'ProcessDefinition'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'oneTaskProcess' of type 'ProcessDefinition'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceAtActivitiesByKeyWithCreateInstancesPermissionOnProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, PROCESS_KEY, userId, CREATE_INSTANCE);
@@ -472,10 +503,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceAtActivitiesById() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, PROCESS_KEY, userId, CREATE_INSTANCE);
@@ -493,6 +525,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
   }
 
+  @Test
   public void testStartProcessInstanceAtActivitiesByIdWithoutAuthorization() {
     // given
     // no authorization to start a process instance
@@ -506,10 +539,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceAtActivitiesByIdWithCreatePermissionOnProcessInstance() {
     // given
     createGrantAuthorization(PROCESS_INSTANCE, ANY, userId, CREATE);
@@ -523,10 +557,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'oneTaskProcess' of type 'ProcessDefinition'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'oneTaskProcess' of type 'ProcessDefinition'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceAtActivitiesByIdWithCreateInstancesPermissionOnProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, PROCESS_KEY, userId, CREATE_INSTANCE);
@@ -540,12 +575,13 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
     }
   }
 
   // start process instance by message //////////////////////////////////////////////
 
+  @Test
   public void testStartProcessInstanceByMessageWithoutAuthorization() {
     // given
     // no authorization to start a process instance
@@ -557,10 +593,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceByMessageWithCreatePermissionOnProcessInstance() {
     // given
     createGrantAuthorization(PROCESS_INSTANCE, ANY, userId, CREATE);
@@ -572,10 +609,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'messageStartProcess' of type 'ProcessDefinition'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'messageStartProcess' of type 'ProcessDefinition'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceByMessageWithCreateInstancesPermissionOnProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, MESSAGE_START_PROCESS_KEY, userId, CREATE_INSTANCE);
@@ -587,10 +625,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceByMessage() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, MESSAGE_START_PROCESS_KEY, userId, CREATE_INSTANCE);
@@ -608,6 +647,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // start process instance by message and process definition id /////////////////////////////
 
+  @Test
   public void testStartProcessInstanceByMessageAndProcDefIdWithoutAuthorization() {
     // given
     // no authorization to start a process instance
@@ -621,10 +661,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceByMessageAndProcDefIdWithCreatePermissionOnProcessInstance() {
     // given
     createGrantAuthorization(PROCESS_INSTANCE, ANY, userId, CREATE);
@@ -638,10 +679,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'messageStartProcess' of type 'ProcessDefinition'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'messageStartProcess' of type 'ProcessDefinition'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceByMessageAndProcDefIdWithCreateInstancesPermissionOnProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, MESSAGE_START_PROCESS_KEY, userId, CREATE_INSTANCE);
@@ -655,10 +697,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceByMessageAndProcDefId() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, MESSAGE_START_PROCESS_KEY, userId, CREATE_INSTANCE);
@@ -678,6 +721,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // delete process instance /////////////////////////////
 
+  @Test
   public void testDeleteProcessInstanceWithoutAuthorization() {
     // given
     // no authorization to delete a process instance
@@ -692,16 +736,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(DELETE.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(DELETE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(DELETE.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(DELETE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testDeleteProcessInstanceWithDeletePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -712,10 +757,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
     // then
     disableAuthorization();
-    assertProcessEnded(processInstanceId);
+    testRule.assertProcessEnded(processInstanceId);
     enableAuthorization();
   }
 
+  @Test
   public void testDeleteProcessInstanceWithDeletePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -726,10 +772,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
     // then
     disableAuthorization();
-    assertProcessEnded(processInstanceId);
+    testRule.assertProcessEnded(processInstanceId);
     enableAuthorization();
   }
 
+  @Test
   public void testDeleteProcessInstanceWithDeleteInstancesPermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -740,10 +787,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
     // then
     disableAuthorization();
-    assertProcessEnded(processInstanceId);
+    testRule.assertProcessEnded(processInstanceId);
     enableAuthorization();
   }
 
+  @Test
   public void testDeleteProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -755,12 +803,13 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
     // then
     disableAuthorization();
-    assertProcessEnded(processInstanceId);
+    testRule.assertProcessEnded(processInstanceId);
     enableAuthorization();
   }
 
   // get active activity ids ///////////////////////////////////
 
+  @Test
   public void testGetActiveActivityIdsWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -773,13 +822,14 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
       // then
 //      String message = e.getMessage();
-//      testHelper.assertTextPresent(userId, message);
-//      testHelper.assertTextPresent(READ.getName(), message);
-//      testHelper.assertTextPresent(processInstanceId, message);
-//      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+//      testRule.assertTextPresent(userId, message);
+//      testRule.assertTextPresent(READ.getName(), message);
+//      testRule.assertTextPresent(processInstanceId, message);
+//      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
     }
   }
 
+  @Test
   public void testGetActiveActivityIdsWithReadPermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -793,6 +843,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertFalse(activityIds.isEmpty());
   }
 
+  @Test
   public void testGetActiveActivityIdsWithReadPermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -806,6 +857,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertFalse(activityIds.isEmpty());
   }
 
+  @Test
   public void testGetActiveActivityIdsWithReadInstancesPermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -819,6 +871,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertFalse(activityIds.isEmpty());
   }
 
+  @Test
   public void testGetActiveActivityIds() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -835,6 +888,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // get activity instance ///////////////////////////////////////////
 
+  @Test
   public void testGetActivityInstanceWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -847,16 +901,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(READ_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(READ_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testGetActivityInstanceWithReadPermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -869,6 +924,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertNotNull(activityInstance);
   }
 
+  @Test
   public void testGetActivityInstanceWithReadPermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -881,6 +937,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertNotNull(activityInstance);
   }
 
+  @Test
   public void testGetActivityInstanceWithReadInstancesPermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -893,6 +950,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertNotNull(activityInstance);
   }
 
+  @Test
   public void testGetActivityInstanceIds() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -908,6 +966,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // signal execution ///////////////////////////////////////////
 
+  @Test
   public void testSignalWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -919,16 +978,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testSignalWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -938,9 +998,10 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     runtimeService.signal(processInstanceId);
 
     // then
-    assertProcessEnded(processInstanceId);
+    testRule.assertProcessEnded(processInstanceId);
   }
 
+  @Test
   public void testSignalWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -950,9 +1011,10 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     runtimeService.signal(processInstanceId);
 
     // then
-    assertProcessEnded(processInstanceId);
+    testRule.assertProcessEnded(processInstanceId);
   }
 
+  @Test
   public void testSignalWithUpdateInstancesPermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -962,9 +1024,10 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     runtimeService.signal(processInstanceId);
 
     // then
-    assertProcessEnded(processInstanceId);
+    testRule.assertProcessEnded(processInstanceId);
   }
 
+  @Test
   public void testSignal() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -980,6 +1043,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // signal event received //////////////////////////////////////
 
+  @Test
   public void testSignalEventReceivedWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(SIGNAL_BOUNDARY_PROCESS_KEY).getId();
@@ -991,16 +1055,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(SIGNAL_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(SIGNAL_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testSignalEventReceivedWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(SIGNAL_BOUNDARY_PROCESS_KEY).getId();
@@ -1015,6 +1080,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals("taskAfterBoundaryEvent", task.getTaskDefinitionKey());
   }
 
+  @Test
   public void testSignalEventReceivedWithUpdatePermissionOnAnyProcessInstance() {
     // given
     startProcessInstanceByKey(SIGNAL_BOUNDARY_PROCESS_KEY);
@@ -1029,6 +1095,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals("taskAfterBoundaryEvent", task.getTaskDefinitionKey());
   }
 
+  @Test
   public void testSignalEventReceivedWithUpdateInstancesPermissionOnProcessDefinition() {
     // given
     startProcessInstanceByKey(SIGNAL_BOUNDARY_PROCESS_KEY);
@@ -1043,6 +1110,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals("taskAfterBoundaryEvent", task.getTaskDefinitionKey());
   }
 
+  @Test
   public void testSignalEventReceived() {
     // given
     String processInstanceId = startProcessInstanceByKey(SIGNAL_BOUNDARY_PROCESS_KEY).getId();
@@ -1058,6 +1126,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals("taskAfterBoundaryEvent", task.getTaskDefinitionKey());
   }
 
+  @Test
   public void testSignalEventReceivedTwoExecutionsShouldFail() {
     // given
     String firstProcessInstanceId = startProcessInstanceByKey(SIGNAL_BOUNDARY_PROCESS_KEY).getId();
@@ -1072,16 +1141,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(secondProcessInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(SIGNAL_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(secondProcessInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(SIGNAL_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testSignalEventReceivedTwoExecutionsShouldSuccess() {
     // given
     String firstProcessInstanceId = startProcessInstanceByKey(SIGNAL_BOUNDARY_PROCESS_KEY).getId();
@@ -1105,6 +1175,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // signal event received by execution id //////////////////////////////////////
 
+  @Test
   public void testSignalEventReceivedByExecutionIdWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(SIGNAL_BOUNDARY_PROCESS_KEY).getId();
@@ -1117,16 +1188,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(SIGNAL_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(SIGNAL_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testSignalEventReceivedByExecutionIdWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(SIGNAL_BOUNDARY_PROCESS_KEY).getId();
@@ -1143,6 +1215,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals("taskAfterBoundaryEvent", task.getTaskDefinitionKey());
   }
 
+  @Test
   public void testSignalEventReceivedByExecutionIdWithUpdatePermissionOnAnyProcessInstance() {
     // given
     startProcessInstanceByKey(SIGNAL_BOUNDARY_PROCESS_KEY);
@@ -1159,6 +1232,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals("taskAfterBoundaryEvent", task.getTaskDefinitionKey());
   }
 
+  @Test
   public void testSignalEventReceivedByExecutionIdWithUpdateInstancesPermissionOnProcessDefinition() {
     // given
     startProcessInstanceByKey(SIGNAL_BOUNDARY_PROCESS_KEY);
@@ -1175,6 +1249,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals("taskAfterBoundaryEvent", task.getTaskDefinitionKey());
   }
 
+  @Test
   public void testSignalEventReceivedByExecutionId() {
     // given
     String processInstanceId = startProcessInstanceByKey(SIGNAL_BOUNDARY_PROCESS_KEY).getId();
@@ -1192,6 +1267,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals("taskAfterBoundaryEvent", task.getTaskDefinitionKey());
   }
 
+  @Test
   public void testStartProcessInstanceBySignalEventReceivedWithoutAuthorization() {
     // given
     // no authorization to start a process instance
@@ -1202,10 +1278,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
       fail("Exception expected");
     } catch (AuthorizationException e) {
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceBySignalEventReceivedWithCreatePermissionOnProcessInstance() {
     // given
     createGrantAuthorization(PROCESS_INSTANCE, ANY, userId, CREATE);
@@ -1216,10 +1293,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
       fail("Exception expected");
     } catch (AuthorizationException e) {
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'signalStartProcess' of type 'ProcessDefinition'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'signalStartProcess' of type 'ProcessDefinition'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceBySignalEventReceived() {
     // given
     createGrantAuthorization(PROCESS_INSTANCE, ANY, userId, CREATE);
@@ -1248,10 +1326,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
       fail("Exception expected");
     } catch (AuthorizationException e) {
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'signalStartProcess' of type 'ProcessDefinition'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'signalStartProcess' of type 'ProcessDefinition'", e.getMessage());
     }
   }
 
+  @Test
   public void testStartProcessInstanceByThrowSignalEvent() {
     // given
     createGrantAuthorization(PROCESS_INSTANCE, ANY, userId, CREATE);
@@ -1285,16 +1364,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(SIGNAL_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(SIGNAL_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testThrowSignalEvent() {
     // given
     createGrantAuthorization(PROCESS_INSTANCE, ANY, userId, CREATE);
@@ -1316,6 +1396,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // message event received /////////////////////////////////////
 
+  @Test
   public void testMessageEventReceivedWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -1328,16 +1409,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(MESSAGE_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(MESSAGE_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testMessageEventReceivedByExecutionIdWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -1354,6 +1436,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals("taskAfterBoundaryEvent", task.getTaskDefinitionKey());
   }
 
+  @Test
   public void testMessageEventReceivedByExecutionIdWithUpdatePermissionOnAnyProcessInstance() {
     // given
     startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY);
@@ -1370,6 +1453,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals("taskAfterBoundaryEvent", task.getTaskDefinitionKey());
   }
 
+  @Test
   public void testMessageEventReceivedByExecutionIdWithUpdateInstancesPermissionOnProcessDefinition() {
     // given
     startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY);
@@ -1386,6 +1470,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals("taskAfterBoundaryEvent", task.getTaskDefinitionKey());
   }
 
+  @Test
   public void testMessageEventReceivedByExecutionId() {
     // given
     String processInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -1405,6 +1490,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // correlate message (correlates to an execution) /////////////
 
+  @Test
   public void testCorrelateMessageExecutionWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -1416,16 +1502,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(MESSAGE_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(MESSAGE_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testCorrelateMessageExecutionWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -1440,6 +1527,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals("taskAfterBoundaryEvent", task.getTaskDefinitionKey());
   }
 
+  @Test
   public void testCorrelateMessageExecutionWithUpdatePermissionOnAnyProcessInstance() {
     // given
     startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY);
@@ -1454,6 +1542,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals("taskAfterBoundaryEvent", task.getTaskDefinitionKey());
   }
 
+  @Test
   public void testCorrelateMessageExecutionWithUpdateInstancesPermissionOnProcessDefinition() {
     // given
     startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY);
@@ -1468,6 +1557,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals("taskAfterBoundaryEvent", task.getTaskDefinitionKey());
   }
 
+  @Test
   public void testCorrelateMessageExecution() {
     // given
     String processInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -1485,6 +1575,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // correlate message (correlates to a process definition) /////////////
 
+  @Test
   public void testCorrelateMessageProcessDefinitionWithoutAuthorization() {
     // given
 
@@ -1494,10 +1585,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to correlate a message.");
     } catch (AuthorizationException e) {
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
     }
   }
 
+  @Test
   public void testCorrelateMessageProcessDefinitionWithCreatePermissionOnProcessInstance() {
     // given
     createGrantAuthorization(PROCESS_INSTANCE, ANY, userId, CREATE);
@@ -1509,10 +1601,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'messageStartProcess' of type 'ProcessDefinition'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'messageStartProcess' of type 'ProcessDefinition'", e.getMessage());
     }
   }
 
+  @Test
   public void testCorrelateMessageProcessDefinitionWithCreateInstancesPermissionOnProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, MESSAGE_START_PROCESS_KEY, userId, CREATE_INSTANCE);
@@ -1524,10 +1617,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
     }
   }
 
+  @Test
   public void testCorrelateMessageProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_INSTANCE, ANY, userId, CREATE);
@@ -1544,6 +1638,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // correlate all (correlates to executions) ///////////////////
 
+  @Test
   public void testCorrelateAllExecutionWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -1557,16 +1652,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(MESSAGE_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(MESSAGE_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testCorrelateAllExecutionWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -1583,6 +1679,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals("taskAfterBoundaryEvent", task.getTaskDefinitionKey());
   }
 
+  @Test
   public void testCorrelateAllExecutionWithUpdatePermissionOnAnyProcessInstance() {
     // given
     startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY);
@@ -1599,6 +1696,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals("taskAfterBoundaryEvent", task.getTaskDefinitionKey());
   }
 
+  @Test
   public void testCorrelateAllExecutionWithUpdateInstancesPermissionOnProcessDefinition() {
     // given
     startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY);
@@ -1615,6 +1713,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals("taskAfterBoundaryEvent", task.getTaskDefinitionKey());
   }
 
+  @Test
   public void testCorrelateAllExecution() {
     // given
     String processInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -1632,6 +1731,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals("taskAfterBoundaryEvent", task.getTaskDefinitionKey());
   }
 
+  @Test
   public void testCorrelateAllTwoExecutionsShouldFail() {
     // given
     String firstProcessInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -1648,16 +1748,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(secondProcessInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(MESSAGE_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(secondProcessInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(MESSAGE_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testCorrelateAllTwoExecutionsShouldSuccess() {
     // given
     String firstProcessInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -1683,6 +1784,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // correlate all (correlates to a process definition) /////////////
 
+  @Test
   public void testCorrelateAllProcessDefinitionWithoutAuthorization() {
     // given
 
@@ -1694,10 +1796,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
       fail("Exception expected: It should not be possible to correlate a message.");
     } catch (AuthorizationException e) {
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
     }
   }
 
+  @Test
   public void testCorrelateAllProcessDefinitionWithCreatePermissionOnProcessInstance() {
     // given
     createGrantAuthorization(PROCESS_INSTANCE, ANY, userId, CREATE);
@@ -1711,10 +1814,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'messageStartProcess' of type 'ProcessDefinition'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE_INSTANCE' permission on resource 'messageStartProcess' of type 'ProcessDefinition'", e.getMessage());
     }
   }
 
+  @Test
   public void testCorrelateAllProcessDefinitionWithCreateInstancesPermissionOnProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, MESSAGE_START_PROCESS_KEY, userId, CREATE_INSTANCE);
@@ -1728,10 +1832,11 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
 
       // then
-      testHelper.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
+      testRule.assertTextPresent("The user with id 'test' does not have 'CREATE' permission on resource 'ProcessInstance'", e.getMessage());
     }
   }
 
+  @Test
   public void testCorrelateAllProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_INSTANCE, ANY, userId, CREATE);
@@ -1750,6 +1855,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // suspend process instance by id /////////////////////////////
 
+  @Test
   public void testSuspendProcessInstanceByIdWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -1762,18 +1868,19 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
-      testHelper.assertTextPresent(SUSPEND.getName(), message);
-      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(SUSPEND.getName(), message);
+      testRule.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
     }
   }
 
+  @Test
   public void testSuspendProcessInstanceByIdWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -1787,6 +1894,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertTrue(instance.isSuspended());
   }
 
+  @Test
   public void testSuspendProcessInstanceByIdWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -1800,6 +1908,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertTrue(instance.isSuspended());
   }
 
+  @Test
   public void testSuspendProcessInstanceByIdWithUpdateInstancesPermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -1813,6 +1922,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertTrue(instance.isSuspended());
   }
 
+  @Test
   public void testSuspendProcessInstanceById() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -1827,6 +1937,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertTrue(instance.isSuspended());
   }
 
+  @Test
   public void testSuspendProcessInstanceByIdWithSuspendPermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -1840,6 +1951,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertTrue(instance.isSuspended());
   }
 
+  @Test
   public void testSuspendProcessInstanceByIdWithSuspendPermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -1853,6 +1965,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertTrue(instance.isSuspended());
   }
 
+  @Test
   public void testSuspendProcessInstanceByIdWithSuspendInstancesPermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -1868,6 +1981,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // activate process instance by id /////////////////////////////
 
+  @Test
   public void testActivateProcessInstanceByIdWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -1881,18 +1995,19 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
-      testHelper.assertTextPresent(SUSPEND.getName(), message);
-      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(SUSPEND.getName(), message);
+      testRule.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
     }
   }
 
+  @Test
   public void testActivateProcessInstanceByIdWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -1907,6 +2022,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertFalse(instance.isSuspended());
   }
 
+  @Test
   public void testActivateProcessInstanceByIdWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -1921,6 +2037,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertFalse(instance.isSuspended());
   }
 
+  @Test
   public void testActivateProcessInstanceByIdWithUpdateInstancesPermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -1935,6 +2052,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertFalse(instance.isSuspended());
   }
 
+  @Test
   public void testActivateProcessInstanceById() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -1950,6 +2068,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertFalse(instance.isSuspended());
   }
 
+  @Test
   public void testActivateProcessInstanceByIdWithSuspendPermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -1964,6 +2083,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertFalse(instance.isSuspended());
   }
 
+  @Test
   public void testActivateProcessInstanceByIdWithSuspendPermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -1978,6 +2098,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertFalse(instance.isSuspended());
   }
 
+  @Test
   public void testActivateProcessInstanceByIdWithSuspendInstancesPermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -1994,6 +2115,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // suspend process instance by process definition id /////////////////////////////
 
+  @Test
   public void testSuspendProcessInstanceByProcessDefinitionIdWithoutAuthorization() {
     // given
     String processDefinitionId = startProcessInstanceByKey(PROCESS_KEY).getProcessDefinitionId();
@@ -2006,17 +2128,18 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
-      testHelper.assertTextPresent(SUSPEND.getName(), message);
-      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(SUSPEND.getName(), message);
+      testRule.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
     }
   }
 
+  @Test
   public void testSuspendProcessInstanceByProcessDefinitionIdWithUpdatePermissionOnProcessInstance() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2032,16 +2155,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
-      testHelper.assertTextPresent(SUSPEND.getName(), message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(SUSPEND.getName(), message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
     }
   }
 
+  @Test
   public void testSuspendProcessInstanceByProcessDefinitionIdWithUpdatePermissionOnAnyProcessInstance() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2056,6 +2180,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertTrue(instance.isSuspended());
   }
 
+  @Test
   public void testSuspendProcessInstanceByProcessDefinitionIdWithUpdateInstancesPermissionOnProcessDefinition() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2070,6 +2195,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertTrue(instance.isSuspended());
   }
 
+  @Test
   public void testSuspendProcessInstanceByProcessDefinitionId() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2087,6 +2213,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertTrue(instance.isSuspended());
   }
 
+  @Test
   public void testSuspendProcessInstanceByProcessDefinitionIdWithSuspendPermissionOnProcessInstance() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2102,16 +2229,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
-      testHelper.assertTextPresent(SUSPEND.getName(), message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(SUSPEND.getName(), message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
     }
   }
 
+  @Test
   public void testSuspendProcessInstanceByProcessDefinitionIdWithSuspendPermissionOnAnyProcessInstance() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2126,6 +2254,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertTrue(instance.isSuspended());
   }
 
+  @Test
   public void testSuspendProcessInstanceByProcessDefinitionIdWithSuspendInstancesPermissionOnProcessDefinition() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2143,6 +2272,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // activate process instance by process definition id /////////////////////////////
 
+  @Test
   public void testActivateProcessInstanceByProcessDefinitionIdWithoutAuthorization() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2158,17 +2288,18 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
-      testHelper.assertTextPresent(SUSPEND.getName(), message);
-      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(SUSPEND.getName(), message);
+      testRule.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
     }
   }
 
+  @Test
   public void testActivateProcessInstanceByProcessDefinitionIdWithUpdatePermissionOnProcessInstance() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2186,16 +2317,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
-      testHelper.assertTextPresent(SUSPEND.getName(), message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(SUSPEND.getName(), message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
     }
   }
 
+  @Test
   public void testActivateProcessInstanceByProcessDefinitionIdWithUpdatePermissionOnAnyProcessInstance() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2213,6 +2345,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertFalse(instance.isSuspended());
   }
 
+  @Test
   public void testActivateProcessInstanceByProcessDefinitionIdWithUpdateInstancesPermissionOnProcessDefinition() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2230,6 +2363,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertFalse(instance.isSuspended());
   }
 
+  @Test
   public void testActivateProcessInstanceByProcessDefinitionId() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2248,6 +2382,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertFalse(instance.isSuspended());
   }
 
+  @Test
   public void testActivateProcessInstanceByProcessDefinitionIdWithSuspendPermissionOnProcessInstance() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2265,16 +2400,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
-      testHelper.assertTextPresent(SUSPEND.getName(), message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(SUSPEND.getName(), message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
     }
   }
 
+  @Test
   public void testActivateProcessInstanceByProcessDefinitionIdWithSuspendPermissionOnAnyProcessInstance() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2292,6 +2428,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertFalse(instance.isSuspended());
   }
 
+  @Test
   public void testActivateProcessInstanceByProcessDefinitionIdWithSuspendInstancesPermissionOnProcessDefinition() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2311,6 +2448,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // suspend process instance by process definition key /////////////////////////////
 
+  @Test
   public void testSuspendProcessInstanceByProcessDefinitionKeyWithoutAuthorization() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -2323,17 +2461,18 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
-      testHelper.assertTextPresent(SUSPEND.getName(), message);
-      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(SUSPEND.getName(), message);
+      testRule.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
    }
   }
 
+  @Test
   public void testSuspendProcessInstanceByProcessDefinitionKeyWithUpdatePermissionOnProcessInstance() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2348,16 +2487,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
-      testHelper.assertTextPresent(SUSPEND.getName(), message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(SUSPEND.getName(), message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
     }
   }
 
+  @Test
   public void testSuspendProcessInstanceByProcessDefinitionKeyWithUpdatePermissionOnAnyProcessInstance() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -2371,6 +2511,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertTrue(instance.isSuspended());
   }
 
+  @Test
   public void testSuspendProcessInstanceByProcessDefinitionKeyWithUpdateInstancesPermissionOnProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -2384,6 +2525,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertTrue(instance.isSuspended());
   }
 
+  @Test
   public void testSuspendProcessInstanceByProcessDefinitionKey() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2400,6 +2542,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertTrue(instance.isSuspended());
   }
 
+  @Test
   public void testSuspendProcessInstanceByProcessDefinitionKeyWithSuspendPermissionOnProcessInstance() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2414,16 +2557,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
-      testHelper.assertTextPresent(SUSPEND.getName(), message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(SUSPEND.getName(), message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
     }
   }
 
+  @Test
   public void testSuspendProcessInstanceByProcessDefinitionKeyWithSuspendPermissionOnAnyProcessInstance() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -2437,6 +2581,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertTrue(instance.isSuspended());
   }
 
+  @Test
   public void testSuspendProcessInstanceByProcessDefinitionKeyWithSuspendInstancesPermissionOnProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -2452,6 +2597,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // activate process instance by process definition key /////////////////////////////
 
+  @Test
   public void testActivateProcessInstanceByProcessDefinitionKeyWithoutAuthorization() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2466,17 +2612,18 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
-      testHelper.assertTextPresent(SUSPEND.getName(), message);
-      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(SUSPEND.getName(), message);
+      testRule.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
     }
   }
 
+  @Test
   public void testActivateProcessInstanceByProcessDefinitionKeyWithUpdatePermissionOnProcessInstance() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2493,16 +2640,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
-      testHelper.assertTextPresent(SUSPEND.getName(), message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(SUSPEND.getName(), message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
     }
   }
 
+  @Test
   public void testActivateProcessInstanceByProcessDefinitionKeyWithUpdatePermissionOnAnyProcessInstance() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2519,6 +2667,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertFalse(instance.isSuspended());
   }
 
+  @Test
   public void testActivateProcessInstanceByProcessDefinitionKeyWithUpdateInstancesPermissionOnProcessDefinition() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2535,6 +2684,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertFalse(instance.isSuspended());
   }
 
+  @Test
   public void testActivateProcessInstanceByProcessDefinitionKey() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2552,6 +2702,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertFalse(instance.isSuspended());
   }
 
+  @Test
   public void testActivateProcessInstanceByProcessDefinitionKeyWithSuspendPermissionOnProcessInstance() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2568,16 +2719,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
-      testHelper.assertTextPresent(SUSPEND.getName(), message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(SUSPEND_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(SUSPEND.getName(), message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
     }
   }
 
+  @Test
   public void testActivateProcessInstanceByProcessDefinitionKeyWithSuspendPermissionOnAnyProcessInstance() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2594,6 +2746,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertFalse(instance.isSuspended());
   }
 
+  @Test
   public void testActivateProcessInstanceByProcessDefinitionKeyWithSuspendInstancesPermissionOnProcessDefinition() {
     // given
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY);
@@ -2612,6 +2765,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // modify process instance /////////////////////////////////////
 
+  @Test
   public void testModifyProcessInstanceWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -2624,16 +2778,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(MESSAGE_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(MESSAGE_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testModifyProcessInstanceWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -2653,6 +2808,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(2, tasks.size());
   }
 
+  @Test
   public void testModifyProcessInstanceWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -2672,6 +2828,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(2, tasks.size());
   }
 
+  @Test
   public void testModifyProcessInstanceWithUpdateInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -2691,6 +2848,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(2, tasks.size());
   }
 
+  @Test
   public void testModifyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -2711,6 +2869,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(2, tasks.size());
   }
 
+  @Test
   public void testDeleteProcessInstanceByModifyingWithoutDeleteAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -2724,16 +2883,17 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(DELETE.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(DELETE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(MESSAGE_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(DELETE.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(DELETE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(MESSAGE_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testDeleteProcessInstanceByModifyingWithoutDeletePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -2746,9 +2906,10 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
       .execute();
 
     // then
-    assertProcessEnded(processInstanceId);
+    testRule.assertProcessEnded(processInstanceId);
   }
 
+  @Test
   public void testDeleteProcessInstanceByModifyingWithoutDeletePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -2761,9 +2922,10 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
       .execute();
 
     // then
-    assertProcessEnded(processInstanceId);
+    testRule.assertProcessEnded(processInstanceId);
   }
 
+  @Test
   public void testDeleteProcessInstanceByModifyingWithoutDeleteInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(MESSAGE_BOUNDARY_PROCESS_KEY).getId();
@@ -2779,11 +2941,12 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
       .execute();
 
     // then
-    assertProcessEnded(processInstanceId);
+    testRule.assertProcessEnded(processInstanceId);
   }
 
   // clear process instance authorization ////////////////////////
 
+  @Test
   public void testClearProcessInstanceAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -2814,6 +2977,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertNull(authorization);
   }
 
+  @Test
   public void testDeleteProcessInstanceClearAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -2843,6 +3007,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#getVariable() ////////////////////////////////////////////
 
+  @Test
   public void testGetVariableWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -2854,13 +3019,13 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(READ_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(READ_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
 
     // given (2)
@@ -2873,13 +3038,14 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then (2)
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testGetVariableWithReadPermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -2892,6 +3058,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variable);
   }
 
+  @Test
   public void testGetVariableWithReadPermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -2904,6 +3071,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variable);
   }
 
+  @Test
   public void testGetVariableWithReadInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -2916,6 +3084,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variable);
   }
 
+  @Test
   public void testGetVariableWithReadInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -2928,6 +3097,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variable);
   }
 
+  @Test
   public void testGetVariableWithReadInstanceVariablePermissionOnProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -2941,6 +3111,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variable);
   }
 
+  @Test
   public void testGetVariableWithReadInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -2956,6 +3127,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#getVariableLocal() ////////////////////////////////////////////
 
+  @Test
   public void testGetVariableLocalWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -2967,13 +3139,13 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(READ_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(READ_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
 
     // given (2)
@@ -2986,13 +3158,14 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then (2)
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testGetVariableLocalWithReadPermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3005,6 +3178,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variable);
   }
 
+  @Test
   public void testGetVariableLocalWithReadPermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3017,6 +3191,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variable);
   }
 
+  @Test
   public void testGetVariableLocalWithReadInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3029,6 +3204,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variable);
   }
 
+  @Test
   public void testGetVariableLocalWithReadInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3041,6 +3217,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variable);
   }
 
+  @Test
   public void testGetVariableLocalWithReadInstanceVariablePermissionOnProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -3054,6 +3231,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variable);
   }
 
+  @Test
   public void testGetVariableLocalWithReadInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -3069,6 +3247,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#getVariableTyped() ////////////////////////////////////////////
 
+  @Test
   public void testGetVariableTypedWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3080,13 +3259,13 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(READ_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(READ_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
 
     // given (2)
@@ -3099,13 +3278,14 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then (2)
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testGetVariableTypedWithReadPermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3119,6 +3299,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, typedValue.getValue());
   }
 
+  @Test
   public void testGetVariableTypedWithReadPermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3132,6 +3313,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, typedValue.getValue());
   }
 
+  @Test
   public void testGetVariableTypedWithReadInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3145,6 +3327,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, typedValue.getValue());
   }
 
+  @Test
   public void testGetVariableTypedWithReadInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3158,6 +3341,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, typedValue.getValue());
   }
 
+  @Test
   public void testGetVariableTypedWithReadInstanceVariablePermissionOnProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -3172,6 +3356,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, typedValue.getValue());
   }
 
+  @Test
   public void testGetVariableTypedWithReadInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -3188,6 +3373,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#getVariableLocalTyped() ////////////////////////////////////////////
 
+  @Test
   public void testGetVariableLocalTypedWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3199,13 +3385,13 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(READ_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(READ_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
 
     // given (2)
@@ -3218,13 +3404,14 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then (2)
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testGetVariableLocalTypedWithReadPermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3238,6 +3425,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, typedValue.getValue());
   }
 
+  @Test
   public void testGetVariableLocalTypedWithReadPermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3251,6 +3439,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, typedValue.getValue());
   }
 
+  @Test
   public void testGetVariableLocalTypedWithReadInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3264,6 +3453,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, typedValue.getValue());
   }
 
+  @Test
   public void testGetVariableLocalTypedWithReadInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3277,6 +3467,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, typedValue.getValue());
   }
 
+  @Test
   public void testGetVariableLocalTypedWithReadInstanceVariablePermissionOnProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -3291,6 +3482,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, typedValue.getValue());
   }
 
+  @Test
   public void testGetVariableLocalTypedWithReadInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -3307,6 +3499,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#getVariables() ////////////////////////////////////////////
 
+  @Test
   public void testGetVariablesWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3318,13 +3511,13 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(READ_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(READ_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
 
     // given (2)
@@ -3337,13 +3530,14 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then (2)
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testGetVariablesWithReadPermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3360,6 +3554,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesWithReadPermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3376,6 +3571,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesWithReadInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3392,6 +3588,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesWithReadInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3408,6 +3605,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesWithReadInstanceVariablePermissionOnProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -3421,6 +3619,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyGetVariables(variables);
   }
 
+  @Test
   public void testGetVariablesWithReadInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -3438,6 +3637,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#getVariablesLocal() ////////////////////////////////////////////
 
+  @Test
   public void testGetVariablesLocalWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3449,13 +3649,13 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(READ_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(READ_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
 
     // given (2)
@@ -3468,13 +3668,14 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then (2)
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testGetVariablesLocalWithReadPermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3491,6 +3692,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesLocalWithReadPermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3507,6 +3709,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesLocalWithReadInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3523,6 +3726,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesLocalWithReadInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3539,6 +3743,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesLocalWithReadInstanceVariablePermissionOnProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -3552,6 +3757,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyGetVariables(variables);
   }
 
+  @Test
   public void testGetVariablesLocalWithReadInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -3569,6 +3775,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#getVariablesTyped() ////////////////////////////////////////////
 
+  @Test
   public void testGetVariablesTypedWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3580,13 +3787,13 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(READ_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(READ_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
 
     // given (2)
@@ -3599,13 +3806,14 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then (2)
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testGetVariablesTypedWithReadPermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3622,6 +3830,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesTypedWithReadPermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3638,6 +3847,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesTypedWithReadInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3654,6 +3864,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesTypedWithReadInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3670,6 +3881,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesTypedWithReadInstanceVariablePermissionOnProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -3683,6 +3895,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyGetVariables(variables);
   }
 
+  @Test
   public void testGetVariablesTypedWithReadInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -3700,6 +3913,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#getVariablesLocalTyped() ////////////////////////////////////////////
 
+  @Test
   public void testGetVariablesLocalTypedWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3711,13 +3925,13 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(READ_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(READ_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
 
     // given (2)
@@ -3730,13 +3944,14 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then (2)
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testGetVariablesLocalTypedWithReadPermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3753,6 +3968,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesLocalTypedWithReadPermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3769,6 +3985,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesLocalTypedWithReadInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3785,6 +4002,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesLocalTypedWithReadInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3801,6 +4019,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesLocalTypedWithReadInstanceVariablePermissionOnProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -3814,6 +4033,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyGetVariables(variables);
   }
 
+  @Test
   public void testGetVariablesLocalTypedWithReadInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -3829,6 +4049,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#getVariables() ////////////////////////////////////////////
 
+  @Test
   public void testGetVariablesByNameWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3840,13 +4061,13 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(READ_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(READ_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
 
     // given (2)
@@ -3859,13 +4080,14 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then (2)
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testGetVariablesByNameWithReadPermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3882,6 +4104,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesByNameWithReadPermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3898,6 +4121,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesByNameWithReadInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3914,6 +4138,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesByNameWithReadInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3930,6 +4155,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesByNameWithReadInstanceVariablePermissionOnProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -3943,6 +4169,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyGetVariables(variables);
   }
 
+  @Test
   public void testGetVariablesByNameWithReadInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -3958,6 +4185,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#getVariablesLocal() ////////////////////////////////////////////
 
+  @Test
   public void testGetVariablesLocalByNameWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -3969,13 +4197,13 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(READ_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(READ_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
 
     // given (2)
@@ -3988,13 +4216,14 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then (2)
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testGetVariablesLocalByNameWithReadPermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4011,6 +4240,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesLocalByNameWithReadPermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4027,6 +4257,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesLocalByNameWithReadInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4043,6 +4274,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesLocalByNameWithReadInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4059,6 +4291,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesLocalByNameWithReadInstanceVariablePermissionOnProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -4072,6 +4305,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyGetVariables(variables);
   }
 
+  @Test
   public void testGetVariablesLocalByNameWithReadInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -4087,6 +4321,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#getVariablesTyped() ////////////////////////////////////////////
 
+  @Test
   public void testGetVariablesTypedByNameWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4098,13 +4333,13 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(READ_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(READ_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
 
     // given (2)
@@ -4117,13 +4352,14 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then (2)
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testGetVariablesTypedByNameWithReadPermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4140,6 +4376,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesTypedByNameWithReadPermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4156,6 +4393,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesTypedByNameWithReadInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4172,6 +4410,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesTypedByNameWithReadInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4188,6 +4427,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesTypedByNameWithReadInstanceVariablePermissionOnProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -4201,6 +4441,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyGetVariables(variables);
   }
 
+  @Test
   public void testGetVariablesTypedByNameWithReadInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -4216,6 +4457,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#getVariablesLocalTyped() ////////////////////////////////////////////
 
+  @Test
   public void testGetVariablesLocalTypedByNameWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4227,13 +4469,13 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ.getName(), message);
-      testHelper.assertTextPresent(processInstanceId, message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(READ_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ.getName(), message);
+      testRule.assertTextPresent(processInstanceId, message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(READ_INSTANCE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
 
     // given (2)
@@ -4246,13 +4488,14 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then (2)
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ_INSTANCE_VARIABLE.getName(), message);
+      testRule.assertTextPresent(PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testGetVariablesLocalTypedByNameWithReadPermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4269,6 +4512,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesLocalTypedByNameWithReadPermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4285,6 +4529,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesLocalTypedByNameWithReadInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4301,6 +4546,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesLocalTypedByNameWithReadInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4317,6 +4563,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     assertEquals(VARIABLE_VALUE, variables.get(VARIABLE_NAME));
   }
 
+  @Test
   public void testGetVariablesLocalTypedByNameWithReadInstanceVariablePermissionOnProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -4330,6 +4577,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyGetVariables(variables);
   }
 
+  @Test
   public void testGetVariablesLocalTypedByNameWithReadInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     setReadVariableAsDefaultReadVariablePermission();
@@ -4345,6 +4593,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#setVariable() ////////////////////////////////////////////
 
+  @Test
   public void testSetVariableWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4360,6 +4609,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     }
   }
 
+  @Test
   public void testSetVariableWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4368,6 +4618,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariable(processInstanceId);
   }
 
+  @Test
   public void testSetVariableWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4376,6 +4627,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariable(processInstanceId);
   }
 
+  @Test
   public void testSetVariableWithUpdateInstanceInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4391,6 +4643,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
   }
 
+  @Test
   public void testSetVariableWithUpdateInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4399,6 +4652,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariable(processInstanceId);
   }
 
+  @Test
   public void testSetVariableWithUpdateVariablePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4407,6 +4661,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariable(processInstanceId);
   }
 
+  @Test
   public void testSetVariableWithUpdateVariablePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4415,6 +4670,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariable(processInstanceId);
   }
 
+  @Test
   public void testSetVariableWithUpdateInstanceVariablePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4423,6 +4679,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariable(processInstanceId);
   }
 
+  @Test
   public void testSetVariableWithUpdateInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4433,6 +4690,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#setVariableLocal() ////////////////////////////////////////////
 
+  @Test
   public void testSetVariableLocalWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4447,6 +4705,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     }
   }
 
+  @Test
   public void testSetVariableLocalWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4455,6 +4714,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariableLocal(processInstanceId);
   }
 
+  @Test
   public void testSetVariableLocalWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4463,6 +4723,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariableLocal(processInstanceId);
   }
 
+  @Test
   public void testSetVariableLocalWithUpdateInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4471,6 +4732,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariableLocal(processInstanceId);
   }
 
+  @Test
   public void testSetVariableLocalWithUpdateInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4486,6 +4748,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
   }
 
+  @Test
   public void testSetVariableLocalWithUpdateVariablePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4494,6 +4757,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariableLocal(processInstanceId);
   }
 
+  @Test
   public void testSetVariableLocalWithUpdateVariablePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4502,6 +4766,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariableLocal(processInstanceId);
   }
 
+  @Test
   public void testSetVariableLocalWithUpdateInstanceVariablePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4510,6 +4775,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariableLocal(processInstanceId);
   }
 
+  @Test
   public void testSetVariableLocalWithUpdateInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4520,6 +4786,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#setVariables() ////////////////////////////////////////////
 
+  @Test
   public void testSetVariablesWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4534,6 +4801,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     }
   }
 
+  @Test
   public void testSetVariablesWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4542,6 +4810,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariables(processInstanceId);
   }
 
+  @Test
   public void testSetVariablesWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4550,6 +4819,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariables(processInstanceId);
   }
 
+  @Test
   public void testSetVariablesWithUpdateInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4558,6 +4828,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariables(processInstanceId);
   }
 
+  @Test
   public void testSetVariablesWithUpdateInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4566,6 +4837,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariables(processInstanceId);
   }
 
+  @Test
   public void testSetVariablesWithUpdateVariablePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4574,6 +4846,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariables(processInstanceId);
   }
 
+  @Test
   public void testSetVariablesWithUpdateVariablePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4582,6 +4855,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariables(processInstanceId);
   }
 
+  @Test
   public void testSetVariablesWithUpdateInstanceVariablePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4590,6 +4864,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariables(processInstanceId);
   }
 
+  @Test
   public void testSetVariablesWithUpdateInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4600,6 +4875,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#setVariablesLocal() ////////////////////////////////////////////
 
+  @Test
   public void testSetVariablesLocalWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4614,6 +4890,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     }
   }
 
+  @Test
   public void testSetVariablesLocalWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4622,6 +4899,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testSetVariablesLocalWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4630,6 +4908,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testSetVariablesLocalWithUpdateInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4638,6 +4917,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testSetVariablesLocalWithUpdateInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4646,6 +4926,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testSetVariablesLocalWithUpdateVariablePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4654,6 +4935,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testSetVariablesLocalWithUpdateVariablePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4662,6 +4944,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testSetVariablesLocalWithUpdateInstanceVariablePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4670,6 +4953,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifySetVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testSetVariablesLocalWithUpdateInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -4680,6 +4964,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#removeVariable() ////////////////////////////////////////////
 
+  @Test
   public void testRemoveVariableWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4694,6 +4979,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     }
   }
 
+  @Test
   public void testRemoveVariableWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4702,6 +4988,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariable(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariableWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4710,6 +4997,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariable(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariableWithUpdateInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4718,6 +5006,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariable(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariableWithUpdateInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4726,6 +5015,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariable(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariableWithUpdateVariablePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4734,6 +5024,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariable(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariableWithUpdateVariablePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4742,6 +5033,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariable(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariableWithUpdateInstanceVariablePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4750,6 +5042,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariable(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariableWithUpdateInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4760,6 +5053,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#removeVariableLocal() ////////////////////////////////////////////
 
+  @Test
   public void testRemoveVariableLocalWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4774,6 +5068,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     }
   }
 
+  @Test
   public void testRemoveVariableLocalWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4782,6 +5077,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariableLocal(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariableLocalWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4790,6 +5086,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariableLocal(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariableLocalWithUpdateInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4798,6 +5095,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariableLocal(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariableLocalWithUpdateInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4806,6 +5104,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariableLocal(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariableLocalWithUpdateVariablePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4814,6 +5113,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariableLocal(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariableLocalWithUpdateVariablePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4822,6 +5122,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariableLocal(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariableLocalWithUpdateInstanceVariablePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4830,6 +5131,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariableLocal(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariableLocalWithUpdateInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4840,6 +5142,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#removeVariables() ////////////////////////////////////////////
 
+  @Test
   public void testRemoveVariablesWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4854,6 +5157,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     }
   }
 
+  @Test
   public void testRemoveVariablesWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4862,6 +5166,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariables(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariablesWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4870,6 +5175,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariables(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariablesWithUpdateInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4878,6 +5184,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariables(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariablesWithUpdateInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4886,6 +5193,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariables(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariablesWithUpdateVariablePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4894,6 +5202,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariables(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariablesWithUpdateVariablePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4902,6 +5211,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariables(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariablesWithUpdateInstanceVariablePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4910,6 +5220,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariables(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariablesWithUpdateInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4920,6 +5231,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeService#removeVariablesLocal() ////////////////////////////////////////////
 
+  @Test
   public void testRemoveVariablesLocalWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4934,6 +5246,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     }
   }
 
+  @Test
   public void testRemoveVariablesLocalWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4942,6 +5255,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariablesLocalWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4950,6 +5264,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariablesLocalWithUpdateInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4958,6 +5273,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariablesLocalWithUpdateInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4966,6 +5282,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariablesLocalWithUpdateVariablePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4974,6 +5291,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariablesLocalWithUpdateVariablePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4982,6 +5300,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariablesLocalWithUpdateInstanceVariablePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -4990,6 +5309,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyRemoveVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testRemoveVariablesLocalWithUpdateInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY, getVariables()).getId();
@@ -5000,6 +5320,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeServiceImpl#updateVariables() ////////////////////////////////////////////
 
+  @Test
   public void testUpdateVariablesWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -5032,6 +5353,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     }
   }
 
+  @Test
   public void testUpdateVariablesWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -5040,6 +5362,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyUpdateVariables(processInstanceId);
   }
 
+  @Test
   public void testUpdateVariablesWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -5048,6 +5371,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyUpdateVariables(processInstanceId);
   }
 
+  @Test
   public void testUpdateVariablesWithUpdateInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -5056,6 +5380,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyUpdateVariables(processInstanceId);
   }
 
+  @Test
   public void testUpdateVariablesWithUpdateInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -5064,6 +5389,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyUpdateVariables(processInstanceId);
   }
 
+  @Test
   public void testUpdateVariablesWithUpdateVariablePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -5072,6 +5398,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyUpdateVariables(processInstanceId);
   }
 
+  @Test
   public void testUpdateVariablesWithUpdateVariablePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -5080,6 +5407,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyUpdateVariables(processInstanceId);
   }
 
+  @Test
   public void testUpdateVariablesWithUpdateInstanceVariablePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -5088,6 +5416,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyUpdateVariables(processInstanceId);
   }
 
+  @Test
   public void testUpdateVariablesWithUpdateInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -5098,6 +5427,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
 
   // RuntimeServiceImpl#updateVariablesLocal() ////////////////////////////////////////////
 
+  @Test
   public void testUpdateVariablesLocalWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -5130,6 +5460,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     }
   }
 
+  @Test
   public void testUpdateVariablesLocalWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -5138,6 +5469,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyUpdateVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testUpdateVariablesLocalWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -5146,6 +5478,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyUpdateVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testUpdateVariablesLocalWithUpdateInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -5154,6 +5487,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyUpdateVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testUpdateVariablesLocalWithUpdateInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -5162,6 +5496,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyUpdateVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testUpdateVariablesLocalWithUpdateVariablePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -5170,6 +5505,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyUpdateVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testUpdateVariablesLocalWithUpdateVariablePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -5178,6 +5514,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyUpdateVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testUpdateVariablesLocalWithUpdateInstanceVariablePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -5186,6 +5523,7 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
     verifyUpdateVariablesLocal(processInstanceId);
   }
 
+  @Test
   public void testUpdateVariablesLocalWithUpdateInstanceVariablePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
@@ -5205,15 +5543,15 @@ public class ProcessInstanceAuthorizationTest extends AuthorizationTest {
   }
 
   protected void verifyMessageIsValid(String processInstanceId, String message) {
-    testHelper.assertTextPresent(userId, message);
-    testHelper.assertTextPresent(UPDATE.getName(), message);
-    testHelper.assertTextPresent(UPDATE_VARIABLE.getName(), message);
-    testHelper.assertTextPresent(processInstanceId, message);
-    testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-    testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-    testHelper.assertTextPresent(UPDATE_INSTANCE_VARIABLE.getName(), message);
-    testHelper.assertTextPresent(PROCESS_KEY, message);
-    testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+    testRule.assertTextPresent(userId, message);
+    testRule.assertTextPresent(UPDATE.getName(), message);
+    testRule.assertTextPresent(UPDATE_VARIABLE.getName(), message);
+    testRule.assertTextPresent(processInstanceId, message);
+    testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+    testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+    testRule.assertTextPresent(UPDATE_INSTANCE_VARIABLE.getName(), message);
+    testRule.assertTextPresent(PROCESS_KEY, message);
+    testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
   }
 
   protected void verifyVariableInstanceCountDisabledAuthorization(int count) {

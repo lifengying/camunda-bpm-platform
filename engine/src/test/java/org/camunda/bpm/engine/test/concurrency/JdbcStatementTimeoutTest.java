@@ -18,7 +18,6 @@ package org.camunda.bpm.engine.test.concurrency;
 
 import java.util.List;
 
-import org.camunda.bpm.engine.ProcessEngineConfiguration;
 import org.camunda.bpm.engine.history.HistoricJobLog;
 import org.camunda.bpm.engine.impl.context.Context;
 import org.camunda.bpm.engine.impl.db.entitymanager.DbEntityManager;
@@ -28,8 +27,21 @@ import org.camunda.bpm.engine.impl.interceptor.Command;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.bpm.engine.impl.persistence.entity.JobEntity;
 import org.camunda.bpm.engine.impl.persistence.entity.MessageEntity;
+import org.camunda.bpm.engine.impl.test.RequiredDatabase;
 import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.test.util.DatabaseHelper;
+import org.camunda.bpm.engine.test.util.ProcessEngineProvider;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  *  @author Philipp Ossler
@@ -44,32 +56,29 @@ public class JdbcStatementTimeoutTest extends ConcurrencyTest {
   private ThreadControl thread1;
   private ThreadControl thread2;
 
-  @Override
-  protected void runTest() throws Throwable {
-    String databaseType = DatabaseHelper.getDatabaseType(processEngineConfiguration);
-
-    if ((DbSqlSessionFactory.DB2.equals(databaseType) || DbSqlSessionFactory.MARIADB.equals(databaseType))
-      && processEngine.getProcessEngineConfiguration().isJdbcBatchProcessing()) {
-      // skip test method - if database is DB2 and MariaDB and Batch mode on
-    } else {
-      // invoke the test method
-      super.runTest();
-    }
-  }
-
-  @Override
+  @Before
   protected void initializeProcessEngine() {
-    processEngine = ProcessEngineConfiguration.createProcessEngineConfigurationFromResource("camunda.cfg.xml")
+    processEngine = ProcessEngineProvider.createConfigurationFromResource("camunda.cfg.xml")
         .setJdbcStatementTimeout(STATEMENT_TIMEOUT_IN_SECONDS)
         .buildProcessEngine();
   }
 
-  @Override
+  @After
+  public void tearDown() throws Exception {
+    if (thread1 != null) {
+      thread1.waitUntilDone();
+      deleteJobEntities();
+    }
+  }
+
+  @After
   protected void closeDownProcessEngine() {
     processEngine.close();
     processEngine = null;
   }
 
+  @Test
+  @RequiredDatabase(excludes = { DbSqlSessionFactory.MARIADB, DbSqlSessionFactory.DB2 })
   public void testTimeoutOnUpdate() {
     createJobEntity();
 
@@ -93,14 +102,6 @@ public class JdbcStatementTimeoutTest extends ConcurrencyTest {
     thread2.waitForSync(TEST_TIMEOUT_IN_MILLIS);
 
     assertNotNull("expected timeout exception", thread2.getException());
-  }
-
-  @Override
-  protected void tearDown() throws Exception {
-    if (thread1 != null) {
-      thread1.waitUntilDone();
-      deleteJobEntities();
-    }
   }
 
   private void createJobEntity() {

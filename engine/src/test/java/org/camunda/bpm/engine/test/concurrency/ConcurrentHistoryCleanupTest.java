@@ -18,14 +18,27 @@ package org.camunda.bpm.engine.test.concurrency;
 
 import java.sql.Connection;
 import java.util.List;
+
 import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.camunda.bpm.engine.impl.cmd.HistoryCleanupCmd;
 import org.camunda.bpm.engine.impl.db.sql.DbSqlSessionFactory;
 import org.camunda.bpm.engine.impl.interceptor.Command;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.bpm.engine.impl.persistence.entity.JobEntity;
+import org.camunda.bpm.engine.impl.test.RequiredDatabase;
 import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.test.util.DatabaseHelper;
+import org.junit.After;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * <p>Tests the call to history cleanup simultaneously.</p>
@@ -37,7 +50,7 @@ import org.camunda.bpm.engine.test.util.DatabaseHelper;
  */
 public class ConcurrentHistoryCleanupTest extends ConcurrencyTest {
 
-  @Override
+  @After
   public void tearDown() throws Exception {
     ((ProcessEngineConfigurationImpl)processEngine.getProcessEngineConfiguration()).getCommandExecutorTxRequired().execute(new Command<Void>() {
       public Void execute(CommandContext commandContext) {
@@ -52,23 +65,15 @@ public class ConcurrentHistoryCleanupTest extends ConcurrencyTest {
         return null;
       }
     });
-    super.tearDown();
+
   }
 
-  @Override
-  protected void runTest() throws Throwable {
-    final Integer transactionIsolationLevel = DatabaseHelper.getTransactionIsolationLevel(processEngineConfiguration);
-    String databaseType = DatabaseHelper.getDatabaseType(processEngineConfiguration);
-
-    if (DbSqlSessionFactory.H2.equals(databaseType) || DbSqlSessionFactory.MARIADB.equals(databaseType) || (transactionIsolationLevel != null && !transactionIsolationLevel.equals(Connection.TRANSACTION_READ_COMMITTED))) {
-      // skip test method - if database is H2
-    } else {
-      // invoke the test method
-      super.runTest();
-    }
-  }
-
+  @Test
+  @RequiredDatabase(excludes = { DbSqlSessionFactory.MARIADB, DbSqlSessionFactory.H2 })
   public void testRunTwoHistoryCleanups() throws InterruptedException {
+    final Integer transactionIsolationLevel = DatabaseHelper.getTransactionIsolationLevel(processEngineConfiguration);
+    assumeTrue((transactionIsolationLevel != null && !transactionIsolationLevel.equals(Connection.TRANSACTION_READ_COMMITTED)));
+
     ThreadControl thread1 = executeControllableCommand(new ControllableHistoryCleanupCommand());
     thread1.waitForSync();
 

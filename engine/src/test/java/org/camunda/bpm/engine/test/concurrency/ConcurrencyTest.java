@@ -16,11 +16,15 @@
  */
 package org.camunda.bpm.engine.test.concurrency;
 
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.camunda.bpm.engine.impl.interceptor.Command;
 import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * @author Daniel Meyer
@@ -30,14 +34,14 @@ public abstract class ConcurrencyTest extends PluggableProcessEngineTest {
 
   protected List<ControllableCommand<?>> controllableCommands;
 
-  @Override
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
     controllableCommands = new ArrayList<>();
-    super.setUp();
+
   }
 
-  @Override
-  protected void tearDown() throws Exception {
+  @After
+  public void tearDown() throws Exception {
 
     // wait for all spawned threads to end
     for (ControllableCommand<?> controllableCommand : controllableCommands) {
@@ -49,7 +53,7 @@ public abstract class ConcurrencyTest extends PluggableProcessEngineTest {
     // clear the test thread's interruption state
     Thread.interrupted();
 
-    super.tearDown();
+
   }
 
   protected ThreadControl executeControllableCommand(final ControllableCommand<?> command) {

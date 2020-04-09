@@ -28,6 +28,17 @@ import org.camunda.bpm.engine.impl.AbstractQuery;
 import org.camunda.bpm.engine.management.JobDefinition;
 import org.camunda.bpm.engine.management.JobDefinitionQuery;
 import org.camunda.bpm.engine.runtime.Job;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author Roman Smirnov
@@ -38,24 +49,16 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
   protected static final String TIMER_START_PROCESS_KEY = "timerStartProcess";
   protected static final String TIMER_BOUNDARY_PROCESS_KEY = "timerBoundaryProcess";
 
-  protected String deploymentId;
-
-  @Override
+  @Before
   public void setUp() throws Exception {
-    deploymentId = createDeployment(null,
+    testRule.deploy(
         "org/camunda/bpm/engine/test/api/authorization/timerStartEventProcess.bpmn20.xml",
-        "org/camunda/bpm/engine/test/api/authorization/timerBoundaryEventProcess.bpmn20.xml").getId();
-    super.setUp();
-  }
-
-  @Override
-  public void tearDown() {
-    super.tearDown();
-    deleteDeployment(deploymentId);
+        "org/camunda/bpm/engine/test/api/authorization/timerBoundaryEventProcess.bpmn20.xml");
   }
 
   // job definition query ///////////////////////////////////////
 
+  @Test
   public void testQueryWithoutAuthorization() {
     // given
 
@@ -66,6 +69,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testQueryWithReadPermissionOnProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, TIMER_START_PROCESS_KEY, userId, READ);
@@ -77,6 +81,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 1);
   }
 
+  @Test
   public void testQueryWithReadPermissionOnAnyProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, ANY, userId, READ);
@@ -88,6 +93,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 2);
   }
 
+  @Test
   public void testQueryWithMultiple() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, ANY, userId, READ);
@@ -102,6 +108,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
 
   // suspend job definition by id ///////////////////////////////
 
+  @Test
   public void testSuspendByIdWithoutAuthorization() {
     // given
     String jobDefinitionId = selectJobDefinitionByProcessDefinitionKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -113,13 +120,14 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testSuspendByIdWithUpdatePermissionOnProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, TIMER_BOUNDARY_PROCESS_KEY, userId, UPDATE);
@@ -134,6 +142,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     assertTrue(jobDefinition.isSuspended());
   }
 
+  @Test
   public void testSuspendByIdWithUpdatePermissionOnAnyProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, ANY, userId, UPDATE);
@@ -150,6 +159,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
 
   // activate job definition by id ///////////////////////////////
 
+  @Test
   public void testActivateByIdWithoutAuthorization() {
     // given
     String jobDefinitionId = selectJobDefinitionByProcessDefinitionKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -162,13 +172,14 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testActivateByIdWithUpdatePermissionOnProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, TIMER_BOUNDARY_PROCESS_KEY, userId, UPDATE);
@@ -184,6 +195,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     assertFalse(jobDefinition.isSuspended());
   }
 
+  @Test
   public void testActivateByIdWithUpdatePermissionOnAnyProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, ANY, userId, UPDATE);
@@ -201,6 +213,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
 
   // suspend job definition by id (including jobs) ///////////////////////////////
 
+  @Test
   public void testSuspendIncludingJobsByIdWithoutAuthorization() {
     // given
     String jobDefinitionId = selectJobDefinitionByProcessDefinitionKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -214,15 +227,16 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testSuspendIncludingJobsByIdWithUpdatePermissionOnProcessInstance() {
     // given
     String jobDefinitionId = selectJobDefinitionByProcessDefinitionKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -238,15 +252,16 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testSuspendIncludingJobsByIdWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String jobDefinitionId = selectJobDefinitionByProcessDefinitionKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -268,6 +283,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     assertTrue(job.isSuspended());
   }
 
+  @Test
   public void testSuspendIncludingJobsByIdWithUpdateInstancePermissionOnProcessDefinition() {
     // given
     String jobDefinitionId = selectJobDefinitionByProcessDefinitionKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -288,6 +304,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     assertTrue(job.isSuspended());
   }
 
+  @Test
   public void testSuspendIncludingJobsByIdWithUpdateInstancePermissionOnAnyProcessDefinition() {
     // given
     String jobDefinitionId = selectJobDefinitionByProcessDefinitionKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -311,6 +328,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
 
   // activate job definition by id (including jobs) ///////////////////////////////
 
+  @Test
   public void testActivateIncludingJobsByIdWithoutAuthorization() {
     // given
     String jobDefinitionId = selectJobDefinitionByProcessDefinitionKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -326,15 +344,16 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testActivateIncludingJobsByIdWithUpdatePermissionOnProcessInstance() {
     // given
     String jobDefinitionId = selectJobDefinitionByProcessDefinitionKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -351,15 +370,16 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testActivateIncludingJobsByIdWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String jobDefinitionId = selectJobDefinitionByProcessDefinitionKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -382,6 +402,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     assertFalse(job.isSuspended());
   }
 
+  @Test
   public void testActivateIncludingJobsByIdWithUpdateInstancePermissionOnProcessDefinition() {
     // given
     String jobDefinitionId = selectJobDefinitionByProcessDefinitionKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -403,6 +424,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     assertFalse(job.isSuspended());
   }
 
+  @Test
   public void testActivateIncludingJobsByIdWithUpdateInstancePermissionOnAnyProcessDefinition() {
     // given
     String jobDefinitionId = selectJobDefinitionByProcessDefinitionKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -427,6 +449,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
 
   // suspend job definition by process definition id ///////////////////////////////
 
+  @Test
   public void testSuspendByProcessDefinitionIdWithoutAuthorization() {
     // given
     String processDefinitionId = selectProcessDefinitionByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -438,13 +461,14 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testSuspendByProcessDefinitionIdWithUpdatePermissionOnProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, TIMER_BOUNDARY_PROCESS_KEY, userId, UPDATE);
@@ -459,6 +483,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     assertTrue(jobDefinition.isSuspended());
   }
 
+  @Test
   public void testSuspendByProcessDefinitionIdWithUpdatePermissionOnAnyProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, ANY, userId, UPDATE);
@@ -475,6 +500,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
 
   // activate job definition by process definition id ///////////////////////////////
 
+  @Test
   public void testActivateByProcessDefinitionIdWithoutAuthorization() {
     // given
     String processDefinitionId = selectProcessDefinitionByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -487,13 +513,14 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testActivateByProcessDefinitionIdWithUpdatePermissionOnProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, TIMER_BOUNDARY_PROCESS_KEY, userId, UPDATE);
@@ -509,6 +536,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     assertFalse(jobDefinition.isSuspended());
   }
 
+  @Test
   public void testActivateByProcessDefinitionIdWithUpdatePermissionOnAnyProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, ANY, userId, UPDATE);
@@ -526,6 +554,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
 
   // suspend job definition by process definition id (including jobs) ///////////////////////////////
 
+  @Test
   public void testSuspendIncludingJobsByProcessDefinitionIdWithoutAuthorization() {
     // given
     startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY);
@@ -540,15 +569,16 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testSuspendIncludingJobsByProcessDefinitionIdWithUpdatePermissionOnProcessInstance() {
     // given
     String processDefinitionId = selectProcessDefinitionByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -564,15 +594,16 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testSuspendIncludingJobsByProcessDefinitionIdWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String processDefinitionId = selectProcessDefinitionByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -594,6 +625,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     assertTrue(job.isSuspended());
   }
 
+  @Test
   public void testSuspendIncludingJobsByProcessDefinitionIdWithUpdateInstancePermissionOnProcessDefinition() {
     // given
     String processDefinitionId = selectProcessDefinitionByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -614,6 +646,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     assertTrue(job.isSuspended());
   }
 
+  @Test
   public void testSuspendIncludingJobsByProcessDefinitionIdWithUpdateInstancePermissionOnAnyProcessDefinition() {
     // given
     String processDefinitionId = selectProcessDefinitionByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -637,6 +670,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
 
   // activate job definition by id (including jobs) ///////////////////////////////
 
+  @Test
   public void testActivateIncludingJobsByProcessDefinitionIdWithoutAuthorization() {
     // given
     String processDefinitionId = selectProcessDefinitionByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -652,15 +686,16 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testActivateIncludingJobsByProcessDefinitionIdWithUpdatePermissionOnProcessInstance() {
     // given
     String processDefinitionId = selectProcessDefinitionByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -677,15 +712,16 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testActivateIncludingJobsByProcessDefinitionIdWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String processDefinitionId = selectProcessDefinitionByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -708,6 +744,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     assertFalse(job.isSuspended());
   }
 
+  @Test
   public void testActivateIncludingJobsByProcessDefinitionIdWithUpdateInstancePermissionOnProcessDefinition() {
     // given
     String processDefinitionId = selectProcessDefinitionByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -729,6 +766,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     assertFalse(job.isSuspended());
   }
 
+  @Test
   public void testActivateIncludingJobsByProcessDefinitionIdWithUpdateInstancePermissionOnAnyProcessDefinition() {
     // given
     String processDefinitionId = selectProcessDefinitionByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -753,6 +791,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
 
   // suspend job definition by process definition key ///////////////////////////////
 
+  @Test
   public void testSuspendByProcessDefinitionKeyWithoutAuthorization() {
     // given
 
@@ -763,13 +802,14 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testSuspendByProcessDefinitionKeyWithUpdatePermissionOnProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, TIMER_BOUNDARY_PROCESS_KEY, userId, UPDATE);
@@ -783,6 +823,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     assertTrue(jobDefinition.isSuspended());
   }
 
+  @Test
   public void testSuspendByProcessDefinitionKeyWithUpdatePermissionOnAnyProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, ANY, userId, UPDATE);
@@ -798,6 +839,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
 
   // activate job definition by process definition key ///////////////////////////////
 
+  @Test
   public void testActivateByProcessDefinitionKeyWithoutAuthorization() {
     // given
     suspendJobDefinitionByProcessDefinitionKey(TIMER_BOUNDARY_PROCESS_KEY);
@@ -809,13 +851,14 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testActivateByProcessDefinitionKeyWithUpdatePermissionOnProcessDefinition() {
     // given
     suspendJobDefinitionByProcessDefinitionKey(TIMER_BOUNDARY_PROCESS_KEY);
@@ -830,6 +873,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     assertFalse(jobDefinition.isSuspended());
   }
 
+  @Test
   public void testActivateByProcessDefinitionKeyWithUpdatePermissionOnAnyProcessDefinition() {
     // given
     suspendJobDefinitionByProcessDefinitionKey(TIMER_BOUNDARY_PROCESS_KEY);
@@ -846,6 +890,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
 
   // suspend job definition by process definition key (including jobs) ///////////////////////////////
 
+  @Test
   public void testSuspendIncludingJobsByProcessDefinitionKeyWithoutAuthorization() {
     // given
     startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY);
@@ -859,15 +904,16 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testSuspendIncludingJobsByProcessDefinitionKeyWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -882,15 +928,16 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testSuspendIncludingJobsByProcessDefinitionKeyWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -911,6 +958,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     assertTrue(job.isSuspended());
   }
 
+  @Test
   public void testSuspendIncludingJobsByProcessDefinitionKeyWithUpdateInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -930,6 +978,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     assertTrue(job.isSuspended());
   }
 
+  @Test
   public void testSuspendIncludingJobsByProcessDefinitionKeyWithUpdateInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -952,6 +1001,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
 
   // activate job definition by id (including jobs) ///////////////////////////////
 
+  @Test
   public void testActivateIncludingJobsByProcessDefinitionKeyWithoutAuthorization() {
     // given
     startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY);
@@ -966,15 +1016,16 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testActivateIncludingJobsByProcessDefinitionKeyWithUpdatePermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -990,15 +1041,16 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
-      testHelper.assertTextPresent(UPDATE_INSTANCE.getName(), message);
-      testHelper.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(PROCESS_INSTANCE.resourceName(), message);
+      testRule.assertTextPresent(UPDATE_INSTANCE.getName(), message);
+      testRule.assertTextPresent(TIMER_BOUNDARY_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testActivateIncludingJobsByProcessDefinitionKeyWithUpdatePermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -1020,6 +1072,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     assertFalse(job.isSuspended());
   }
 
+  @Test
   public void testActivateIncludingJobsByProcessDefinitionKeyWithUpdateInstancePermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();
@@ -1040,6 +1093,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     assertFalse(job.isSuspended());
   }
 
+  @Test
   public void testActivateIncludingJobsByProcessDefinitionKeyWithUpdateInstancePermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY).getId();

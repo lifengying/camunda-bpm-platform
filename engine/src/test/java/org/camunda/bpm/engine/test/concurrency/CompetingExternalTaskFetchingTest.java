@@ -16,6 +16,9 @@
  */
 package org.camunda.bpm.engine.test.concurrency;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +27,9 @@ import org.camunda.bpm.engine.OptimisticLockingException;
 import org.camunda.bpm.engine.externaltask.LockedExternalTask;
 import org.camunda.bpm.engine.impl.cmd.FetchExternalTasksCmd;
 import org.camunda.bpm.engine.impl.externaltask.TopicFetchInstruction;
-import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.camunda.bpm.engine.test.Deployment;
+import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
+import org.junit.Test;
 
 /**
  * @author Thorben Lindhauer
@@ -64,6 +68,7 @@ public class CompetingExternalTaskFetchingTest extends PluggableProcessEngineTes
   }
 
   @Deployment
+  @Test
   public void testCompetingExternalTaskFetching() {
     runtimeService.startProcessInstanceByKey("oneExternalTaskProcess");
 

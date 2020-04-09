@@ -16,16 +16,20 @@
  */
 package org.camunda.bpm.engine.test.concurrency;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import org.camunda.bpm.engine.OptimisticLockingException;
 import org.camunda.bpm.engine.impl.ProcessEngineLogger;
 import org.camunda.bpm.engine.impl.cmd.SignalCmd;
 import org.camunda.bpm.engine.impl.cmd.SuspendProcessDefinitionCmd;
 import org.camunda.bpm.engine.impl.repository.UpdateProcessDefinitionSuspensionStateBuilderImpl;
-import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.camunda.bpm.engine.runtime.Execution;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.Deployment;
+import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
+import org.junit.Test;
 import org.slf4j.Logger;
 
 /**
@@ -109,6 +113,7 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
    * such that concurrent updates fail with an OptimisticLockingException.
    */
   @Deployment
+  @Test
   public void testCompetingSuspension() {
     ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionKey("CompetingSuspensionProcess").singleResult();
 

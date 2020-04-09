@@ -18,8 +18,9 @@ package org.camunda.bpm.engine.test.api.authorization.history;
 
 import static org.camunda.bpm.engine.authorization.Resources.OPERATION_LOG_CATEGORY;
 import static org.camunda.bpm.engine.authorization.Resources.PROCESS_DEFINITION;
-import static org.camunda.bpm.engine.history.UserOperationLogEntry.*;
 import static org.camunda.bpm.engine.authorization.UserOperationLogCategoryPermissions.READ;
+import static org.camunda.bpm.engine.history.UserOperationLogEntry.CATEGORY_ADMIN;
+import static org.camunda.bpm.engine.history.UserOperationLogEntry.CATEGORY_OPERATOR;
 
 import org.camunda.bpm.engine.EntityTypes;
 import org.camunda.bpm.engine.ProcessEngineConfiguration;
@@ -38,6 +39,15 @@ import org.camunda.bpm.engine.test.RequiredHistoryLevel;
 import org.camunda.bpm.engine.test.api.authorization.AuthorizationTest;
 import org.camunda.bpm.engine.test.api.identity.TestPermissions;
 import org.camunda.bpm.engine.test.api.identity.TestResource;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author Tobias Metzke
@@ -46,6 +56,7 @@ import org.camunda.bpm.engine.test.api.identity.TestResource;
 @RequiredHistoryLevel(ProcessEngineConfiguration.HISTORY_FULL)
 public class AuthorizationUserOperationLogTest extends AuthorizationTest {
 
+  @Test
   public void testLogCreatedOnAuthorizationCreation() {
     // given
     createGrantAuthorizationWithoutAuthentication(OPERATION_LOG_CATEGORY, CATEGORY_ADMIN, userId, READ);
@@ -95,6 +106,7 @@ public class AuthorizationUserOperationLogTest extends AuthorizationTest {
     assertEquals("testGroupId", entry.getNewValue());
   }
 
+  @Test
   public void testLogCreatedOnAuthorizationUpdate() {
     // given
     UserOperationLogQuery query = historyService.createUserOperationLogQuery();
@@ -164,6 +176,7 @@ public class AuthorizationUserOperationLogTest extends AuthorizationTest {
     assertNull(entry.getOrgValue());
   }
 
+  @Test
   public void testLogCreatedOnAuthorizationDeletion() {
     // given
     UserOperationLogQuery query = historyService.createUserOperationLogQuery();
@@ -215,6 +228,7 @@ public class AuthorizationUserOperationLogTest extends AuthorizationTest {
     assertEquals("testUserId", entry.getNewValue());
   }
 
+  @Test
   public void testLogCreatedOnAuthorizationCreationWithExceedingPermissionStringList() {
     // given
     createGrantAuthorizationWithoutAuthentication(OPERATION_LOG_CATEGORY, CATEGORY_ADMIN, userId, READ);
@@ -237,6 +251,7 @@ public class AuthorizationUserOperationLogTest extends AuthorizationTest {
     assertEquals(TestPermissions.LONG_NAME.getName().substring(0, StringUtil.DB_MAX_STRING_LENGTH), entry.getNewValue());
   }
 
+  @Test
   public void testLogCreatedOnAuthorizationCreationWithAllPermission() {
     // given
     createGrantAuthorizationWithoutAuthentication(OPERATION_LOG_CATEGORY, CATEGORY_ADMIN, userId, READ);
@@ -259,6 +274,7 @@ public class AuthorizationUserOperationLogTest extends AuthorizationTest {
     assertEquals(TestPermissions.ALL.getName(), entry.getNewValue());
   }
 
+  @Test
   public void testLogCreatedOnAuthorizationCreationWithNonePermission() {
     // given
     createGrantAuthorizationWithoutAuthentication(OPERATION_LOG_CATEGORY, CATEGORY_ADMIN, userId, READ);
@@ -281,6 +297,7 @@ public class AuthorizationUserOperationLogTest extends AuthorizationTest {
     assertEquals(TestPermissions.NONE.getName(), entry.getNewValue());
   }
 
+  @Test
   public void testLogCreatedOnAuthorizationCreationWithoutAuthorization() {
     // given
     UserOperationLogQuery query = historyService.createUserOperationLogQuery();
@@ -293,6 +310,7 @@ public class AuthorizationUserOperationLogTest extends AuthorizationTest {
     assertEquals(0, query.count());
   }
 
+  @Test
   public void testLogCreatedOnAuthorizationCreationWithReadPermissionOnAnyCategoryPermission() {
     // given
     createGrantAuthorizationWithoutAuthentication(OPERATION_LOG_CATEGORY, Authorization.ANY, userId, READ);
@@ -306,6 +324,7 @@ public class AuthorizationUserOperationLogTest extends AuthorizationTest {
     assertEquals(6, query.count());
   }
 
+  @Test
   public void testLogCreatedOnAuthorizationCreationWithReadPermissionOnWrongCategory() {
     // given
     createGrantAuthorizationWithoutAuthentication(OPERATION_LOG_CATEGORY, CATEGORY_OPERATOR, userId, READ);

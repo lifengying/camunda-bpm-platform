@@ -16,8 +16,8 @@
  */
 package org.camunda.bpm.engine.test.bpmn.property;
 
-import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.camunda.bpm.engine.test.Deployment;
+import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 
 /**
  * @author Joram Barrez

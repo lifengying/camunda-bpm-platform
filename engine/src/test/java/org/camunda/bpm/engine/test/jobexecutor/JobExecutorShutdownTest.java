@@ -18,7 +18,6 @@ package org.camunda.bpm.engine.test.jobexecutor;
 
 import java.util.List;
 
-import org.camunda.bpm.engine.ProcessEngineConfiguration;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;

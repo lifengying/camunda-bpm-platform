@@ -36,6 +36,17 @@ import org.camunda.bpm.engine.impl.AbstractQuery;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.RequiredHistoryLevel;
 import org.camunda.bpm.engine.test.api.authorization.AuthorizationTest;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author Roman Smirnov
@@ -48,27 +59,23 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
   protected static final String MESSAGE_START_PROCESS_KEY = "messageStartProcess";
   protected static final String CASE_KEY = "oneTaskCase";
 
-  protected String deploymentId;
-
-  @Override
+  @Before
   public void setUp() throws Exception {
-    deploymentId = createDeployment(null,
+    testRule.deploy(
         "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml",
         "org/camunda/bpm/engine/test/api/authorization/messageStartEventProcess.bpmn20.xml",
-        "org/camunda/bpm/engine/test/api/authorization/oneTaskCase.cmmn").getId();
-    super.setUp();
+        "org/camunda/bpm/engine/test/api/authorization/oneTaskCase.cmmn");
   }
 
-  @Override
+  @After
   public void tearDown() {
-    super.tearDown();
     processEngineConfiguration.setEnableHistoricInstancePermissions(false);
     processEngineConfiguration.setEnforceSpecificVariablePermission(false);
-    deleteDeployment(deploymentId);
   }
 
   // historic variable update query (standalone task) /////////////////////////////////////////////
 
+  @Test
   public void testQueryAfterStandaloneTaskVariableUpdates() {
     // given
     String taskId = "myTask";
@@ -89,6 +96,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
 
   // historic variable update query (process task) /////////////////////////////////////////////
 
+  @Test
   public void testSimpleVariableUpdateQueryWithoutAuthorization() {
     // given
     startProcessInstanceByKey(PROCESS_KEY, getVariables());
@@ -100,6 +108,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testSimpleVariableUpdateQueryWithReadHistoryPermissionOnProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY, getVariables());
@@ -112,6 +121,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 1);
   }
 
+  @Test
   public void testSimpleVariableUpdateQueryMultiple() {
     // given
     startProcessInstanceByKey(PROCESS_KEY, getVariables());
@@ -125,6 +135,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 1);
   }
 
+  @Test
   public void testSimpleVariableUpdateQueryWithReadHistoryPermissionOnAnyProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY, getVariables());
@@ -139,6 +150,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
 
   // historic variable update query (multiple process instances) ///////////////////////////////////////////
 
+  @Test
   public void testVariableUpdateQueryWithoutAuthorization() {
     // given
     startProcessInstanceByKey(PROCESS_KEY, getVariables());
@@ -157,6 +169,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testVariableUpdateQueryWithReadHistoryPermissionOnProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY, getVariables());
@@ -177,6 +190,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 3);
   }
 
+  @Test
   public void testVariableUpdateQueryWithReadHistoryPermissionOnAnyProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY, getVariables());
@@ -199,6 +213,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
 
   // historic variable update query (case variables) /////////////////////////////////////////////
 
+  @Test
   public void testQueryAfterCaseVariables() {
     // given
     createCaseInstanceByKey(CASE_KEY, getVariables());
@@ -212,6 +227,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
 
   // historic variable update query (mixed) ////////////////////////////////////
 
+  @Test
   public void testMixedQueryWithoutAuthorization() {
     // given
     startProcessInstanceByKey(PROCESS_KEY, getVariables());
@@ -253,6 +269,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     deleteTask("five", true);
   }
 
+  @Test
   public void testMixedQueryWithReadHistoryPermissionOnProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY, getVariables());
@@ -296,6 +313,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     deleteTask("five", true);
   }
 
+  @Test
   public void testMixedQueryWithReadHistoryPermissionOnAnyProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY, getVariables());
@@ -341,6 +359,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
 
   // historic form field query //////////////////////////////////////////////////////
 
+  @Test
   public void testSimpleFormFieldQueryWithoutAuthorization() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -357,6 +376,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testSimpleFormFieldQueryWithReadHistoryPermissionOnProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -374,6 +394,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 1);
   }
 
+  @Test
   public void testSimpleFormFieldQueryWithReadHistoryPermissionOnAnyProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY, getVariables());
@@ -393,6 +414,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
 
   // historic variable update query (multiple process instances) ///////////////////////////////////////////
 
+  @Test
   public void testFormFieldQueryWithoutAuthorization() {
     // given
     startProcessInstanceByKey(PROCESS_KEY, getVariables());
@@ -411,6 +433,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testFormFieldQueryWithReadHistoryPermissionOnProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -464,6 +487,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 3);
   }
 
+  @Test
   public void testFormFieldQueryWithReadHistoryPermissionOnAnyProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -519,6 +543,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
 
   // historic detail query (variable update + form field) //////////
 
+  @Test
   public void testDetailQueryWithoutAuthorization() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -544,6 +569,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testDetailQueryWithReadHistoryOnProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -571,6 +597,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 7);
   }
 
+  @Test
   public void testDetailQueryWithReadHistoryOnAnyProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -600,8 +627,10 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
 
   // delete deployment (cascade = false)
 
+  @Test
   public void testQueryAfterDeletingDeployment() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(PROCESS_KEY);
     String taskId = selectSingleTask().getId();
     disableAuthorization();
@@ -645,6 +674,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
   }
 
+  @Test
   public void testCheckNonePermissionOnHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -665,6 +695,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     assertEquals(0, result.size());
   }
 
+  @Test
   public void testCheckReadPermissionOnHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -685,6 +716,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     assertEquals(1, result.size());
   }
 
+  @Test
   public void testCheckReadPermissionOnStandaloneHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -708,6 +740,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     deleteTask(taskId, true);
   }
 
+  @Test
   public void testCheckNonePermissionOnStandaloneHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -731,6 +764,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     deleteTask(taskId, true);
   }
 
+  @Test
   public void testCheckReadPermissionOnCompletedHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -752,6 +786,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     assertEquals(1, result.size());
   }
 
+  @Test
   public void testCheckNonePermissionOnHistoricTaskAndReadHistoryPermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -774,6 +809,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     assertEquals(1, result.size());
   }
 
+  @Test
   public void testCheckReadPermissionOnHistoricTaskAndNonePermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -797,6 +833,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     assertEquals(1, result.size());
   }
 
+  @Test
   public void testCheckReadVariablePermissionOnHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -814,6 +851,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     assertEquals(1, result.size());
   }
 
+  @Test
   public void testOnlyReadPermissionOnHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -831,6 +869,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     assertEquals(0, result.size());
   }
 
+  @Test
   public void testIgnoreReadVariablePermissionOnHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -848,6 +887,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     assertEquals(0, result.size());
   }
 
+  @Test
   public void testCheckReadVariablePermissionOnStandaloneHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -871,6 +911,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     deleteTask(taskId, true);
   }
 
+  @Test
   public void testCheckReadVariablePermissionOnCompletedHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -891,6 +932,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     assertEquals(1, result.size());
   }
 
+  @Test
   public void testCheckReadVariablePermissionOnHistoricTaskAndNonePermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -913,6 +955,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     assertEquals(1, result.size());
   }
 
+  @Test
   public void testCheckNonePermissionOnHistoricTaskAndReadHistoryVariablePermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -935,6 +978,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     assertEquals(1, result.size());
   }
 
+  @Test
   public void testCheckReadHistoryVariablePermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnforceSpecificVariablePermission(true);
@@ -951,6 +995,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     assertEquals(1, result.size());
   }
 
+  @Test
   public void testOnlyReadPermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnforceSpecificVariablePermission(true);
@@ -967,6 +1012,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     assertEquals(0, result.size());
   }
 
+  @Test
   public void testIgnoreReadHistoryVariablePermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnforceSpecificVariablePermission(false);
@@ -983,6 +1029,7 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
     assertEquals(0, result.size());
   }
 
+  @Test
   public void testHistoricTaskPermissionsAuthorizationDisabled() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);

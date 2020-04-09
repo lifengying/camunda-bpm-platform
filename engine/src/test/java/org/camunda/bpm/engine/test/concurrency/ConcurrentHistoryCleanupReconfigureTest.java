@@ -16,25 +16,32 @@
  */
 package org.camunda.bpm.engine.test.concurrency;
 
-import org.camunda.bpm.engine.ProcessEngineConfiguration;
 import org.camunda.bpm.engine.impl.BootstrapEngineCommand;
-import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.camunda.bpm.engine.impl.interceptor.Command;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.bpm.engine.impl.persistence.entity.JobEntity;
+import org.camunda.bpm.engine.test.util.ProcessEngineProvider;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ConcurrentHistoryCleanupReconfigureTest extends ConcurrencyTest {
 
-  protected void setUp() throws Exception {
-    super.setUp();
+  @Before
+  public void initializeProcessEngine() {
+    processEngineConfiguration = ProcessEngineProvider.createConfigurationFromResource("camunda.cfg.xml");
+
+    processEngineConfiguration.setHistoryCleanupBatchWindowStartTime("12:00");
+
+    processEngine = processEngineConfiguration.buildProcessEngine();
   }
 
-  protected void tearDown() throws Exception {
+  @After
+  public void tearDown() throws Exception {
     clearDatabase();
-
-    super.tearDown();
   }
 
+  @Test
   public void testReconfigureCleanupJobs() {
     // given
     // create cleanup job
@@ -81,15 +88,6 @@ public class ConcurrentHistoryCleanupReconfigureTest extends ConcurrencyTest {
   }
 
   // helpers ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  protected void initializeProcessEngine() {
-    processEngineConfiguration = (ProcessEngineConfigurationImpl) ProcessEngineConfiguration
-      .createProcessEngineConfigurationFromResource("camunda.cfg.xml");
-
-    processEngineConfiguration.setHistoryCleanupBatchWindowStartTime("12:00");
-
-    processEngine = processEngineConfiguration.buildProcessEngine();
-  }
 
   protected void clearDatabase() {
     deleteHistoryCleanupJobs();

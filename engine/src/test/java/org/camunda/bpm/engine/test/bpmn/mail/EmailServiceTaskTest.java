@@ -16,6 +16,13 @@
  */
 package org.camunda.bpm.engine.test.bpmn.mail;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import javax.activation.DataHandler;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,10 +32,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.activation.DataHandler;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 
 import org.camunda.bpm.engine.impl.util.CollectionUtil;
 import org.camunda.bpm.engine.test.Deployment;
@@ -50,7 +53,7 @@ public class EmailServiceTaskTest extends EmailTestCase {
     WiserMessage message = messages.get(0);
     assertEmailSend(message, false, "Hello Kermit!", "This a text only e-mail.", "camunda@localhost",
             Arrays.asList("kermit@camunda.org"), null);
-    assertProcessEnded(procId);
+    testRule.assertProcessEnded(procId);
   }
 
   @Deployment

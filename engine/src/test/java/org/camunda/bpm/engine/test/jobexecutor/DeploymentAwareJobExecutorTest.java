@@ -16,6 +16,8 @@
  */
 package org.camunda.bpm.engine.test.jobexecutor;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.FileNotFoundException;
 import java.util.Date;
 import java.util.HashSet;
@@ -23,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.camunda.bpm.engine.ProcessEngine;
-import org.camunda.bpm.engine.ProcessEngineConfiguration;
 import org.camunda.bpm.engine.ProcessEngineException;
 import org.camunda.bpm.engine.ProcessEngines;
 import org.camunda.bpm.engine.RepositoryService;
@@ -37,29 +38,33 @@ import org.camunda.bpm.engine.impl.jobexecutor.AcquiredJobs;
 import org.camunda.bpm.engine.impl.jobexecutor.JobExecutor;
 import org.camunda.bpm.engine.impl.persistence.entity.AcquirableJobEntity;
 import org.camunda.bpm.engine.impl.persistence.entity.MessageEntity;
-import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.camunda.bpm.engine.impl.util.ClockUtil;
 import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.test.Deployment;
+import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
+import org.camunda.bpm.engine.test.util.ProcessEngineProvider;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class DeploymentAwareJobExecutorTest extends PluggableProcessEngineTest {
 
   protected ProcessEngine otherProcessEngine = null;
 
+  @Before
   public void setUp() throws Exception {
-    super.setUp();
     processEngineConfiguration.setJobExecutorDeploymentAware(true);
   }
 
+  @After
   public void tearDown() throws Exception {
     processEngineConfiguration.setJobExecutorDeploymentAware(false);
-    super.tearDown();
+    closeDownProcessEngine();
   }
 
   protected void closeDownProcessEngine() {
-    super.closeDownProcessEngine();
     if (otherProcessEngine != null) {
       otherProcessEngine.close();
       ProcessEngines.unregister(otherProcessEngine);
@@ -68,8 +73,9 @@ public class DeploymentAwareJobExecutorTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/jobexecutor/simpleAsyncProcess.bpmn20.xml")
+  @Test
   public void testProcessingOfJobsWithMatchingDeployment() {
-
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     runtimeService.startProcessInstanceByKey("simpleAsyncProcess");
 
     Set<String> registeredDeployments = managementService.getRegisteredDeployments();
@@ -101,6 +107,7 @@ public class DeploymentAwareJobExecutorTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/jobexecutor/simpleAsyncProcess.bpmn20.xml")
+  @Test
   public void testExplicitDeploymentRegistration() {
     runtimeService.startProcessInstanceByKey("simpleAsyncProcess");
 
@@ -121,6 +128,7 @@ public class DeploymentAwareJobExecutorTest extends PluggableProcessEngineTest {
     repositoryService.deleteDeployment(otherDeploymentId, true);
   }
 
+  @Test
   public void testRegistrationOfNonExistingDeployment() {
     String nonExistingDeploymentId = "some non-existing id";
 
@@ -128,13 +136,15 @@ public class DeploymentAwareJobExecutorTest extends PluggableProcessEngineTest {
       processEngine.getManagementService().registerDeploymentForJobExecutor(nonExistingDeploymentId);
       Assert.fail("Registering a non-existing deployment should not succeed");
     } catch (ProcessEngineException e) {
-      testHelper.assertTextPresent("Deployment " + nonExistingDeploymentId + " does not exist", e.getMessage());
+      testRule.assertTextPresent("Deployment " + nonExistingDeploymentId + " does not exist", e.getMessage());
       // happy path
     }
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/jobexecutor/simpleAsyncProcess.bpmn20.xml")
+  @Test
   public void testDeploymentUnregistrationOnUndeployment() {
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     Assert.assertEquals(1, managementService.getRegisteredDeployments().size());
 
     repositoryService.deleteDeployment(deploymentId, true);
@@ -143,7 +153,9 @@ public class DeploymentAwareJobExecutorTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/jobexecutor/simpleAsyncProcess.bpmn20.xml")
+  @Test
   public void testNoUnregistrationOnFailingUndeployment() {
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     runtimeService.startProcessInstanceByKey("simpleAsyncProcess");
 
     try {
@@ -156,7 +168,9 @@ public class DeploymentAwareJobExecutorTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/jobexecutor/simpleAsyncProcess.bpmn20.xml")
+  @Test
   public void testExplicitDeploymentUnregistration() {
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     runtimeService.startProcessInstanceByKey("simpleAsyncProcess");
 
     processEngine.getManagementService().unregisterDeploymentForJobExecutor(deploymentId);
@@ -165,6 +179,7 @@ public class DeploymentAwareJobExecutorTest extends PluggableProcessEngineTest {
     Assert.assertEquals(0, acquiredJobs.size());
   }
 
+  @Test
   public void testJobsWithoutDeploymentIdAreAlwaysProcessed() {
     CommandExecutor commandExecutor = processEngineConfiguration.getCommandExecutorTxRequired();
 
@@ -190,13 +205,11 @@ public class DeploymentAwareJobExecutorTest extends PluggableProcessEngineTest {
   private String deployAndInstantiateWithNewEngineConfiguration(String resource) {
     // 1. create another process engine
     try {
-      otherProcessEngine = ProcessEngineConfiguration
-        .createProcessEngineConfigurationFromResource("camunda.cfg.xml")
-        .buildProcessEngine();
+      otherProcessEngine = ProcessEngineProvider.createConfigurationFromResource("camunda.cfg.xml")
+                                                .buildProcessEngine();
     } catch (RuntimeException ex) {
       if (ex.getCause() != null && ex.getCause() instanceof FileNotFoundException) {
-        otherProcessEngine = ProcessEngineConfiguration
-          .createProcessEngineConfigurationFromResource("activiti.cfg.xml")
+        otherProcessEngine = ProcessEngineProvider.createConfigurationFromResource("activiti.cfg.xml")
           .buildProcessEngine();
       } else {
         throw ex;
@@ -218,6 +231,7 @@ public class DeploymentAwareJobExecutorTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources="org/camunda/bpm/engine/test/jobexecutor/processWithTimerCatch.bpmn20.xml")
+  @Test
   public void testIntermediateTimerEvent() {
 
 
@@ -243,6 +257,7 @@ public class DeploymentAwareJobExecutorTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources="org/camunda/bpm/engine/test/jobexecutor/processWithTimerStart.bpmn20.xml")
+  @Test
   public void testTimerStartEvent() {
 
     Set<String> registeredDeployments = processEngineConfiguration.getRegisteredDeployments();

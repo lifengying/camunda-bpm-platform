@@ -20,10 +20,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.camunda.bpm.engine.delegate.DelegateCaseExecution;
-import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
-import org.camunda.bpm.engine.repository.CaseDefinition;
 import org.camunda.bpm.engine.test.api.multitenancy.listener.AssertingCaseExecutionListener;
 import org.camunda.bpm.engine.test.api.multitenancy.listener.AssertingCaseExecutionListener.DelegateCaseExecutionAsserter;
+import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * Tests if a {@link DelegateCaseExecution} has the correct tenant-id.
@@ -36,27 +37,29 @@ public class MultiTenancyDelegateCaseExecutionTest extends PluggableProcessEngin
 
   protected static final String TENANT_ID = "tenant1";
 
+  @Test
   public void testSingleExecution() {
-    deploymentForTenant(TENANT_ID, HUMAN_TASK_CMMN_FILE);
+    testRule.deployForTenant(TENANT_ID, HUMAN_TASK_CMMN_FILE);
 
     AssertingCaseExecutionListener.addAsserts(hasTenantId("tenant1"));
 
     createCaseInstance("case");
   }
 
+  @Test
   public void testCallCaseTask() {
-    deploymentForTenant(TENANT_ID, CMMN_FILE);
-    deployment(CASE_TASK_CMMN_FILE);
+    testRule.deployForTenant(TENANT_ID, CMMN_FILE);
+    testRule.deploy(CASE_TASK_CMMN_FILE);
 
     AssertingCaseExecutionListener.addAsserts(hasTenantId("tenant1"));
 
     createCaseInstance("oneCaseTaskCase");
   }
 
-  @Override
-  protected void tearDown() throws Exception {
+  @After
+  public void tearDown() throws Exception {
     AssertingCaseExecutionListener.clear();
-    super.tearDown();
+
   }
 
   protected static DelegateCaseExecutionAsserter hasTenantId(final String expectedTenantId) {

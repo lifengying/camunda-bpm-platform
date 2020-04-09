@@ -22,6 +22,16 @@ import org.camunda.bpm.engine.repository.ProcessDefinition;
 import org.camunda.bpm.model.bpmn.Bpmn;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
 import org.camunda.commons.utils.cache.Cache;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author Roman Smirnov
@@ -34,6 +44,7 @@ public class DeploymentRegistrationTest extends PluggableProcessEngineTest {
   protected static final String PROCESS_KEY = "process-1";
   protected static final String BPMN_RESOURCE = "path/to/my/process1.bpmn";
 
+  @Test
   public void testNoRegistrationCheckIfNoProcessApplicationIsDeployed() {
 
     // create two deployments; both contain a process with the same key

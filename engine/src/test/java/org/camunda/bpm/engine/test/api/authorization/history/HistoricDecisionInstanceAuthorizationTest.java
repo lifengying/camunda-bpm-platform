@@ -16,32 +16,43 @@
  */
 package org.camunda.bpm.engine.test.api.authorization.history;
 
-import org.apache.commons.lang3.time.DateUtils;
-import org.camunda.bpm.dmn.engine.impl.DefaultDmnEngineConfiguration;
-import org.camunda.bpm.engine.AuthorizationException;
-import org.camunda.bpm.engine.ProcessEngineConfiguration;
-import org.camunda.bpm.engine.authorization.Permissions;
-import org.camunda.bpm.engine.history.HistoricDecisionInstance;
-import org.camunda.bpm.engine.history.HistoricDecisionInstanceQuery;
-import org.camunda.bpm.engine.history.CleanableHistoricDecisionInstanceReportResult;
-import org.camunda.bpm.engine.impl.util.ClockUtil;
-import org.camunda.bpm.engine.repository.DecisionDefinition;
-import org.camunda.bpm.engine.test.RequiredHistoryLevel;
-import org.camunda.bpm.engine.test.api.authorization.AuthorizationTest;
-import org.camunda.bpm.engine.test.util.ResetDmnConfigUtil;
-import org.camunda.bpm.engine.variable.Variables;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import static org.camunda.bpm.engine.authorization.Authorization.ANY;
 import static org.camunda.bpm.engine.authorization.Permissions.DELETE_HISTORY;
 import static org.camunda.bpm.engine.authorization.Permissions.READ_HISTORY;
 import static org.camunda.bpm.engine.authorization.Resources.DECISION_DEFINITION;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.time.DateUtils;
+import org.camunda.bpm.dmn.engine.impl.DefaultDmnEngineConfiguration;
+import org.camunda.bpm.engine.AuthorizationException;
+import org.camunda.bpm.engine.ProcessEngineConfiguration;
+import org.camunda.bpm.engine.authorization.Permissions;
+import org.camunda.bpm.engine.history.CleanableHistoricDecisionInstanceReportResult;
+import org.camunda.bpm.engine.history.HistoricDecisionInstance;
+import org.camunda.bpm.engine.history.HistoricDecisionInstanceQuery;
+import org.camunda.bpm.engine.impl.util.ClockUtil;
+import org.camunda.bpm.engine.repository.DecisionDefinition;
+import org.camunda.bpm.engine.test.RequiredHistoryLevel;
+import org.camunda.bpm.engine.test.api.authorization.AuthorizationTest;
+import org.camunda.bpm.engine.test.util.ResetDmnConfigUtil;
+import org.camunda.bpm.engine.variable.Variables;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author Philipp Ossler
@@ -52,12 +63,10 @@ public class HistoricDecisionInstanceAuthorizationTest extends AuthorizationTest
   protected static final String PROCESS_KEY = "testProcess";
   protected static final String DECISION_DEFINITION_KEY = "testDecision";
 
-  @Override
+  @Before
   public void setUp() throws Exception {
-    deploymentId = createDeployment(null,
-        "org/camunda/bpm/engine/test/history/HistoricDecisionInstanceTest.processWithBusinessRuleTask.bpmn20.xml",
-        "org/camunda/bpm/engine/test/history/HistoricDecisionInstanceTest.decisionSingleOutput.dmn11.xml")
-        .getId();
+    testRule.deploy("org/camunda/bpm/engine/test/history/HistoricDecisionInstanceTest.processWithBusinessRuleTask.bpmn20.xml",
+        "org/camunda/bpm/engine/test/history/HistoricDecisionInstanceTest.decisionSingleOutput.dmn11.xml");
 
     DefaultDmnEngineConfiguration dmnEngineConfiguration =
         processEngineConfiguration.getDmnEngineConfiguration();
@@ -65,24 +74,19 @@ public class HistoricDecisionInstanceAuthorizationTest extends AuthorizationTest
     ResetDmnConfigUtil.reset(dmnEngineConfiguration)
         .enableFeelLegacyBehavior(true)
         .init();
-
-    super.setUp();
   }
 
-  @Override
+  @After
   public void tearDown() {
-    super.tearDown();
-
     DefaultDmnEngineConfiguration dmnEngineConfiguration =
         processEngineConfiguration.getDmnEngineConfiguration();
 
     ResetDmnConfigUtil.reset(dmnEngineConfiguration)
         .enableFeelLegacyBehavior(false)
         .init();
-
-    deleteDeployment(deploymentId);
   }
 
+  @Test
   public void testQueryWithoutAuthorization() {
     // given
     startProcessInstanceAndEvaluateDecision();
@@ -94,6 +98,7 @@ public class HistoricDecisionInstanceAuthorizationTest extends AuthorizationTest
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testQueryWithReadPermissionOnDecisionDefinition() {
     // given
     startProcessInstanceAndEvaluateDecision();
@@ -106,6 +111,7 @@ public class HistoricDecisionInstanceAuthorizationTest extends AuthorizationTest
     verifyQueryResults(query, 1);
   }
 
+  @Test
   public void testQueryWithReadPermissionOnAnyDecisionDefinition() {
     // given
     startProcessInstanceAndEvaluateDecision();
@@ -118,6 +124,7 @@ public class HistoricDecisionInstanceAuthorizationTest extends AuthorizationTest
     verifyQueryResults(query, 1);
   }
 
+  @Test
   public void testQueryWithMultiple() {
     // given
     startProcessInstanceAndEvaluateDecision();
@@ -131,6 +138,7 @@ public class HistoricDecisionInstanceAuthorizationTest extends AuthorizationTest
     verifyQueryResults(query, 1);
   }
 
+  @Test
   public void testDeleteHistoricDecisionInstanceWithoutAuthorization(){
     // given
     startProcessInstanceAndEvaluateDecision();
@@ -147,6 +155,7 @@ public class HistoricDecisionInstanceAuthorizationTest extends AuthorizationTest
     }
   }
 
+  @Test
   public void testDeleteHistoricDecisionInstanceWithDeleteHistoryPermissionOnDecisionDefinition() {
     // given
     startProcessInstanceAndEvaluateDecision();
@@ -163,6 +172,7 @@ public class HistoricDecisionInstanceAuthorizationTest extends AuthorizationTest
     enableAuthorization();
 }
 
+  @Test
   public void testDeleteHistoricDecisionInstanceWithDeleteHistoryPermissionOnAnyDecisionDefinition() {
     // given
     startProcessInstanceAndEvaluateDecision();
@@ -178,6 +188,7 @@ public class HistoricDecisionInstanceAuthorizationTest extends AuthorizationTest
     enableAuthorization();
   }
 
+  @Test
   public void testDeleteHistoricDecisionInstanceByInstanceIdWithoutAuthorization() {
 
     // given
@@ -198,6 +209,7 @@ public class HistoricDecisionInstanceAuthorizationTest extends AuthorizationTest
     }
   }
 
+  @Test
   public void testDeleteHistoricDecisionInstanceByInstanceIdWithDeleteHistoryPermissionOnDecisionDefinition() {
 
     // given
@@ -215,6 +227,7 @@ public class HistoricDecisionInstanceAuthorizationTest extends AuthorizationTest
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testHistoryCleanupReportWithoutAuthorization() {
     // given
     prepareDecisionInstances(DECISION_DEFINITION_KEY, -6, 5, 10);
@@ -226,6 +239,7 @@ public class HistoricDecisionInstanceAuthorizationTest extends AuthorizationTest
     assertEquals(0, reportResults.size());
   }
 
+  @Test
   public void testHistoryCleanupReportWithAuthorization() {
     // given
     prepareDecisionInstances(DECISION_DEFINITION_KEY, -6, 5, 10);
@@ -242,6 +256,7 @@ public class HistoricDecisionInstanceAuthorizationTest extends AuthorizationTest
     assertEquals(10, reportResults.get(0).getFinishedDecisionInstanceCount());
   }
 
+  @Test
   public void testHistoryCleanupReportWithReadPermissionOnly() {
     // given
     prepareDecisionInstances(DECISION_DEFINITION_KEY, -6, 5, 10);
@@ -255,6 +270,7 @@ public class HistoricDecisionInstanceAuthorizationTest extends AuthorizationTest
     assertEquals(0, reportResults.size());
   }
 
+  @Test
   public void testHistoryCleanupReportWithReadHistoryPermissionOnly() {
     // given
     prepareDecisionInstances(DECISION_DEFINITION_KEY, -6, 5, 10);

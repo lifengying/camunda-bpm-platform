@@ -16,13 +16,17 @@
  */
 package org.camunda.bpm.engine.test.concurrency;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import org.camunda.bpm.engine.OptimisticLockingException;
 import org.camunda.bpm.engine.impl.ProcessEngineLogger;
 import org.camunda.bpm.engine.impl.cmd.AcquireJobsCmd;
 import org.camunda.bpm.engine.impl.jobexecutor.AcquiredJobs;
 import org.camunda.bpm.engine.impl.jobexecutor.JobExecutor;
-import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.camunda.bpm.engine.test.Deployment;
+import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
+import org.junit.Test;
 import org.slf4j.Logger;
 
 
@@ -61,6 +65,7 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
   }
 
   @Deployment
+  @Test
   public void testCompetingJobAcquisitions() throws Exception {
     runtimeService.startProcessInstanceByKey("CompetingJobAcquisitionProcess");
 

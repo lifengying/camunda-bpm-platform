@@ -33,6 +33,9 @@ import org.camunda.bpm.engine.impl.AbstractQuery;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.RequiredHistoryLevel;
 import org.camunda.bpm.engine.test.api.authorization.AuthorizationTest;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Roman Smirnov
@@ -44,25 +47,21 @@ public class HistoricActivityInstanceAuthorizationTest extends AuthorizationTest
   protected static final String PROCESS_KEY = "oneTaskProcess";
   protected static final String MESSAGE_START_PROCESS_KEY = "messageStartProcess";
 
-  protected String deploymentId;
-
-  @Override
+  @Before
   public void setUp() throws Exception {
-    deploymentId = createDeployment(null,
+    testRule.deploy(
         "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml",
-        "org/camunda/bpm/engine/test/api/authorization/messageStartEventProcess.bpmn20.xml").getId();
-    super.setUp();
+        "org/camunda/bpm/engine/test/api/authorization/messageStartEventProcess.bpmn20.xml");
   }
 
-  @Override
+  @After
   public void tearDown() {
-    super.tearDown();
     processEngineConfiguration.setEnableHistoricInstancePermissions(false);
-    deleteDeployment(deploymentId);
   }
 
   // historic activity instance query /////////////////////////////////
 
+  @Test
   public void testSimpleQueryWithoutAuthorization() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -74,6 +73,7 @@ public class HistoricActivityInstanceAuthorizationTest extends AuthorizationTest
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testSimpleQueryWithReadHistoryPermissionOnProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -86,6 +86,7 @@ public class HistoricActivityInstanceAuthorizationTest extends AuthorizationTest
     verifyQueryResults(query, 2);
   }
 
+  @Test
   public void testSimpleQueryWithReadHistoryPermissionOnAnyProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -98,6 +99,7 @@ public class HistoricActivityInstanceAuthorizationTest extends AuthorizationTest
     verifyQueryResults(query, 2);
   }
 
+  @Test
   public void testSimpleQueryMultiple() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -113,6 +115,7 @@ public class HistoricActivityInstanceAuthorizationTest extends AuthorizationTest
 
   // historic activity instance query (multiple process instances) ////////////////////////
 
+  @Test
   public void testQueryWithoutAuthorization() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -131,6 +134,7 @@ public class HistoricActivityInstanceAuthorizationTest extends AuthorizationTest
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testQueryWithReadHistoryPermissionOnProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -151,6 +155,7 @@ public class HistoricActivityInstanceAuthorizationTest extends AuthorizationTest
     verifyQueryResults(query, 6);
   }
 
+  @Test
   public void testQueryWithReadHistoryPermissionOnAnyProcessDefinition() {
     // given
     startProcessInstanceByKey(PROCESS_KEY);
@@ -173,8 +178,10 @@ public class HistoricActivityInstanceAuthorizationTest extends AuthorizationTest
 
   // delete deployment (cascade = false)
 
+  @Test
   public void testQueryAfterDeletingDeployment() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(PROCESS_KEY);
     startProcessInstanceByKey(PROCESS_KEY);
     startProcessInstanceByKey(PROCESS_KEY);

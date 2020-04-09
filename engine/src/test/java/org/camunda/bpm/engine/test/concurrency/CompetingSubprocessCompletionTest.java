@@ -16,14 +16,19 @@
  */
 package org.camunda.bpm.engine.test.concurrency;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import java.util.List;
 
 import org.camunda.bpm.engine.OptimisticLockingException;
 import org.camunda.bpm.engine.impl.ProcessEngineLogger;
 import org.camunda.bpm.engine.impl.cmd.CompleteTaskCmd;
-import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.Deployment;
+import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
+import org.junit.Test;
 import org.slf4j.Logger;
 
 
@@ -64,6 +69,7 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
    * that all threads attempt compaction by which synchronization happens "by accident"
    */
   @Deployment
+  @Test
   public void testCompetingSubprocessEnd() throws Exception {
     runtimeService.startProcessInstanceByKey("CompetingSubprocessEndProcess");
 
@@ -85,7 +91,7 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
     LOG.debug("test thread notifies thread 2");
     threadTwo.proceedAndWaitTillDone();
     assertNotNull(threadTwo.exception);
-    testHelper.assertTextPresent("was updated by another transaction concurrently", threadTwo.exception.getMessage());
+    testRule.assertTextPresent("was updated by another transaction concurrently", threadTwo.exception.getMessage());
   }
 
 }

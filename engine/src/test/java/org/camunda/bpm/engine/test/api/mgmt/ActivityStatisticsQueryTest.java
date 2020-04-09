@@ -16,12 +16,16 @@
  */
 package org.camunda.bpm.engine.test.api.mgmt;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.camunda.bpm.engine.ProcessEngineException;
-import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.camunda.bpm.engine.management.ActivityStatistics;
 import org.camunda.bpm.engine.management.IncidentStatistics;
 import org.camunda.bpm.engine.repository.ProcessDefinition;
@@ -29,6 +33,7 @@ import org.camunda.bpm.engine.runtime.Incident;
 import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.Deployment;
+import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -43,7 +48,7 @@ public class ActivityStatisticsQueryTest extends PluggableProcessEngineTest {
 
     runtimeService.startProcessInstanceByKey("ExampleProcess", parameters);
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     ProcessDefinition definition = repositoryService.createProcessDefinitionQuery()
         .processDefinitionKey("ExampleProcess").singleResult();
@@ -68,7 +73,7 @@ public class ActivityStatisticsQueryTest extends PluggableProcessEngineTest {
 
     ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("ExampleProcess", parameters);
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     List<ActivityStatistics> statistics =
         managementService
@@ -98,7 +103,7 @@ public class ActivityStatisticsQueryTest extends PluggableProcessEngineTest {
 
     ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("ExampleProcess", parameters);
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     List<ActivityStatistics> statistics =
         managementService
@@ -128,7 +133,7 @@ public class ActivityStatisticsQueryTest extends PluggableProcessEngineTest {
 
     ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("ExampleProcess", parameters);
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     List<ActivityStatistics> statistics =
         managementService
@@ -149,7 +154,7 @@ public class ActivityStatisticsQueryTest extends PluggableProcessEngineTest {
   public void testActivityStatisticsQueryWithIncidentsWithoutFailedJobs() {
     ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("callExampleSubProcess");
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     List<ActivityStatistics> statistics =
         managementService
@@ -313,7 +318,7 @@ public class ActivityStatisticsQueryTest extends PluggableProcessEngineTest {
   public void testCallActivityActivityStatisticsQuery() {
     runtimeService.startProcessInstanceByKey("callExampleSubProcess");
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     ProcessDefinition definition = repositoryService
         .createProcessDefinitionQuery()
@@ -496,7 +501,7 @@ public class ActivityStatisticsQueryTest extends PluggableProcessEngineTest {
         .processDefinitionKey("process")
         .singleResult();
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     List<ActivityStatistics> statistics =
         managementService
@@ -532,7 +537,7 @@ public class ActivityStatisticsQueryTest extends PluggableProcessEngineTest {
         .processDefinitionKey("process")
         .singleResult();
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     List<ActivityStatistics> statistics =
         managementService
@@ -566,7 +571,7 @@ public class ActivityStatisticsQueryTest extends PluggableProcessEngineTest {
         .processDefinitionKey("process")
         .singleResult();
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     List<ActivityStatistics> statistics =
         managementService
@@ -593,7 +598,7 @@ public class ActivityStatisticsQueryTest extends PluggableProcessEngineTest {
         .processDefinitionKey("process")
         .singleResult();
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     List<ActivityStatistics> statistics =
         managementService

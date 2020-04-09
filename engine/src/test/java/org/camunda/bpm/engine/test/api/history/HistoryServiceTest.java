@@ -16,34 +16,11 @@
  */
 package org.camunda.bpm.engine.test.api.history;
 
-import org.camunda.bpm.engine.BadUserRequestException;
-import org.camunda.bpm.engine.ProcessEngineConfiguration;
-import org.camunda.bpm.engine.ProcessEngineException;
-import org.camunda.bpm.engine.history.HistoricDetailQuery;
-import org.camunda.bpm.engine.history.HistoricProcessInstance;
-import org.camunda.bpm.engine.history.HistoricProcessInstanceQuery;
-import org.camunda.bpm.engine.history.HistoricVariableInstance;
-import org.camunda.bpm.engine.history.HistoricVariableInstanceQuery;
-import org.camunda.bpm.engine.impl.ProcessEngineLogger;
-import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
-import org.camunda.bpm.engine.impl.util.CollectionUtil;
-import org.camunda.bpm.engine.runtime.ProcessInstance;
-import org.camunda.bpm.engine.runtime.VariableInstanceQuery;
-import org.camunda.bpm.engine.task.Task;
-import org.camunda.bpm.engine.task.TaskQuery;
-import org.camunda.bpm.engine.test.Deployment;
-import org.camunda.bpm.engine.test.RequiredHistoryLevel;
-import org.camunda.bpm.engine.test.api.runtime.ProcessInstanceQueryTest;
-import org.camunda.bpm.engine.test.api.runtime.migration.models.ProcessModels;
-import org.camunda.bpm.engine.variable.VariableMap;
-import org.camunda.bpm.engine.variable.Variables;
-import org.camunda.bpm.model.bpmn.BpmnModelInstance;
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Test;
-import org.slf4j.Logger;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -55,6 +32,33 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
+import org.camunda.bpm.engine.BadUserRequestException;
+import org.camunda.bpm.engine.ProcessEngineConfiguration;
+import org.camunda.bpm.engine.ProcessEngineException;
+import org.camunda.bpm.engine.history.HistoricDetailQuery;
+import org.camunda.bpm.engine.history.HistoricProcessInstance;
+import org.camunda.bpm.engine.history.HistoricProcessInstanceQuery;
+import org.camunda.bpm.engine.history.HistoricVariableInstance;
+import org.camunda.bpm.engine.history.HistoricVariableInstanceQuery;
+import org.camunda.bpm.engine.impl.ProcessEngineLogger;
+import org.camunda.bpm.engine.impl.util.CollectionUtil;
+import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.camunda.bpm.engine.runtime.VariableInstanceQuery;
+import org.camunda.bpm.engine.task.Task;
+import org.camunda.bpm.engine.task.TaskQuery;
+import org.camunda.bpm.engine.test.Deployment;
+import org.camunda.bpm.engine.test.RequiredHistoryLevel;
+import org.camunda.bpm.engine.test.api.runtime.ProcessInstanceQueryTest;
+import org.camunda.bpm.engine.test.api.runtime.migration.models.ProcessModels;
+import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
+import org.camunda.bpm.engine.variable.VariableMap;
+import org.camunda.bpm.engine.variable.Variables;
+import org.camunda.bpm.model.bpmn.BpmnModelInstance;
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
+import org.junit.Test;
+import org.slf4j.Logger;
 
 /**
  * @author Frederik Heremans
@@ -206,7 +210,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       historyService.createHistoricProcessInstanceQuery().processInstanceIds(new HashSet<String>());
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      testHelper.assertTextPresent("Set of process instance ids is empty", re.getMessage());
+      testRule.assertTextPresent("Set of process instance ids is empty", re.getMessage());
     }
   }
 
@@ -215,7 +219,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       historyService.createHistoricProcessInstanceQuery().processInstanceIds(null);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException re) {
-      testHelper.assertTextPresent("Set of process instance ids is null", re.getMessage());
+      testRule.assertTextPresent("Set of process instance ids is null", re.getMessage());
     }
   }
 
@@ -236,7 +240,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       .endEvent()
       .done();
 
-    deployment(callingInstance, calledInstance);
+   testRule.deploy(callingInstance, calledInstance);
     String processInstanceId1 = runtimeService.startProcessInstanceByKey(superProcess).getProcessInstanceId();
 
     // when
@@ -651,7 +655,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       historyService.deleteHistoricProcessInstance(processInstance.getId());
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      testHelper.assertTextPresent("Process instance is still running, cannot delete historic process instance", ae.getMessage());
+      testRule.assertTextPresent("Process instance is still running, cannot delete historic process instance", ae.getMessage());
     }
   }
 
@@ -660,7 +664,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       historyService.deleteHistoricProcessInstance("aFake");
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      testHelper.assertTextPresent("No historic process instance found with id", ae.getMessage());
+      testRule.assertTextPresent("No historic process instance found with id", ae.getMessage());
     }
   }
 
@@ -674,7 +678,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       historyService.deleteHistoricProcessInstance(null);
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
-      testHelper.assertTextPresent("processInstanceId is null", ae.getMessage());
+      testRule.assertTextPresent("processInstanceId is null", ae.getMessage());
     }
   }
 
@@ -970,7 +974,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
       // then
-      testHelper.assertTextPresent("No historic variable instance found with id: fakeID", ae.getMessage());
+      testRule.assertTextPresent("No historic variable instance found with id: fakeID", ae.getMessage());
     }
   }
 
@@ -981,7 +985,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
       // then
-      testHelper.assertTextPresent("variableInstanceId is null", ae.getMessage());
+      testRule.assertTextPresent("variableInstanceId is null", ae.getMessage());
     }
   }
 
@@ -1156,7 +1160,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
       // then
-      testHelper.assertTextPresent("No historic process instance found with id: fakeID", ae.getMessage());
+      testRule.assertTextPresent("No historic process instance found with id: fakeID", ae.getMessage());
     }
   }
 
@@ -1167,7 +1171,7 @@ public class HistoryServiceTest extends PluggableProcessEngineTest {
       fail("ProcessEngineException expected");
     } catch (ProcessEngineException ae) {
       // then
-      testHelper.assertTextPresent("processInstanceId is null", ae.getMessage());
+      testRule.assertTextPresent("processInstanceId is null", ae.getMessage());
     }
   }
 

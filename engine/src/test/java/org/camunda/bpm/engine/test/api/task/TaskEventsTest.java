@@ -35,6 +35,17 @@ import org.camunda.bpm.engine.task.Attachment;
 import org.camunda.bpm.engine.task.Event;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.history.useroperationlog.AbstractUserOperationLogTest;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author Daniel Meyer
@@ -51,20 +62,19 @@ public class TaskEventsTest extends AbstractUserOperationLogTest {
 
   private Task task;
 
-  @Override
+  @Before
   public void setUp() throws Exception {
     task = taskService.newTask();
     taskService.saveTask(task);
-    super.setUp();
   }
 
-  @Override
-  protected void tearDown() throws Exception {
-    super.tearDown();
+  @After
+  public void tearDown() throws Exception {
     // delete task
     taskService.deleteTask(task.getId(), true);
   }
 
+  @Test
   public void testAddUserLinkEvents() {
 
     // initially there are no task events
@@ -87,6 +97,7 @@ public class TaskEventsTest extends AbstractUserOperationLogTest {
     assertNoCommentsForTask();
   }
 
+  @Test
   public void testDeleteUserLinkEvents() {
 
     // initially there are no task events
@@ -113,6 +124,7 @@ public class TaskEventsTest extends AbstractUserOperationLogTest {
     assertNoCommentsForTask();
   }
 
+  @Test
   public void testAddGroupLinkEvents() {
 
     // initially there are no task events
@@ -135,6 +147,7 @@ public class TaskEventsTest extends AbstractUserOperationLogTest {
     assertNoCommentsForTask();
   }
 
+  @Test
   public void testDeleteGroupLinkEvents() {
 
     // initially there are no task events
@@ -161,6 +174,7 @@ public class TaskEventsTest extends AbstractUserOperationLogTest {
     assertNoCommentsForTask();
   }
 
+  @Test
   public void testAddAttachmentEvents() {
     // initially there are no task events
     assertTrue(taskService.getTaskEvents(task.getId()).isEmpty());
@@ -183,6 +197,7 @@ public class TaskEventsTest extends AbstractUserOperationLogTest {
     assertNoCommentsForTask();
   }
 
+  @Test
   public void testDeleteAttachmentEvents() {
     // initially there are no task events
     assertTrue(taskService.getTaskEvents(task.getId()).isEmpty());

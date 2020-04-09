@@ -42,6 +42,17 @@ import org.camunda.bpm.engine.impl.jobexecutor.TimerSuspendProcessDefinitionHand
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.RequiredHistoryLevel;
 import org.camunda.bpm.engine.test.api.authorization.AuthorizationTest;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author Roman Smirnov
@@ -54,22 +65,19 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
   protected static final String TIMER_BOUNDARY_PROCESS_KEY = "timerBoundaryProcess";
   protected static final String ONE_INCIDENT_PROCESS_KEY = "process";
 
-  protected String deploymentId;
-
   protected String batchId;
 
-  @Override
+  @Before
   public void setUp() throws Exception {
-    deploymentId = createDeployment(null,
+    testRule.deploy(
         "org/camunda/bpm/engine/test/api/authorization/timerStartEventProcess.bpmn20.xml",
         "org/camunda/bpm/engine/test/api/authorization/timerBoundaryEventProcess.bpmn20.xml",
-        "org/camunda/bpm/engine/test/api/authorization/oneIncidentProcess.bpmn20.xml").getId();
-    super.setUp();
+        "org/camunda/bpm/engine/test/api/authorization/oneIncidentProcess.bpmn20.xml");
   }
 
-  @Override
+  @After
   public void tearDown() {
-    super.tearDown();
+
     CommandExecutor commandExecutor = processEngineConfiguration.getCommandExecutorTxRequired();
     commandExecutor.execute(new Command<Object>() {
       public Object execute(CommandContext commandContext) {
@@ -78,7 +86,6 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
       }
     });
     processEngineConfiguration.setEnableHistoricInstancePermissions(false);
-    deleteDeployment(deploymentId);
 
     if (batchId != null) {
       managementService.deleteBatch(batchId, true);
@@ -88,6 +95,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
 
   // historic job log query (start timer job) ////////////////////////////////
 
+  @Test
   public void testStartTimerJobLogQueryWithoutAuthorization() {
     // given
 
@@ -99,6 +107,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testStartTimerJobLogQueryWithReadHistoryPermissionOnProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, TIMER_START_PROCESS_KEY, userId, READ_HISTORY);
@@ -110,6 +119,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 1);
   }
 
+  @Test
   public void testStartTimerJobLogQueryWithReadHistoryPermissionOnAnyProcessDefinition() {
     // given
     createGrantAuthorization(PROCESS_DEFINITION, ANY, userId, READ_HISTORY);
@@ -123,6 +133,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
 
   // historic job log query ////////////////////////////////////////////////
 
+  @Test
   public void testSimpleQueryWithoutAuthorization() {
     // given
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);
@@ -134,6 +145,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testSimpleQueryWithHistoryReadPermissionOnProcessDefinition() {
     // given
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);
@@ -146,6 +158,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 4);
   }
 
+  @Test
   public void testSimpleQueryWithHistoryReadPermissionOnAnyProcessDefinition() {
     // given
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);
@@ -158,6 +171,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 5);
   }
 
+  @Test
   public void testSimpleQueryWithMultiple() {
     // given
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);
@@ -173,6 +187,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
 
   // historic job log query (multiple process instance) ////////////////////////////////////////////////
 
+  @Test
   public void testQueryWithoutAuthorization() {
     // given
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);
@@ -193,6 +208,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testQueryWithHistoryReadPermissionOnProcessDefinition() {
     // given
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);
@@ -215,6 +231,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 12);
   }
 
+  @Test
   public void testQueryWithHistoryReadPermissionOnAnyProcessDefinition() {
     // given
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);
@@ -239,8 +256,10 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
 
   // historic job log query (standalone job) ///////////////////////
 
+  @Test
   public void testQueryAfterStandaloneJob() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     disableAuthorization();
     repositoryService.suspendProcessDefinitionByKey(TIMER_BOUNDARY_PROCESS_KEY, true, new Date());
     enableAuthorization();
@@ -264,8 +283,10 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
 
   // delete deployment (cascade = false)
 
+  @Test
   public void testQueryAfterDeletingDeployment() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY);
     startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY);
     startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY);
@@ -298,8 +319,10 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
 
   // get historic job log exception stacktrace (standalone) /////////////////////
 
+  @Test
   public void testGetHistoricStandaloneJobLogExceptionStacktrace() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     disableAuthorization();
     repositoryService.suspendProcessDefinitionByKey(TIMER_BOUNDARY_PROCESS_KEY, true, new Date());
     enableAuthorization();
@@ -321,6 +344,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
 
   // get historic job log exception stacktrace /////////////////////
 
+  @Test
   public void testGetHistoricJobLogExceptionStacktraceWithoutAuthorization() {
     // given
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);
@@ -336,13 +360,14 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(READ_HISTORY.getName(), message);
-      testHelper.assertTextPresent(ONE_INCIDENT_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(READ_HISTORY.getName(), message);
+      testRule.assertTextPresent(ONE_INCIDENT_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
     }
   }
 
+  @Test
   public void testGetHistoricJobLogExceptionStacktraceWithReadHistoryPermissionOnProcessDefinition() {
     // given
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);
@@ -360,6 +385,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
     assertNotNull(stacktrace);
   }
 
+  @Test
   public void testGetHistoricJobLogExceptionStacktraceWithReadHistoryPermissionOnAnyProcessDefinition() {
     // given
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);

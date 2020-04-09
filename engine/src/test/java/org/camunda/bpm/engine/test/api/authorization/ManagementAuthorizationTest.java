@@ -26,6 +26,23 @@ import org.camunda.bpm.engine.authorization.Groups;
 import org.camunda.bpm.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.camunda.bpm.engine.management.TableMetaData;
 import org.camunda.bpm.engine.management.TablePage;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 
 /**
@@ -38,6 +55,7 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
 
   // get table count //////////////////////////////////////////////
 
+  @Test
   public void testGetTableCountWithoutAuthorization() {
     // given
 
@@ -48,10 +66,11 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testRule.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
     }
   }
 
+  @Test
   public void testGetTableCountAsCamundaAdmin() {
     // given
     identityService.setAuthentication(userId, Collections.singletonList(Groups.CAMUNDA_ADMIN));
@@ -65,6 +84,7 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
 
   // get table name //////////////////////////////////////////////
 
+  @Test
   public void testGetTableNameWithoutAuthorization() {
     // given
 
@@ -75,10 +95,11 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testRule.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
     }
   }
 
+  @Test
   public void testGetTableNameAsCamundaAdmin() {
     // given
     identityService.setAuthentication(userId, Collections.singletonList(Groups.CAMUNDA_ADMIN));
@@ -93,6 +114,7 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
 
   // get table meta data //////////////////////////////////////////////
 
+  @Test
   public void testGetTableMetaDataWithoutAuthorization() {
     // given
 
@@ -103,10 +125,11 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testRule.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
     }
   }
 
+  @Test
   public void testGetTableMetaDataAsCamundaAdmin() {
     // given
     identityService.setAuthentication(userId, Collections.singletonList(Groups.CAMUNDA_ADMIN));
@@ -120,6 +143,7 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
 
   // table page query //////////////////////////////////
 
+  @Test
   public void testTablePageQueryWithoutAuthorization() {
     // given
 
@@ -130,11 +154,12 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testRule.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
     }
 
   }
 
+  @Test
   public void testTablePageQueryAsCamundaAdmin() {
     // given
     identityService.setAuthentication(userId, Collections.singletonList(Groups.CAMUNDA_ADMIN));
@@ -149,6 +174,7 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
 
   // get history level /////////////////////////////////
 
+  @Test
   public void testGetHistoryLevelWithoutAuthorization() {
     //given
 
@@ -159,10 +185,11 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testRule.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
     }
   }
 
+  @Test
   public void testGetHistoryLevelAsCamundaAdmin() {
     //given
     identityService.setAuthentication(userId, Collections.singletonList(Groups.CAMUNDA_ADMIN));
@@ -176,6 +203,7 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
 
   // database schema upgrade ///////////////////////////
 
+  @Test
   public void testDataSchemaUpgradeWithoutAuthorization() {
     // given
 
@@ -186,12 +214,13 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testRule.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
     }
   }
 
   // get properties & set/delete property ///////////////////////////
 
+  @Test
   public void testGetPropertiesWithoutAuthorization() {
     // given
 
@@ -202,10 +231,11 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testRule.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
     }
   }
 
+  @Test
   public void testSetPropertyWithoutAuthorization() {
     // given
 
@@ -216,10 +246,11 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testRule.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
     }
   }
 
+  @Test
   public void testDeletePropertyWithoutAuthorization() {
     // given
 
@@ -230,7 +261,7 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
+      testRule.assertTextPresent(REQUIRED_ADMIN_AUTH_EXCEPTION, message);
     }
   }
 

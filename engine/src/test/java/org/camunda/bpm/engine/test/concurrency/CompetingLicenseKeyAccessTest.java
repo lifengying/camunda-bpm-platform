@@ -22,20 +22,29 @@ import org.camunda.bpm.engine.OptimisticLockingException;
 import org.camunda.bpm.engine.impl.cmd.SetLicenseKeyCmd;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.bpm.engine.impl.persistence.entity.ResourceEntity;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 public class CompetingLicenseKeyAccessTest extends ConcurrencyTest {
 
   private ThreadControl asyncThread;
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
+  @Before
+  public void setUp() throws Exception {
     managementService.setLicenseKey("testLicenseKey");
   }
 
-  @Override
-  protected void tearDown() throws Exception {
-    super.tearDown();
+  @After
+  public void tearDown() throws Exception {
     managementService.deleteLicenseKey();
   }
 
@@ -48,6 +57,7 @@ public class CompetingLicenseKeyAccessTest extends ConcurrencyTest {
    *  t=2: fetch and delete license key
    *  t=3: commit transaction
    */
+  @Test
   public void testConcurrentlyDeleteAndSetLicense() {
     managementService.setLicenseKey("testLicenseKey");
 
@@ -74,6 +84,7 @@ public class CompetingLicenseKeyAccessTest extends ConcurrencyTest {
    *  t=2: fetch and update license key
    *  t=3: commit transaction
    */
+  @Test
   public void testConcurrentlyAlterLicense() {
     managementService.setLicenseKey("testLicenseKey");
 

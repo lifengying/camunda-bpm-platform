@@ -17,6 +17,8 @@
 package org.camunda.bpm.engine.test.bpmn.exclusive;
 
 import org.camunda.bpm.engine.test.Deployment;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * @author Daniel Meyer
@@ -24,16 +26,14 @@ import org.camunda.bpm.engine.test.Deployment;
  */
 public class ExclusiveTaskReuseCacheTest extends ExclusiveTaskTest {
 
-  @Override
+  @Before
   protected void setUp() throws Exception {
-    super.setUp();
     processEngineConfiguration.setDbEntityCacheReuseEnabled(true);
   }
 
-  @Override
+  @After
   protected void tearDown() throws Exception {
     processEngineConfiguration.setDbEntityCacheReuseEnabled(false);
-    super.tearDown();
   }
 
   @Deployment(resources={"org/camunda/bpm/engine/test/bpmn/exclusive/ExclusiveTaskTest.testNonExclusiveService.bpmn20.xml"})

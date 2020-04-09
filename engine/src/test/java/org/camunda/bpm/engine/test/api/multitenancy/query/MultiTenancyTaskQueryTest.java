@@ -17,16 +17,20 @@
 package org.camunda.bpm.engine.test.api.multitenancy.query;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.camunda.bpm.engine.exception.NullValueException;
-import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.task.TaskQuery;
+import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -41,8 +45,8 @@ public class MultiTenancyTaskQueryTest extends PluggableProcessEngineTest {
 
   private final List<String> taskIds = new ArrayList<String>();
 
-  @Override
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
 
     createTaskWithoutTenant();
     createTaskForTenant(TENANT_ONE);
@@ -191,8 +195,8 @@ public class MultiTenancyTaskQueryTest extends PluggableProcessEngineTest {
     return taskId;
   }
 
-  @Override
-  protected void tearDown() throws Exception {
+  @After
+  public void tearDown() throws Exception {
     identityService.clearAuthentication();
     for (String taskId : taskIds) {
       taskService.deleteTask(taskId, true);

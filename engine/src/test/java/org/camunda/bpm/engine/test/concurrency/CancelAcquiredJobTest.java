@@ -18,9 +18,10 @@ package org.camunda.bpm.engine.test.concurrency;
 
 import java.util.Date;
 
-import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.camunda.bpm.engine.impl.util.ClockUtil;
 import org.camunda.bpm.engine.test.Deployment;
+import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
+import org.junit.Test;
 
 /**
  * @author Daniel Meyer
@@ -29,6 +30,7 @@ import org.camunda.bpm.engine.test.Deployment;
 public class CancelAcquiredJobTest extends PluggableProcessEngineTest {
 
   @Deployment
+  @Test
   public void testBothJobsAcquiredAtSameTime() {
 
     runtimeService.startProcessInstanceByKey("testProcess");
@@ -36,7 +38,7 @@ public class CancelAcquiredJobTest extends PluggableProcessEngineTest {
     // move clock by 20 seconds -> both jobs are acquirable:
     ClockUtil.setCurrentTime(new Date(System.currentTimeMillis() + (20 * 1000)));
 
-    waitForJobExecutorToProcessAllJobs(6000);
+    testRule.waitForJobExecutorToProcessAllJobs(6000);
 
   }
 

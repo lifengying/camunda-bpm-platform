@@ -37,6 +37,17 @@ import org.camunda.bpm.engine.impl.persistence.entity.HistoricIncidentEntity;
 import org.camunda.bpm.engine.runtime.Incident;
 import org.camunda.bpm.engine.runtime.IncidentQuery;
 import org.camunda.bpm.engine.runtime.Job;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author Roman Smirnov
@@ -48,23 +59,15 @@ public class IncidentAuthorizationTest extends AuthorizationTest {
   protected static final String ONE_INCIDENT_PROCESS_KEY = "process";
   protected static final String ANOTHER_ONE_INCIDENT_PROCESS_KEY = "anotherOneIncidentProcess";
 
-  protected String deploymentId;
-
-  @Override
+  @Before
   public void setUp() throws Exception {
-    deploymentId = createDeployment(null,
+    testRule.deploy(
         "org/camunda/bpm/engine/test/api/authorization/timerStartEventProcess.bpmn20.xml",
         "org/camunda/bpm/engine/test/api/authorization/oneIncidentProcess.bpmn20.xml",
-        "org/camunda/bpm/engine/test/api/authorization/anotherOneIncidentProcess.bpmn20.xml").getId();
-    super.setUp();
+        "org/camunda/bpm/engine/test/api/authorization/anotherOneIncidentProcess.bpmn20.xml");
   }
 
-  @Override
-  public void tearDown() {
-    super.tearDown();
-    deleteDeployment(deploymentId);
-  }
-
+  @Test
   public void testQueryForStandaloneIncidents() {
     // given
     disableAuthorization();
@@ -93,6 +96,7 @@ public class IncidentAuthorizationTest extends AuthorizationTest {
     clearDatabase();
   }
 
+  @Test
   public void testStartTimerJobIncidentQueryWithoutAuthorization() {
     // given
     disableAuthorization();
@@ -107,6 +111,7 @@ public class IncidentAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testStartTimerJobIncidentQueryWithReadPermissionOnAnyProcessInstance() {
     // given
     disableAuthorization();
@@ -123,6 +128,7 @@ public class IncidentAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 1);
   }
 
+  @Test
   public void testStartTimerJobIncidentQueryWithReadInstancePermissionOnProcessDefinition() {
     // given
     disableAuthorization();
@@ -139,6 +145,7 @@ public class IncidentAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 1);
   }
 
+  @Test
   public void testStartTimerJobIncidentQueryWithReadInstancePermissionOnAnyProcessDefinition() {
     // given
     disableAuthorization();
@@ -155,6 +162,7 @@ public class IncidentAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 1);
   }
 
+  @Test
   public void testSimpleQueryWithoutAuthorization() {
     // given
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);
@@ -166,6 +174,7 @@ public class IncidentAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testSimpleQueryWithReadPermissionOnProcessInstance() {
     // given
     String processInstanceId = startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY).getId();
@@ -182,6 +191,7 @@ public class IncidentAuthorizationTest extends AuthorizationTest {
     assertEquals(processInstanceId, incident.getProcessInstanceId());
   }
 
+  @Test
   public void testSimpleQueryWithReadPermissionOnAnyProcessInstance() {
     // given
     String processInstanceId = startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY).getId();
@@ -198,6 +208,7 @@ public class IncidentAuthorizationTest extends AuthorizationTest {
     assertEquals(processInstanceId, incident.getProcessInstanceId());
   }
 
+  @Test
   public void testSimpleQueryWithMultiple() {
     // given
     String processInstanceId = startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY).getId();
@@ -215,6 +226,7 @@ public class IncidentAuthorizationTest extends AuthorizationTest {
     assertEquals(processInstanceId, incident.getProcessInstanceId());
   }
 
+  @Test
   public void testSimpleQueryWithReadInstancesPermissionOnOneTaskProcess() {
     // given
     String processInstanceId = startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY).getId();
@@ -231,6 +243,7 @@ public class IncidentAuthorizationTest extends AuthorizationTest {
     assertEquals(processInstanceId, incident.getProcessInstanceId());
   }
 
+  @Test
   public void testSimpleQueryWithReadInstancesPermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY).getId();
@@ -247,6 +260,7 @@ public class IncidentAuthorizationTest extends AuthorizationTest {
     assertEquals(processInstanceId, incident.getProcessInstanceId());
   }
 
+  @Test
   public void testQueryWithoutAuthorization() {
     // given
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);
@@ -265,6 +279,7 @@ public class IncidentAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testQueryWithReadPermissionOnProcessInstance() {
     // given
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);
@@ -289,6 +304,7 @@ public class IncidentAuthorizationTest extends AuthorizationTest {
     assertEquals(processInstanceId, incident.getProcessInstanceId());
   }
 
+  @Test
   public void testQueryWithReadPermissionOnAnyProcessInstance() {
     // given
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);
@@ -309,6 +325,7 @@ public class IncidentAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 7);
   }
 
+  @Test
   public void testQueryWithReadInstancesPermissionOnOneTaskProcess() {
     // given
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);
@@ -329,6 +346,7 @@ public class IncidentAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 3);
   }
 
+  @Test
   public void testQueryWithReadInstancesPermissionOnAnyProcessDefinition() {
     // given
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);

@@ -34,6 +34,18 @@ import org.camunda.bpm.engine.impl.interceptor.CommandInvocationContext;
 import org.camunda.bpm.engine.impl.persistence.entity.JobEntity;
 import org.camunda.bpm.engine.impl.util.ClockUtil;
 import org.camunda.bpm.engine.runtime.Job;
+import org.camunda.bpm.engine.test.util.ProcessEngineProvider;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * <p>Tests a concurrent attempt of a bootstrapping Process Engine to reconfigure
@@ -45,7 +57,7 @@ public class ConcurrentProcessEngineJobExecutorHistoryCleanupJobTest extends Con
 
   private static final String PROCESS_ENGINE_NAME = "historyCleanupJobEngine";
 
-  @Override
+  @Before
   public void setUp() throws Exception {
 
     // Ensure that current time is outside batch window
@@ -54,13 +66,9 @@ public class ConcurrentProcessEngineJobExecutorHistoryCleanupJobTest extends Con
     ClockUtil.setCurrentTime(timeOfDay.getTime());
 
     processEngineConfiguration.setHistoryCleanupStrategy(HISTORY_CLEANUP_STRATEGY_END_TIME_BASED);
-
-    super.setUp();
   }
 
-  @Override
   protected void closeDownProcessEngine() {
-    super.closeDownProcessEngine();
     final ProcessEngine otherProcessEngine = ProcessEngines.getProcessEngine(PROCESS_ENGINE_NAME);
     if (otherProcessEngine != null) {
 
@@ -84,7 +92,7 @@ public class ConcurrentProcessEngineJobExecutorHistoryCleanupJobTest extends Con
     }
   }
 
-  @Override
+  @After
   public void tearDown() throws Exception {
     ((ProcessEngineConfigurationImpl)processEngine.getProcessEngineConfiguration()).getCommandExecutorTxRequired().execute(new Command<Void>() {
       public Void execute(CommandContext commandContext) {
@@ -101,9 +109,10 @@ public class ConcurrentProcessEngineJobExecutorHistoryCleanupJobTest extends Con
       }
     });
     ClockUtil.setCurrentTime(new Date());
-    super.tearDown();
+    closeDownProcessEngine();
   }
 
+  @Test
   public void testConcurrentHistoryCleanupJobReconfigurationExecution() throws InterruptedException {
 
     getProcessEngine().getHistoryService().cleanUpHistoryAsync(true);
@@ -146,8 +155,8 @@ public class ConcurrentProcessEngineJobExecutorHistoryCleanupJobTest extends Con
 
       bootstrapCommand = new ControllableBootstrapEngineCommand(this.monitor);
 
-      ProcessEngineConfiguration processEngineConfiguration = ProcessEngineConfiguration
-        .createProcessEngineConfigurationFromResource("org/camunda/bpm/engine/test/concurrency/historycleanup.camunda.cfg.xml");
+      ProcessEngineConfiguration processEngineConfiguration = ProcessEngineProvider
+          .createConfigurationFromResource("org/camunda/bpm/engine/test/concurrency/historycleanup.camunda.cfg.xml");
 
 
       processEngineConfiguration.setProcessEngineBootstrapCommand(bootstrapCommand);

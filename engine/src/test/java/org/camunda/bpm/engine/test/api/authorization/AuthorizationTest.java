@@ -23,6 +23,10 @@ import static org.camunda.bpm.engine.authorization.Authorization.AUTH_TYPE_REVOK
 import static org.camunda.bpm.engine.authorization.Permissions.ALL;
 import static org.camunda.bpm.engine.authorization.Resources.AUTHORIZATION;
 import static org.camunda.bpm.engine.authorization.Resources.USER;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,6 +54,8 @@ import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.camunda.bpm.engine.variable.VariableMap;
 import org.camunda.bpm.engine.variable.Variables;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * @author Roman Smirnov
@@ -64,8 +70,8 @@ public abstract class AuthorizationTest extends PluggableProcessEngineTest {
   protected static final String VARIABLE_NAME = "aVariableName";
   protected static final String VARIABLE_VALUE = "aVariableValue";
 
-  @Override
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
     user = createUser(userId);
     group = createGroup(groupId);
 
@@ -75,7 +81,7 @@ public abstract class AuthorizationTest extends PluggableProcessEngineTest {
     processEngineConfiguration.setAuthorizationEnabled(true);
   }
 
-  @Override
+  @After
   public void tearDown() {
     processEngineConfiguration.setAuthorizationEnabled(false);
     for (User user : identityService.createUserQuery().list()) {
@@ -245,10 +251,9 @@ public abstract class AuthorizationTest extends PluggableProcessEngineTest {
     return runWithoutAuthorization(() -> runtimeService.startProcessInstanceByKey(key, variables));
   }
 
-  @Override
   public void executeAvailableJobs() {
     runWithoutAuthorization((Callable<Void>) () -> {
-      AuthorizationTest.super.executeAvailableJobs();
+      testRule.executeAvailableJobs();
       return null;
     });
   }

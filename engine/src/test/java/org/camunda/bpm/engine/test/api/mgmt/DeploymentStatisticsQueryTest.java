@@ -16,16 +16,20 @@
  */
 package org.camunda.bpm.engine.test.api.mgmt;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.camunda.bpm.engine.management.DeploymentStatistics;
 import org.camunda.bpm.engine.management.IncidentStatistics;
 import org.camunda.bpm.engine.runtime.Incident;
 import org.camunda.bpm.engine.test.Deployment;
+import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -109,7 +113,7 @@ public class DeploymentStatisticsQueryTest extends PluggableProcessEngineTest {
     runtimeService.startProcessInstanceByKey("MIExampleProcess");
     runtimeService.startProcessInstanceByKey("ExampleProcess", parameters);
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     List<DeploymentStatistics> statistics =
         managementService.createDeploymentStatisticsQuery().includeFailedJobs().list();
@@ -129,7 +133,7 @@ public class DeploymentStatisticsQueryTest extends PluggableProcessEngineTest {
     runtimeService.startProcessInstanceByKey("MIExampleProcess");
     runtimeService.startProcessInstanceByKey("ExampleProcess", parameters);
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     List<DeploymentStatistics> statistics =
         managementService.createDeploymentStatisticsQuery().includeIncidents().list();
@@ -159,7 +163,7 @@ public class DeploymentStatisticsQueryTest extends PluggableProcessEngineTest {
     runtimeService.startProcessInstanceByKey("MIExampleProcess");
     runtimeService.startProcessInstanceByKey("ExampleProcess", parameters);
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     List<DeploymentStatistics> statistics =
         managementService
@@ -192,7 +196,7 @@ public class DeploymentStatisticsQueryTest extends PluggableProcessEngineTest {
     runtimeService.startProcessInstanceByKey("MIExampleProcess");
     runtimeService.startProcessInstanceByKey("ExampleProcess", parameters);
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     List<DeploymentStatistics> statistics =
         managementService
@@ -220,7 +224,7 @@ public class DeploymentStatisticsQueryTest extends PluggableProcessEngineTest {
     runtimeService.startProcessInstanceByKey("MIExampleProcess");
     runtimeService.startProcessInstanceByKey("ExampleProcess", parameters);
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     List<DeploymentStatistics> statistics =
         managementService
@@ -250,7 +254,7 @@ public class DeploymentStatisticsQueryTest extends PluggableProcessEngineTest {
   public void testDeploymentStatisticsQueryWithTwoIncidentsAndOneFailedJobs() {
     runtimeService.startProcessInstanceByKey("callExampleSubProcess");
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     List<DeploymentStatistics> statistics =
         managementService
@@ -294,7 +298,7 @@ public class DeploymentStatisticsQueryTest extends PluggableProcessEngineTest {
   @Deployment(resources = "org/camunda/bpm/engine/test/api/mgmt/StatisticsTest.testFailedTimerStartEvent.bpmn20.xml")
   public void testQueryByIncidentsWithFailedTimerStartEvent() {
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     List<DeploymentStatistics> statistics =
         managementService
@@ -322,7 +326,7 @@ public class DeploymentStatisticsQueryTest extends PluggableProcessEngineTest {
   @Deployment(resources = "org/camunda/bpm/engine/test/api/mgmt/StatisticsTest.testFailedTimerStartEvent.bpmn20.xml")
   public void testQueryByIncidentTypeWithFailedTimerStartEvent() {
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     List<DeploymentStatistics> statistics =
         managementService
@@ -350,7 +354,7 @@ public class DeploymentStatisticsQueryTest extends PluggableProcessEngineTest {
   @Deployment(resources = "org/camunda/bpm/engine/test/api/mgmt/StatisticsTest.testFailedTimerStartEvent.bpmn20.xml")
   public void testQueryByFailedJobsWithFailedTimerStartEvent() {
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     List<DeploymentStatistics> statistics =
         managementService
@@ -371,7 +375,7 @@ public class DeploymentStatisticsQueryTest extends PluggableProcessEngineTest {
   @Deployment(resources = "org/camunda/bpm/engine/test/api/mgmt/StatisticsTest.testFailedTimerStartEvent.bpmn20.xml")
   public void testQueryByFailedJobsAndIncidentsWithFailedTimerStartEvent() {
 
-    executeAvailableJobs();
+    testRule.executeAvailableJobs();
 
     List<DeploymentStatistics> statistics =
         managementService

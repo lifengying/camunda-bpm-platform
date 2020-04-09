@@ -19,11 +19,23 @@ package org.camunda.bpm.engine.test.api.authorization;
 import static org.camunda.bpm.engine.authorization.Permissions.TASK_WORK;
 import static org.camunda.bpm.engine.authorization.Permissions.UPDATE;
 import static org.camunda.bpm.engine.authorization.Resources.TASK;
+
 import java.util.Arrays;
+
 import org.camunda.bpm.engine.authorization.Permissions;
 import org.camunda.bpm.engine.authorization.Resources;
 import org.camunda.bpm.engine.identity.Group;
 import org.camunda.bpm.engine.identity.User;
+import org.junit.After;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  *
@@ -40,13 +52,14 @@ public class DefaultUserPermissionsForTaskTest extends AuthorizationTest {
 
   protected String defaultTaskPermissionValue;
 
-  @Override
+  @After
   public void tearDown() {
     // reset default permission
     processEngineConfiguration.setDefaultUserPermissionForTask(UPDATE);
-    super.tearDown();
+
   }
 
+  @Test
   public void testShouldGrantTaskWorkOnAssign() {
 
     // given
@@ -67,6 +80,7 @@ public class DefaultUserPermissionsForTaskTest extends AuthorizationTest {
     deleteTask(taskId, true);
   }
 
+  @Test
   public void testShouldGrantUpdateOnAssign() {
 
     // given
@@ -86,6 +100,7 @@ public class DefaultUserPermissionsForTaskTest extends AuthorizationTest {
     deleteTask(taskId, true);
   }
 
+  @Test
   public void testShouldGrantTaskWorkOnSetCandidateUser() {
 
     // given
@@ -106,6 +121,7 @@ public class DefaultUserPermissionsForTaskTest extends AuthorizationTest {
     deleteTask(taskId, true);
   }
 
+  @Test
   public void testShouldGrantUpdateOnSetCandidateUser() {
 
     // given
@@ -125,6 +141,7 @@ public class DefaultUserPermissionsForTaskTest extends AuthorizationTest {
     deleteTask(taskId, true);
   }
 
+  @Test
   public void testShouldGrantTaskWorkOnSetOwner() {
 
     // given
@@ -145,6 +162,7 @@ public class DefaultUserPermissionsForTaskTest extends AuthorizationTest {
     deleteTask(taskId, true);
   }
 
+  @Test
   public void testShouldGrantUpdateOnSetOwner() {
 
     // given
@@ -165,6 +183,7 @@ public class DefaultUserPermissionsForTaskTest extends AuthorizationTest {
   }
 
 
+  @Test
   public void testShouldGrantTaskWorkOnSetCandidateGroup() {
 
     // given
@@ -185,6 +204,7 @@ public class DefaultUserPermissionsForTaskTest extends AuthorizationTest {
     deleteTask(taskId, true);
   }
 
+  @Test
   public void testShouldGrantUpdateOnSetCandidateGroup() {
 
     // given

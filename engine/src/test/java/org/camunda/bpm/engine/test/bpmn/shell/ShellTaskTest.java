@@ -16,9 +16,13 @@
  */
 package org.camunda.bpm.engine.test.bpmn.shell;
 
-import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.Deployment;
+import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
+import org.junit.Before;
 import org.junit.Test;
 
 public class ShellTaskTest extends PluggableProcessEngineTest {
@@ -43,7 +47,8 @@ public class ShellTaskTest extends PluggableProcessEngineTest {
       return OsType.UNKOWN;
   }
 
-  protected void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
     osType = getSystemOsType();
   }
 

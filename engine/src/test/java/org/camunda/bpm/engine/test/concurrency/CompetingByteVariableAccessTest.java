@@ -25,6 +25,15 @@ import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.bpm.engine.impl.persistence.entity.ByteArrayEntity;
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity;
 import org.camunda.bpm.engine.impl.persistence.entity.VariableInstanceEntity;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * thread1:
@@ -44,8 +53,9 @@ public class CompetingByteVariableAccessTest extends ConcurrencyTest {
 
   private ThreadControl asyncThread;
 
+  @Test
   public void testConcurrentVariableRemoval() {
-    deployment(createExecutableProcess("test")
+   testRule.deploy(createExecutableProcess("test")
         .startEvent()
           .userTask()
         .endEvent()

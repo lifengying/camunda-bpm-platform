@@ -16,14 +16,16 @@
  */
 package org.camunda.bpm.engine.test.concurrency;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.camunda.bpm.engine.impl.interceptor.Command;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.bpm.engine.impl.persistence.entity.JobEntity;
 import org.camunda.bpm.engine.impl.persistence.entity.MessageEntity;
-
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * @author Tassilo Weidner
@@ -32,7 +34,8 @@ public class ThrowOleWhenDeletingExceptionStacktraceTest extends ConcurrencyTest
 
   protected AtomicReference<JobEntity> job = new AtomicReference<>();
 
-  protected void tearDown() throws Exception {
+  @After
+  public void tearDown() throws Exception {
     if (job.get() != null) {
       processEngineConfiguration.getCommandExecutorTxRequired().execute(new Command<Void>() {
         public Void execute(CommandContext commandContext) {
@@ -49,9 +52,10 @@ public class ThrowOleWhenDeletingExceptionStacktraceTest extends ConcurrencyTest
       });
     }
 
-    super.tearDown();
+
   }
 
+  @Test
   public void testThrowOleWhenDeletingExceptionStacktraceTest() {
     // given
     processEngineConfiguration.getCommandExecutorTxRequired()

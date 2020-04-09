@@ -23,6 +23,8 @@ import static org.camunda.bpm.engine.authorization.Resources.HISTORIC_PROCESS_IN
 import static org.camunda.bpm.engine.authorization.Resources.HISTORIC_TASK;
 import static org.camunda.bpm.engine.authorization.Resources.PROCESS_DEFINITION;
 
+import java.util.List;
+
 import org.camunda.bpm.engine.ProcessEngineConfiguration;
 import org.camunda.bpm.engine.authorization.HistoricProcessInstancePermissions;
 import org.camunda.bpm.engine.authorization.HistoricTaskPermissions;
@@ -32,32 +34,38 @@ import org.camunda.bpm.engine.history.HistoricIdentityLinkLogQuery;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.RequiredHistoryLevel;
 import org.camunda.bpm.engine.test.api.authorization.AuthorizationTest;
-
-import java.util.List;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 @RequiredHistoryLevel(ProcessEngineConfiguration.HISTORY_FULL)
 public class HistoricIdentityLinkLogAuthorizationTest extends AuthorizationTest {
 
   protected static final String ONE_PROCESS_KEY = "demoAssigneeProcess";
   protected static final String CASE_KEY = "oneTaskCase";
-  protected String deploymentId;
 
-  @Override
+  @Before
   public void setUp() throws Exception {
-    deploymentId = createDeployment(null, "org/camunda/bpm/engine/test/api/authorization/oneTaskProcess.bpmn20.xml",
-    "org/camunda/bpm/engine/test/api/authorization/oneTaskCase.cmmn").getId();
-    super.setUp();
+    testRule.deploy( "org/camunda/bpm/engine/test/api/authorization/oneTaskProcess.bpmn20.xml",
+    "org/camunda/bpm/engine/test/api/authorization/oneTaskCase.cmmn");
   }
 
-  @Override
+  @After
   public void tearDown() {
-    super.tearDown();
-    deleteDeployment(deploymentId);
     processEngineConfiguration.setEnableHistoricInstancePermissions(false);
   }
 
   // historic identity link query (standalone task) - Authorization
 
+  @Test
   public void testQueryForStandaloneTaskHistoricIdentityLinkWithoutAuthrorization() {
     // given
     disableAuthorization();
@@ -79,6 +87,7 @@ public class HistoricIdentityLinkLogAuthorizationTest extends AuthorizationTest 
     enableAuthorization();
   }
 
+  @Test
   public void testQueryForTaskHistoricIdentityLinkWithoutUserPermission() {
     // given
     disableAuthorization();
@@ -98,6 +107,7 @@ public class HistoricIdentityLinkLogAuthorizationTest extends AuthorizationTest 
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testQueryForTaskHistoricIdentityLinkWithUserPermission() {
     // given
     disableAuthorization();
@@ -114,6 +124,7 @@ public class HistoricIdentityLinkLogAuthorizationTest extends AuthorizationTest 
     verifyQueryResults(query, 1);
   }
 
+  @Test
   public void testQueryWithMultiple() {
     // given
     disableAuthorization();
@@ -131,6 +142,7 @@ public class HistoricIdentityLinkLogAuthorizationTest extends AuthorizationTest 
     verifyQueryResults(query, 1);
   }
 
+  @Test
   public void testQueryCaseTask() {
     // given
     createCaseInstanceByKey(CASE_KEY);
@@ -148,6 +160,7 @@ public class HistoricIdentityLinkLogAuthorizationTest extends AuthorizationTest 
     verifyQueryResults(query, 1);
   }
 
+  @Test
   public void testMixedQuery() {
 
     disableAuthorization();
@@ -196,6 +209,7 @@ public class HistoricIdentityLinkLogAuthorizationTest extends AuthorizationTest 
     deleteTask("five", true);
   }
 
+  @Test
   public void testCheckNonePermissionOnHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -213,6 +227,7 @@ public class HistoricIdentityLinkLogAuthorizationTest extends AuthorizationTest 
     assertEquals(0, result.size());
   }
 
+  @Test
   public void testCheckReadPermissionOnHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -230,6 +245,7 @@ public class HistoricIdentityLinkLogAuthorizationTest extends AuthorizationTest 
     assertEquals(1, result.size());
   }
 
+  @Test
   public void testCheckReadPermissionOnStandaloneHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -254,6 +270,7 @@ public class HistoricIdentityLinkLogAuthorizationTest extends AuthorizationTest 
     deleteTask(taskId, true);
   }
 
+  @Test
   public void testCheckNonePermissionOnStandaloneHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -277,6 +294,7 @@ public class HistoricIdentityLinkLogAuthorizationTest extends AuthorizationTest 
     deleteTask(taskId, true);
   }
 
+  @Test
   public void testCheckReadPermissionOnCompletedHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -297,6 +315,7 @@ public class HistoricIdentityLinkLogAuthorizationTest extends AuthorizationTest 
     assertEquals(1, result.size());
   }
 
+  @Test
   public void testCheckNonePermissionOnHistoricTaskAndReadHistoryPermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -318,6 +337,7 @@ public class HistoricIdentityLinkLogAuthorizationTest extends AuthorizationTest 
     assertEquals(1, result.size());
   }
 
+  @Test
   public void testCheckReadPermissionOnHistoricTaskAndNonePermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -340,6 +360,7 @@ public class HistoricIdentityLinkLogAuthorizationTest extends AuthorizationTest 
     assertEquals(1, result.size());
   }
 
+  @Test
   public void testHistoricTaskPermissionsAuthorizationDisabled() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);

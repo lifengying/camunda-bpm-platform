@@ -16,6 +16,9 @@
  */
 package org.camunda.bpm.engine.test.concurrency;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import org.camunda.bpm.engine.OptimisticLockingException;
 import org.camunda.bpm.engine.impl.ProcessEngineLogger;
 import org.camunda.bpm.engine.impl.cmmn.cmd.CompleteCaseExecutionCmd;
@@ -23,8 +26,9 @@ import org.camunda.bpm.engine.impl.cmmn.cmd.DisableCaseExecutionCmd;
 import org.camunda.bpm.engine.impl.cmmn.cmd.StateTransitionCaseExecutionCmd;
 import org.camunda.bpm.engine.impl.cmmn.entity.runtime.CaseExecutionEntity;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
-import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.camunda.bpm.engine.test.Deployment;
+import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
+import org.junit.Test;
 import org.slf4j.Logger;
 
 /**
@@ -101,6 +105,7 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
   }
 
   @Deployment(resources = {"org/camunda/bpm/engine/test/concurrency/CompetingParentCompletionTest.testComplete.cmmn"})
+  @Test
   public void testComplete() {
     String caseInstanceId = caseService
         .withCaseDefinitionByKey("case")
@@ -136,11 +141,12 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
     LOG.debug("test thread notifies thread 2");
     threadTwo.proceedAndWaitTillDone();
     assertNotNull(threadTwo.exception);
-    testHelper.assertTextPresent("was updated by another transaction concurrently", threadTwo.exception.getMessage());
+    testRule.assertTextPresent("was updated by another transaction concurrently", threadTwo.exception.getMessage());
 
   }
 
   @Deployment(resources = {"org/camunda/bpm/engine/test/concurrency/CompetingParentCompletionTest.testDisable.cmmn"})
+  @Test
   public void testDisable() {
     String caseInstanceId = caseService
         .withCaseDefinitionByKey("case")
@@ -176,11 +182,12 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
     LOG.debug("test thread notifies thread 2");
     threadTwo.proceedAndWaitTillDone();
     assertNotNull(threadTwo.exception);
-    testHelper.assertTextPresent("was updated by another transaction concurrently", threadTwo.exception.getMessage());
+    testRule.assertTextPresent("was updated by another transaction concurrently", threadTwo.exception.getMessage());
 
   }
 
   @Deployment(resources = {"org/camunda/bpm/engine/test/concurrency/CompetingParentCompletionTest.testTerminate.cmmn"})
+  @Test
   public void testTerminate() {
     String caseInstanceId = caseService
         .withCaseDefinitionByKey("case")
@@ -216,7 +223,7 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
     LOG.debug("test thread notifies thread 2");
     threadTwo.proceedAndWaitTillDone();
     assertNotNull(threadTwo.exception);
-    testHelper.assertTextPresent("was updated by another transaction concurrently", threadTwo.exception.getMessage());
+    testRule.assertTextPresent("was updated by another transaction concurrently", threadTwo.exception.getMessage());
 
   }
 

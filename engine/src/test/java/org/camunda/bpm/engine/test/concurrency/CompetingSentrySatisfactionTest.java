@@ -16,14 +16,18 @@
  */
 package org.camunda.bpm.engine.test.concurrency;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import org.camunda.bpm.engine.OptimisticLockingException;
 import org.camunda.bpm.engine.impl.ProcessEngineLogger;
 import org.camunda.bpm.engine.impl.cmmn.cmd.CompleteCaseExecutionCmd;
 import org.camunda.bpm.engine.impl.cmmn.cmd.ManualStartCaseExecutionCmd;
 import org.camunda.bpm.engine.impl.cmmn.cmd.StateTransitionCaseExecutionCmd;
-import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.camunda.bpm.engine.runtime.CaseExecution;
 import org.camunda.bpm.engine.test.Deployment;
+import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
+import org.junit.Test;
 import org.slf4j.Logger;
 
 /**
@@ -83,6 +87,7 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
   }
 
   @Deployment(resources = {"org/camunda/bpm/engine/test/concurrency/CompetingSentrySatisfactionTest.testEntryCriteriaWithAndSentry.cmmn"})
+  @Test
   public void testEntryCriteriaWithAndSentry() {
     String caseInstanceId = caseService
         .withCaseDefinitionByKey("case")
@@ -120,11 +125,12 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
     assertNotNull(threadTwo.exception);
 
     String message = threadTwo.exception.getMessage();
-    testHelper.assertTextPresent("CaseSentryPartEntity", message);
-    testHelper.assertTextPresent("was updated by another transaction concurrently", message);
+    testRule.assertTextPresent("CaseSentryPartEntity", message);
+    testRule.assertTextPresent("was updated by another transaction concurrently", message);
   }
 
   @Deployment(resources = {"org/camunda/bpm/engine/test/concurrency/CompetingSentrySatisfactionTest.testExitCriteriaWithAndSentry.cmmn"})
+  @Test
   public void testExitCriteriaWithAndSentry() {
     String caseInstanceId = caseService
         .withCaseDefinitionByKey("case")
@@ -162,11 +168,12 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
     assertNotNull(threadTwo.exception);
 
     String message = threadTwo.exception.getMessage();
-    testHelper.assertTextPresent("CaseSentryPartEntity", message);
-    testHelper.assertTextPresent("was updated by another transaction concurrently", message);
+    testRule.assertTextPresent("CaseSentryPartEntity", message);
+    testRule.assertTextPresent("was updated by another transaction concurrently", message);
   }
 
   @Deployment(resources = {"org/camunda/bpm/engine/test/concurrency/CompetingSentrySatisfactionTest.testEntryCriteriaWithOrSentry.cmmn"})
+  @Test
   public void testEntryCriteriaWithOrSentry() {
     String caseInstanceId = caseService
         .withCaseDefinitionByKey("case")
@@ -204,12 +211,13 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
     assertNotNull(threadTwo.exception);
 
     String message = threadTwo.exception.getMessage();
-    testHelper.assertTextPresent("CaseExecutionEntity", message);
-    testHelper.assertTextPresent("was updated by another transaction concurrently", message);
+    testRule.assertTextPresent("CaseExecutionEntity", message);
+    testRule.assertTextPresent("was updated by another transaction concurrently", message);
   }
 
   @Deployment(resources = {"org/camunda/bpm/engine/test/concurrency/CompetingSentrySatisfactionTest.testExitCriteriaWithOrSentry.cmmn",
       "org/camunda/bpm/engine/test/concurrency/CompetingSentrySatisfactionTest.oneTaskProcess.bpmn20.xml"})
+  @Test
   public void testExitCriteriaWithOrSentry() {
     String caseInstanceId = caseService
         .withCaseDefinitionByKey("case")
@@ -254,8 +262,8 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
     assertNotNull(threadTwo.exception);
 
     String message = threadTwo.exception.getMessage();
-    testHelper.assertTextPresent("CaseExecutionEntity", message);
-    testHelper.assertTextPresent("was updated by another transaction concurrently", message);
+    testRule.assertTextPresent("CaseExecutionEntity", message);
+    testRule.assertTextPresent("was updated by another transaction concurrently", message);
   }
 
 }

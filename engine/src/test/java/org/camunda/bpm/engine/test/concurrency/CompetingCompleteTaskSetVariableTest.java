@@ -16,12 +16,17 @@
  */
 package org.camunda.bpm.engine.test.concurrency;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.Map;
+
 import org.camunda.bpm.engine.impl.cmd.CompleteTaskCmd;
 import org.camunda.bpm.engine.impl.cmd.SetTaskVariablesCmd;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.variable.Variables;
+import org.junit.Test;
 
 /**
  * @author Svetlana Dorokhova
@@ -76,6 +81,7 @@ public class CompetingCompleteTaskSetVariableTest extends ConcurrencyTest {
   }
 
   @Deployment
+  @Test
   public void testCompleteTaskSetLocalVariable() {
     runtimeService.startProcessInstanceByKey("oneTaskProcess");
 

@@ -16,13 +16,17 @@
  */
 package org.camunda.bpm.engine.test.concurrency;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import org.camunda.bpm.engine.OptimisticLockingException;
 import org.camunda.bpm.engine.impl.ProcessEngineLogger;
 import org.camunda.bpm.engine.impl.pvm.delegate.ActivityBehavior;
 import org.camunda.bpm.engine.impl.pvm.delegate.ActivityExecution;
-import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.Deployment;
+import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
+import org.junit.Test;
 import org.slf4j.Logger;
 
 
@@ -68,6 +72,7 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
   }
 
   @Deployment
+  @Test
   public void testCompetingSignals() throws Exception {
     ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("CompetingSignalsProcess");
     String processInstanceId = processInstance.getId();
@@ -87,7 +92,7 @@ private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
     LOG.debug("test thread notifies thread 2");
     threadTwo.proceedAndWaitTillDone();
     assertNotNull(threadTwo.exception);
-    testHelper.assertTextPresent("was updated by another transaction concurrently", threadTwo.exception.getMessage());
+    testRule.assertTextPresent("was updated by another transaction concurrently", threadTwo.exception.getMessage());
   }
 
 }

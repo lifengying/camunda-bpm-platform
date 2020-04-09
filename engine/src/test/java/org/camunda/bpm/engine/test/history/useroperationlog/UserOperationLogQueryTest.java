@@ -16,41 +16,6 @@
  */
 package org.camunda.bpm.engine.test.history.useroperationlog;
 
-import org.camunda.bpm.engine.EntityTypes;
-import org.camunda.bpm.engine.ProcessEngineException;
-import org.camunda.bpm.engine.externaltask.ExternalTask;
-import org.camunda.bpm.engine.history.HistoricVariableInstance;
-import org.camunda.bpm.engine.history.UserOperationLogEntry;
-import org.camunda.bpm.engine.history.UserOperationLogQuery;
-import org.camunda.bpm.engine.impl.RuntimeServiceImpl;
-import org.camunda.bpm.engine.impl.TaskServiceImpl;
-import org.camunda.bpm.engine.impl.interceptor.Command;
-import org.camunda.bpm.engine.impl.interceptor.CommandContext;
-import org.camunda.bpm.engine.impl.interceptor.CommandExecutor;
-import org.camunda.bpm.engine.impl.jobexecutor.TimerActivateJobDefinitionHandler;
-import org.camunda.bpm.engine.impl.jobexecutor.TimerSuspendProcessDefinitionHandler;
-import org.camunda.bpm.engine.impl.util.ClockUtil;
-import org.camunda.bpm.engine.repository.ProcessDefinition;
-import org.camunda.bpm.engine.runtime.CaseInstance;
-import org.camunda.bpm.engine.runtime.Execution;
-import org.camunda.bpm.engine.runtime.Job;
-import org.camunda.bpm.engine.runtime.JobQuery;
-import org.camunda.bpm.engine.runtime.ProcessInstance;
-import org.camunda.bpm.engine.task.Attachment;
-import org.camunda.bpm.engine.task.Task;
-import org.camunda.bpm.engine.test.Deployment;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import static org.camunda.bpm.engine.EntityTypes.JOB;
 import static org.camunda.bpm.engine.EntityTypes.JOB_DEFINITION;
 import static org.camunda.bpm.engine.EntityTypes.PROCESS_DEFINITION;
@@ -81,7 +46,48 @@ import static org.camunda.bpm.engine.impl.cmd.AbstractSetBatchStateCmd.SUSPENSIO
 import static org.camunda.bpm.engine.impl.cmd.AbstractSetProcessDefinitionStateCmd.INCLUDE_PROCESS_INSTANCES_PROPERTY;
 import static org.camunda.bpm.engine.impl.persistence.entity.TaskEntity.ASSIGNEE;
 import static org.camunda.bpm.engine.impl.persistence.entity.TaskEntity.OWNER;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.camunda.bpm.engine.EntityTypes;
+import org.camunda.bpm.engine.ProcessEngineException;
+import org.camunda.bpm.engine.externaltask.ExternalTask;
+import org.camunda.bpm.engine.history.HistoricVariableInstance;
+import org.camunda.bpm.engine.history.UserOperationLogEntry;
+import org.camunda.bpm.engine.history.UserOperationLogQuery;
+import org.camunda.bpm.engine.impl.RuntimeServiceImpl;
+import org.camunda.bpm.engine.impl.TaskServiceImpl;
+import org.camunda.bpm.engine.impl.interceptor.Command;
+import org.camunda.bpm.engine.impl.interceptor.CommandContext;
+import org.camunda.bpm.engine.impl.interceptor.CommandExecutor;
+import org.camunda.bpm.engine.impl.jobexecutor.TimerActivateJobDefinitionHandler;
+import org.camunda.bpm.engine.impl.jobexecutor.TimerSuspendProcessDefinitionHandler;
+import org.camunda.bpm.engine.impl.util.ClockUtil;
+import org.camunda.bpm.engine.repository.ProcessDefinition;
+import org.camunda.bpm.engine.runtime.CaseInstance;
+import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.runtime.Job;
+import org.camunda.bpm.engine.runtime.JobQuery;
+import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.camunda.bpm.engine.task.Attachment;
+import org.camunda.bpm.engine.task.Task;
+import org.camunda.bpm.engine.test.Deployment;
+import org.junit.After;
+import org.junit.Test;
 /**
  * @author Danny Gräf
  */
@@ -101,15 +107,15 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   private Date tomorrow = new Date(((ClockUtil.getCurrentTime().getTime() + 86400000) / 1000) * 1000);
   private Date yesterday = new Date(((ClockUtil.getCurrentTime().getTime() - 86400000) / 1000) * 1000);
 
-  protected void tearDown() throws Exception {
-    super.tearDown();
-
+  @After
+  public void tearDown() throws Exception {
     if (userTask != null) {
       historyService.deleteHistoricTaskInstance(userTask.getId());
     }
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQuery() {
     createLogEntries();
 
@@ -196,6 +202,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryWithBackwardCompatibility() {
     createLogEntries();
 
@@ -210,8 +217,10 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryProcessInstanceOperationsById() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
 
     // when
@@ -271,8 +280,10 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryProcessInstanceOperationsByProcessDefinitionId() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
 
     // when
@@ -318,6 +329,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryProcessInstanceOperationsByProcessDefinitionKey() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -368,8 +380,10 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
    * CAM-1930: add assertions for additional op log entries here
    */
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryProcessDefinitionOperationsById() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
 
     // when
@@ -420,6 +434,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
    * CAM-1930: add assertions for additional op log entries here
    */
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryProcessDefinitionOperationsByKey() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -513,6 +528,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   @Deployment(resources = {ONE_TASK_PROCESS})
   public void testQueryProcessDefinitionOperationsById_includeProcessInstancesEntries() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
 
     // when
@@ -562,6 +578,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   @Deployment(resources = {ONE_TASK_PROCESS})
   public void testQueryProcessDefinitionOperationsById_excludeProcessInstancesEntries() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
 
     // when
@@ -751,8 +768,10 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {"org/camunda/bpm/engine/test/history/HistoricJobLogTest.testAsyncContinuation.bpmn20.xml"})
+  @Test
   public void testQueryJobOperations() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     process = runtimeService.startProcessInstanceByKey("process");
 
     // when
@@ -831,8 +850,10 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = { "org/camunda/bpm/engine/test/bpmn/async/FoxJobRetryCmdTest.testFailedServiceTask.bpmn20.xml" })
+  @Test
   public void testQueryJobRetryOperationsById() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     process = runtimeService.startProcessInstanceByKey("failedServiceTask");
     Job job = managementService.createJobQuery().processInstanceId(process.getProcessInstanceId()).singleResult();
 
@@ -862,6 +883,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryJobDefinitionOperationWithDelayedJobDefinition() {
     // given
     // a running process instance
@@ -921,6 +943,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {"org/camunda/bpm/engine/test/api/repository/ProcessDefinitionSuspensionTest.testWithOneAsyncServiceTask.bpmn"})
+  @Test
   public void testQueryProcessDefinitionOperationWithDelayedProcessDefinition() {
     // given
     ClockUtil.setCurrentTime(today);
@@ -982,7 +1005,9 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   // ----- PROCESS INSTANCE MODIFICATION -----
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryProcessInstanceModificationOperation() {
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("oneTaskProcess");
     String processInstanceId = processInstance.getId();
 
@@ -1015,6 +1040,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   // ----- ADD VARIABLES -----
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryAddExecutionVariableOperation() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1027,6 +1053,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryAddExecutionVariablesMapOperation() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1039,6 +1066,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryAddExecutionVariablesSingleAndMapOperation() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1053,6 +1081,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryAddTaskVariableOperation() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1066,6 +1095,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryAddTaskVariablesMapOperation() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1079,6 +1109,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryAddTaskVariablesSingleAndMapOperation() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1096,6 +1127,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   // ----- PATCH VARIABLES -----
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryPatchExecutionVariablesOperation() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1109,6 +1141,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryPatchTaskVariablesOperation() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1125,6 +1158,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   // ----- REMOVE VARIABLES -----
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryRemoveExecutionVariableOperation() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1137,6 +1171,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryRemoveExecutionVariablesMapOperation() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1149,6 +1184,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryRemoveExecutionVariablesSingleAndMapOperation() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1163,6 +1199,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryRemoveTaskVariableOperation() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1176,6 +1213,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryRemoveTaskVariablesMapOperation() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1189,6 +1227,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryRemoveTaskVariablesSingleAndMapOperation() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1204,6 +1243,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryByEntityTypes() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1221,6 +1261,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
     verifyQueryResults(query, 2);
   }
 
+  @Test
   public void testQueryByInvalidEntityTypes() {
     UserOperationLogQuery query = historyService
         .createUserOperationLogQuery()
@@ -1242,8 +1283,9 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
       // expected
     }
   }
-  
+
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryByCategories() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1259,14 +1301,14 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
       .categoryIn(UserOperationLogEntry.CATEGORY_TASK_WORKER, UserOperationLogEntry.CATEGORY_OPERATOR);
 
     verifyQueryResults(query, 3);
-    
+
     // and
     query = historyService
         .createUserOperationLogQuery()
         .categoryIn(UserOperationLogEntry.CATEGORY_TASK_WORKER);
 
     verifyQueryResults(query, 2);
-      
+
     // and
     query = historyService
       .createUserOperationLogQuery()
@@ -1274,14 +1316,15 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
 
     verifyQueryResults(query, 1);
   }
-  
+
+  @Test
   public void testQueryByInvalidCategories() {
     UserOperationLogQuery query = historyService
         .createUserOperationLogQuery()
         .categoryIn("foo");
 
     verifyQueryResults(query, 0);
-    
+
     query = historyService
         .createUserOperationLogQuery()
         .category("foo");
@@ -1294,7 +1337,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
     } catch (ProcessEngineException e) {
       // expected
     }
-    
+
     try {
       query.categoryIn((String[]) null);
       fail();
@@ -1309,10 +1352,11 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
       // expected
     }
   }
-  
+
   // ----- DELETE VARIABLE HISTORY -----
-  
+
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryDeleteVariableHistoryOperationOnRunningInstance() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1327,8 +1371,9 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
     verifyHistoricVariableOperationAsserts(1, UserOperationLogEntry.OPERATION_TYPE_DELETE_HISTORY);
     verifySingleVariableOperationPropertyChange("name", "testVariable", UserOperationLogEntry.OPERATION_TYPE_DELETE_HISTORY);
   }
-  
+
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryDeleteVariableHistoryOperationOnHistoricInstance() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1343,8 +1388,9 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
     verifyHistoricVariableOperationAsserts(1, UserOperationLogEntry.OPERATION_TYPE_DELETE_HISTORY);
     verifySingleVariableOperationPropertyChange("name", "testVariable", UserOperationLogEntry.OPERATION_TYPE_DELETE_HISTORY);
   }
-  
+
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryDeleteVariableHistoryOperationOnTaskOfRunningInstance() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1360,8 +1406,9 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
     verifyHistoricVariableOperationAsserts(1, UserOperationLogEntry.OPERATION_TYPE_DELETE_HISTORY);
     verifySingleVariableOperationPropertyChange("name", "testVariable", UserOperationLogEntry.OPERATION_TYPE_DELETE_HISTORY);
   }
-  
+
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryDeleteVariableHistoryOperationOnTaskOfHistoricInstance() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1377,8 +1424,9 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
     verifyHistoricVariableOperationAsserts(1, UserOperationLogEntry.OPERATION_TYPE_DELETE_HISTORY);
     verifySingleVariableOperationPropertyChange("name", "testVariable", UserOperationLogEntry.OPERATION_TYPE_DELETE_HISTORY);
   }
-  
+
   @Deployment(resources = {"org/camunda/bpm/engine/test/api/cmmn/oneTaskCase.cmmn"})
+  @Test
   public void testQueryDeleteVariableHistoryOperationOnCase() {
     // given
     CaseInstance caseInstance = caseService.createCaseInstanceByKey("oneTaskCase");
@@ -1386,7 +1434,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
     caseService.setVariable(caseInstance.getId(), "myVariable", 2);
     caseService.setVariable(caseInstance.getId(), "myVariable", 3);
     HistoricVariableInstance variableInstance = historyService.createHistoricVariableInstanceQuery().singleResult();
-    
+
     // when
     historyService.deleteHistoricVariableInstance(variableInstance.getId());
 
@@ -1396,6 +1444,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {"org/camunda/bpm/engine/test/api/cmmn/oneTaskCase.cmmn"})
+  @Test
   public void testQueryDeleteVariableHistoryOperationOnTaskOfCase() {
     // given
     CaseInstance caseInstance = caseService.createCaseInstanceByKey("oneTaskCase");
@@ -1404,25 +1453,27 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
     taskService.setVariable(processTaskId, "myVariable", "2");
     taskService.setVariable(processTaskId, "myVariable", "3");
     HistoricVariableInstance variableInstance = historyService.createHistoricVariableInstanceQuery().singleResult();
-    
+
     // when
     historyService.deleteHistoricVariableInstance(variableInstance.getId());
 
     verfiySingleCaseVariableOperationAsserts(caseInstance);
     verifySingleVariableOperationPropertyChange("name", "myVariable", UserOperationLogEntry.OPERATION_TYPE_DELETE_HISTORY);
   }
-  
+
+  @Test
   public void testQueryDeleteVariableHistoryOperationOnStandaloneTask() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     Task task = taskService.newTask();
     taskService.saveTask(task);
     taskService.setVariable(task.getId(), "testVariable", "testValue");
     taskService.setVariable(task.getId(), "testVariable", "testValue2");
     HistoricVariableInstance variableInstance = historyService.createHistoricVariableInstanceQuery().singleResult();
-    
+
     // when
     historyService.deleteHistoricVariableInstance(variableInstance.getId());
-    
+
     // then
     String operationType = UserOperationLogEntry.OPERATION_TYPE_DELETE_HISTORY;
     UserOperationLogQuery logQuery = query().entityType(EntityTypes.VARIABLE).operationType(operationType);
@@ -1432,11 +1483,12 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
     assertEquals(task.getId(), logEntry.getTaskId());
     assertEquals(deploymentId, logEntry.getDeploymentId());
     verifySingleVariableOperationPropertyChange("name", "testVariable", UserOperationLogEntry.OPERATION_TYPE_DELETE_HISTORY);
-    
+
     taskService.deleteTask(task.getId(), true);
   }
-  
+
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryDeleteVariablesHistoryOperationOnRunningInstance() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1452,8 +1504,9 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
     // then
     verifyHistoricVariableOperationAsserts(1, UserOperationLogEntry.OPERATION_TYPE_DELETE_HISTORY);
   }
-  
+
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryDeleteVariablesHistoryOperationOnHistoryInstance() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1470,6 +1523,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryDeleteVariableAndVariablesHistoryOperationOnRunningInstance() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1488,8 +1542,9 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
     // then
     verifyHistoricVariableOperationAsserts(2, UserOperationLogEntry.OPERATION_TYPE_DELETE_HISTORY);
   }
-  
+
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryDeleteVariableAndVariablesHistoryOperationOnHistoryInstance() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -1506,10 +1561,11 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
     // then
     verifyHistoricVariableOperationAsserts(2, UserOperationLogEntry.OPERATION_TYPE_DELETE_HISTORY);
   }
-  
+
   // --------------- CMMN --------------------
 
   @Deployment(resources={ONE_TASK_CASE})
+  @Test
   public void testQueryByCaseDefinitionId() {
     // given:
     // a deployed case definition
@@ -1541,6 +1597,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources={ONE_TASK_CASE})
+  @Test
   public void testQueryByCaseInstanceId() {
     // given:
     // a deployed case definition
@@ -1573,6 +1630,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources={ONE_TASK_CASE})
+  @Test
   public void testQueryByCaseExecutionId() {
     // given:
     // a deployed case definition
@@ -1608,8 +1666,9 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
 
     verifyQueryResults(query, 1);
   }
-  
+
   @Deployment(resources={ONE_EXTERNAL_TASK_PROCESS})
+  @Test
   public void testQueryByExternalTaskId() {
     // given:
     // an active process instance
@@ -1629,6 +1688,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
     verifyQueryResults(query, 1);
   }
 
+  @Test
   public void testQueryByDeploymentId() {
     // given
     String deploymentId = repositoryService
@@ -1649,6 +1709,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
     repositoryService.deleteDeployment(deploymentId, true);
   }
 
+  @Test
   public void testQueryByInvalidDeploymentId() {
     UserOperationLogQuery query = historyService
         .createUserOperationLogQuery()
@@ -1701,6 +1762,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   private void verifyVariableOperationAsserts(int countAssertValue, String operationType, String category) {
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     UserOperationLogQuery logQuery = query().entityType(EntityTypes.VARIABLE).operationType(operationType);
     assertEquals(countAssertValue, logQuery.count());
 
@@ -1721,8 +1783,9 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
       assertEquals(category, logEntry.getCategory());
     }
   }
-  
+
   private void verifyHistoricVariableOperationAsserts(int countAssertValue, String operationType) {
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     UserOperationLogQuery logQuery = query().entityType(EntityTypes.VARIABLE).operationType(operationType);
     assertEquals(countAssertValue, logQuery.count());
 
@@ -1745,7 +1808,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
       assertEquals(UserOperationLogEntry.CATEGORY_OPERATOR, logEntry.getCategory());
     }
   }
-  
+
   private void verifySingleVariableOperationPropertyChange(String property, String newValue, String operationType) {
     UserOperationLogQuery logQuery = query().entityType(EntityTypes.VARIABLE).operationType(operationType);
     assertEquals(1, logQuery.count());
@@ -1754,8 +1817,9 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
     assertEquals(newValue, logEntry.getNewValue());
     assertEquals(UserOperationLogEntry.CATEGORY_OPERATOR, logEntry.getCategory());
   }
-  
+
   private void verfiySingleCaseVariableOperationAsserts(CaseInstance caseInstance) {
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     String operationType = UserOperationLogEntry.OPERATION_TYPE_DELETE_HISTORY;
     UserOperationLogQuery logQuery = query().entityType(EntityTypes.VARIABLE).operationType(operationType);
     assertEquals(1, logQuery.count());
@@ -1807,7 +1871,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
 
     // complete the userTask to finish the process
     taskService.complete(processTaskId);
-    assertProcessEnded(process.getId());
+    testRule.assertProcessEnded(process.getId());
 
     // user "er" works on the process userTask
     identityService.setAuthenticatedUserId("er");

@@ -30,6 +30,7 @@ import static org.camunda.bpm.engine.authorization.UserOperationLogCategoryPermi
 import static org.camunda.bpm.engine.history.UserOperationLogEntry.CATEGORY_ADMIN;
 import static org.camunda.bpm.engine.history.UserOperationLogEntry.CATEGORY_OPERATOR;
 import static org.camunda.bpm.engine.history.UserOperationLogEntry.CATEGORY_TASK_WORKER;
+
 import java.util.Date;
 import java.util.List;
 
@@ -54,7 +55,18 @@ import org.camunda.bpm.engine.impl.persistence.entity.HistoricIncidentEntity;
 import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.test.RequiredHistoryLevel;
 import org.camunda.bpm.engine.test.api.authorization.AuthorizationTest;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author Roman Smirnov
@@ -70,19 +82,16 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
   protected String deploymentId;
   protected String taskId;
 
-  @Override
+  @Before
   public void setUp() throws Exception {
-    deploymentId = createDeployment(null,
+    testRule.deploy(
         "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml",
         "org/camunda/bpm/engine/test/api/authorization/oneTaskCase.cmmn",
-        "org/camunda/bpm/engine/test/api/authorization/timerBoundaryEventProcess.bpmn20.xml").getId();
-    super.setUp();
+        "org/camunda/bpm/engine/test/api/authorization/timerBoundaryEventProcess.bpmn20.xml");
   }
 
-  @Override
+  @After
   public void tearDown() {
-    super.tearDown();
-    deleteDeployment(deploymentId);
     processEngineConfiguration.setEnableHistoricInstancePermissions(false);
 
     if (taskId != null) {
@@ -94,6 +103,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
 
   // standalone task ///////////////////////////////
 
+  @Test
   public void testQueryCreateStandaloneTaskUserOperationLogWithoutAuthorization() {
     // given
     String taskId = "myTask";
@@ -108,6 +118,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     deleteTask(taskId, true);
   }
   
+  @Test
   public void testQueryCreateStandaloneTaskUserOperationLogWithReadHistoryPermissionOnProcessDefinition() {
     // given
     String taskId = "myTask";
@@ -141,6 +152,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     deleteTask(taskId, true);
   }
   
+  @Test
   public void testQueryCreateStandaloneTaskUserOperationLogWithReadPermissionOnCategory() {
     // given
     String taskId = "myTask";
@@ -157,6 +169,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     deleteTask(taskId, true);
   }
   
+  @Test
   public void testQueryCreateStandaloneTaskUserOperationLogWithReadPermissionOnAnyCategory() {
     // given
     String taskId = "myTask";
@@ -173,6 +186,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     deleteTask(taskId, true);
   }
   
+  @Test
   public void testQueryCreateStandaloneTaskUserOperationLogWithReadPermissionOnAnyCategoryAndRevokeReadHistoryOnProcessDefinition() {
     // given
     String taskId = "myTask";
@@ -209,6 +223,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     deleteTask(taskId, true);
   }
 
+  @Test
   public void testQuerySetAssigneeStandaloneTaskUserOperationLogWithoutAuthorization() {
     // given
     String taskId = "myTask";
@@ -224,6 +239,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     deleteTask(taskId, true);
   }
   
+  @Test
   public void testQuerySetAssigneeStandaloneTaskUserOperationLogWithReadPermissionOnProcessDefinition() {
     // given
     String taskId = "myTask";
@@ -259,6 +275,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     deleteTask(taskId, true);
   }
   
+  @Test
   public void testQuerySetAssigneeStandaloneTaskUserOperationLogWithReadPermissionOnCategory() {
     // given
     String taskId = "myTask";
@@ -276,6 +293,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     deleteTask(taskId, true);
   }
   
+  @Test
   public void testQuerySetAssigneeStandaloneTaskUserOperationLogWithReadPermissionOnAnyCategory() {
     // given
     String taskId = "myTask";
@@ -295,6 +313,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
 
   // (process) user task /////////////////////////////
 
+  @Test
   public void testQuerySetAssigneeTaskUserOperationLogWithoutAuthorization() {
     // given
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
@@ -308,6 +327,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testQuerySetAssigneeTaskUserOperationLogWithReadHistoryPermissionOnProcessDefinition() {
     // given
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
@@ -323,6 +343,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 2);
   }
 
+  @Test
   public void testQuerySetAssigneeTaskUserOperationLogWithReadHistoryPermissionOnAnyProcessDefinition() {
     // given
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
@@ -338,6 +359,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 2);
   }
 
+  @Test
   public void testQuerySetAssigneeTaskUserOperationLogWithMultiple() {
     // given
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
@@ -354,6 +376,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 2);
   }
 
+  @Test
   public void testCheckNonePermissionOnHistoricProcessInstance() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -374,6 +397,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     assertThat(query.list()).isEmpty();
   }
 
+  @Test
   public void testCheckReadPermissionOnHistoricProcessInstance() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -396,6 +420,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
         .containsExactly(processInstanceId, processInstanceId);
   }
 
+  @Test
   public void testCheckNoneOnHistoricProcessInstanceAndReadHistoryPermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -420,6 +445,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
         .containsExactly(processInstanceId, processInstanceId);
   }
 
+  @Test
   public void testCheckReadOnHistoricProcessInstanceAndNonePermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -444,6 +470,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
         .containsExactly(processInstanceId, processInstanceId);
   }
 
+  @Test
   public void testCheckNoneOnHistoricProcessInstanceAndTaskWorkerCategory() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -468,6 +495,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
         .containsExactly(processInstanceId);
   }
 
+  @Test
   public void testCheckReadOnHistoricProcessInstanceAndAdminCategory() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -491,6 +519,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
         .containsExactly(processInstanceId, processInstanceId);
   }
 
+  @Test
   public void testHistoricProcessInstancePermissionsAuthorizationDisabled() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -513,6 +542,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
         .containsExactly(processInstanceId, processInstanceId);
   }
 
+  @Test
   public void testCheckNonePermissionOnHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -532,6 +562,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     assertThat(query.list()).isEmpty();
   }
 
+  @Test
   public void testCheckReadPermissionOnHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -552,6 +583,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
         .containsExactly(taskId);
   }
 
+  @Test
   public void testCheckReadPermissionOnStandaloneHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -575,6 +607,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
         .containsExactly(taskId, taskId);
   }
 
+  @Test
   public void testCheckNonePermissionOnStandaloneHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -595,6 +628,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     assertThat(query.list()).isEmpty();
   }
 
+  @Test
   public void testCheckReadPermissionOnCompletedHistoricTask() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -618,6 +652,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
         .containsExactly(taskId, taskId);
   }
 
+  @Test
   public void testCheckNonePermissionOnHistoricTaskAndReadHistoryPermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -642,6 +677,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
         .containsExactlyInAnyOrder(taskId, null);
   }
 
+  @Test
   public void testCheckReadPermissionOnHistoricTaskAndNonePermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -666,6 +702,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
         .containsExactly(taskId);
   }
 
+  @Test
   public void testCheckNoneOnHistoricTaskAndTaskWorkerCategory() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -689,6 +726,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
         .containsExactly(taskId);
   }
 
+  @Test
   public void testCheckReadOnHistoricTaskAndAdminCategory() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -712,6 +750,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
         .containsExactly(taskId);
   }
 
+  @Test
   public void testHistoricTaskPermissionsAuthorizationDisabled() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -730,6 +769,8 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
         .containsExactlyInAnyOrder(taskId, null);
   }
 
+
+  @Test
   public void testQuerySetAssigneeTaskUserOperationLogWithReadPermissionOnCategory() {
     // given
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
@@ -745,6 +786,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 1);
   }
 
+  @Test
   public void testQuerySetAssigneeTaskUserOperationLogWithReadPermissionOnAnyCategory() {
     // given
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
@@ -760,6 +802,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 2);
   }
   
+  @Test
   public void testQuerySetAssigneeTaskUserOperationLogWithReadPermissionOnAnyCategoryAndRevokeOnProcessDefinition() {
     // given
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
@@ -776,6 +819,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);// "revoke process definition" wins over "grant all categories" since task log is related to the definition
   }
   
+  @Test
   public void testQuerySetAssigneeTaskUserOperationLogWithReadPermissionOnAnyCategoryAndRevokeOnUnrelatedProcessDefinition() {
     // given
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
@@ -792,6 +836,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 2);// "revoke process definition" has no effect since task log is not related to the definition
   }
   
+  @Test
   public void testQuerySetAssigneeTaskUserOperationLogWithReadPermissionOnAnyCategoryAndRevokeOnAnyProcessDefinition() {
     // given
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
@@ -810,6 +855,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
 
   // (case) human task /////////////////////////////
 
+  @Test
   public void testQuerySetAssigneeHumanTaskUserOperationLogWithoutAuthorization() {
     // given
     createCaseInstanceByKey(ONE_TASK_CASE_KEY);
@@ -823,6 +869,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);
   }
   
+  @Test
   public void testQuerySetAssigneeHumanTaskUserOperationLogWithReadHistoryPermissionOnProcessDefinition() {
     // given
     createCaseInstanceByKey(ONE_TASK_CASE_KEY);
@@ -854,6 +901,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);
   }
   
+  @Test
   public void testQuerySetAssigneeHumanTaskUserOperationLogWithReadPermissionOnCategory() {
     // given
     createCaseInstanceByKey(ONE_TASK_CASE_KEY);
@@ -869,6 +917,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 1);
   }
   
+  @Test
   public void testQuerySetAssigneeHumanTaskUserOperationLogWithReadPermissionOnAnyCategory() {
     // given
     createCaseInstanceByKey(ONE_TASK_CASE_KEY);
@@ -886,6 +935,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
 
   // standalone job ///////////////////////////////
 
+  @Test
   public void testQuerySetStandaloneJobRetriesUserOperationLogWithoutAuthorization() {
     // given
     disableAuthorization();
@@ -910,6 +960,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     clearDatabase();
   }
   
+  @Test
   public void testQuerySetStandaloneJobRetriesUserOperationLogWithReadHistoryPermissionOnProcessDefinition() {
     // given
     disableAuthorization();
@@ -939,6 +990,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
   }
 
   @Ignore("CAM-9888")
+  @Test
   public void testQuerySetStandaloneJobRetriesUserOperationLogWithReadHistoryPermissionOnAnyProcessDefinition() {
     // given
     disableAuthorization();
@@ -967,6 +1019,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     clearDatabase();
   }
   
+  @Test
   public void testQuerySetStandaloneJobRetriesUserOperationLogWithReadPermissionOnCategory() {
     // given
     disableAuthorization();
@@ -994,6 +1047,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     clearDatabase();
   }
   
+  @Test
   public void testQuerySetStandaloneJobRetriesUserOperationLogWithReadPermissionOnAnyCategory() {
     // given
     disableAuthorization();
@@ -1020,6 +1074,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     clearDatabase();
   }
 
+  @Test
   public void testQuerySetStandaloneJobRetriesUserOperationLogWithReadPermissionOnWrongCategory() {
     // given
     disableAuthorization();
@@ -1048,6 +1103,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
 
   // job ///////////////////////////////
 
+  @Test
   public void testQuerySetJobRetriesUserOperationLogWithoutAuthorization() {
     // given
     startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY);
@@ -1064,6 +1120,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 0);
   }
 
+  @Test
   public void testQuerySetJobRetriesUserOperationLogWithReadHistoryPermissionOnProcessDefinition() {
     // given
     startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY);
@@ -1082,6 +1139,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 2);
   }
 
+  @Test
   public void testQuerySetJobRetriesUserOperationLogWithReadHistoryPermissionOnAnyProcessDefinition() {
     // given
     startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY);
@@ -1100,6 +1158,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 2);
   }
   
+  @Test
   public void testQuerySetJobRetriesUserOperationLogWithReadPermissionOnCategory() {
     // given
     startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY);
@@ -1118,6 +1177,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     verifyQueryResults(query, 2);
   }
 
+  @Test
   public void testQuerySetJobRetriesUserOperationLogWithReadPermissionOnAnyCategory() {
     // given
     startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY);
@@ -1138,6 +1198,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
 
   // process definition ////////////////////////////////////////////
 
+  @Test
   public void testQuerySuspendProcessDefinitionUserOperationLogWithoutAuthorization() {
     // given
     suspendProcessDefinitionByKey(ONE_TASK_PROCESS_KEY);
@@ -1151,6 +1212,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     clearDatabase();
   }
 
+  @Test
   public void testQuerySuspendProcessDefinitionUserOperationLogWithReadHistoryPermissionOnProcessDefinition() {
     // given
     suspendProcessDefinitionByKey(ONE_TASK_PROCESS_KEY);
@@ -1165,6 +1227,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     clearDatabase();
   }
 
+  @Test
   public void testQuerySuspendProcessDefinitionUserOperationLogWithReadHistoryPermissionOnAnyProcessDefinition() {
     // given
     suspendProcessDefinitionByKey(ONE_TASK_PROCESS_KEY);
@@ -1179,6 +1242,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     clearDatabase();
   }
   
+  @Test
   public void testQuerySuspendProcessDefinitionUserOperationLogWithReadHPermissionOnCategory() {
     // given
     suspendProcessDefinitionByKey(ONE_TASK_PROCESS_KEY);
@@ -1193,6 +1257,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     clearDatabase();
   }
   
+  @Test
   public void testQuerySuspendProcessDefinitionUserOperationLogWithReadHPermissionOnAnyCategory() {
     // given
     suspendProcessDefinitionByKey(ONE_TASK_PROCESS_KEY);
@@ -1209,6 +1274,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
 
   // process instance //////////////////////////////////////////////
 
+  @Test
   public void testQuerySuspendProcessInstanceUserOperationLogWithoutAuthorization() {
     // given
     String processInstanceId = startProcessInstanceByKey(ONE_TASK_PROCESS_KEY).getId();
@@ -1223,6 +1289,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     clearDatabase();
   }
 
+  @Test
   public void testQuerySuspendProcessInstanceUserOperationLogWithReadHistoryPermissionOnProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(ONE_TASK_PROCESS_KEY).getId();
@@ -1239,6 +1306,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     clearDatabase();
   }
 
+  @Test
   public void testQuerySuspendProcessInstanceUserOperationLogWithReadHistoryPermissionOnAnyProcessDefinition() {
     // given
     String processInstanceId = startProcessInstanceByKey(ONE_TASK_PROCESS_KEY).getId();
@@ -1255,6 +1323,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     clearDatabase();
   }
   
+  @Test
   public void testQuerySuspendProcessInstanceUserOperationLogWithReadPermissionOnCategory() {
     // given
     String processInstanceId = startProcessInstanceByKey(ONE_TASK_PROCESS_KEY).getId();
@@ -1271,6 +1340,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     clearDatabase();
   }
   
+  @Test
   public void testQuerySuspendProcessInstanceUserOperationLogWithReadPermissionOnAnyCategory() {
     // given
     String processInstanceId = startProcessInstanceByKey(ONE_TASK_PROCESS_KEY).getId();
@@ -1289,8 +1359,10 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
 
   // delete deployment (cascade = false)
 
+  @Test
   public void testQueryAfterDeletingDeploymentWithoutAuthorization() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
     String taskId = selectSingleTask().getId();
     setAssignee(taskId, "demo");
@@ -1315,8 +1387,10 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
   }
   
+  @Test
   public void testQueryAfterDeletingDeploymentWithReadHistoryPermissionOnProcessDefinition() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
     String taskId = selectSingleTask().getId();
     setAssignee(taskId, "demo");
@@ -1342,8 +1416,10 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
   }
   
+  @Test
   public void testQueryAfterDeletingDeploymentWithReadHistoryPermissionOnAnyProcessDefinition() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
     String taskId = selectSingleTask().getId();
     setAssignee(taskId, "demo");
@@ -1369,8 +1445,10 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
   }
   
+  @Test
   public void testQueryAfterDeletingDeploymentWithReadPermissionOnCategory() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
     String taskId = selectSingleTask().getId();
     setAssignee(taskId, "demo");
@@ -1402,8 +1480,10 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
   }
   
+  @Test
   public void testQueryAfterDeletingDeploymentWithReadPermissionOnAnyCategory() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
     String taskId = selectSingleTask().getId();
     setAssignee(taskId, "demo");
@@ -1431,6 +1511,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
 
   // delete user operation log (standalone) ////////////////////////
 
+  @Test
   public void testDeleteStandaloneEntryWithoutAuthorization() {
     // given
     String taskId = "myTask";
@@ -1447,15 +1528,16 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(DELETE.getName(), message);
-      testHelper.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
-      testHelper.assertTextPresent(CATEGORY_TASK_WORKER, message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(DELETE.getName(), message);
+      testRule.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
+      testRule.assertTextPresent(CATEGORY_TASK_WORKER, message);
     }
     
     deleteTask(taskId, true);
   }
   
+  @Test
   public void testDeleteStandaloneEntryWithDeleteHistoryPermissionOnProcessDefinition() {
     // given
     String taskId = "myTask";
@@ -1474,15 +1556,16 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(DELETE.getName(), message);
-      testHelper.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
-      testHelper.assertTextPresent(CATEGORY_TASK_WORKER, message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(DELETE.getName(), message);
+      testRule.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
+      testRule.assertTextPresent(CATEGORY_TASK_WORKER, message);
     }
     
     deleteTask(taskId, true);
   }
   
+  @Test
   public void testDeleteStandaloneEntryWithDeleteHistoryPermissionOnAnyProcessDefinition() {
     // given
     String taskId = "myTask";
@@ -1501,15 +1584,16 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(DELETE.getName(), message);
-      testHelper.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
-      testHelper.assertTextPresent(CATEGORY_TASK_WORKER, message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(DELETE.getName(), message);
+      testRule.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
+      testRule.assertTextPresent(CATEGORY_TASK_WORKER, message);
     }
     
     deleteTask(taskId, true);
   }
   
+  @Test
   public void testDeleteStandaloneEntryWithDeletePermissionOnCategory() {
     // given
     String taskId = "myTask";
@@ -1530,6 +1614,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     deleteTask(taskId, true);
   }
   
+  @Test
   public void testDeleteStandaloneEntryWithDeletePermissionOnAnyCategory() {
     // given
     String taskId = "myTask";
@@ -1552,6 +1637,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
 
   // delete user operation log /////////////////////////////////////
 
+  @Test
   public void testDeleteEntryWithoutAuthorization() {
     // given
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
@@ -1569,16 +1655,17 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(DELETE_HISTORY.getName(), message);
-      testHelper.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
-      testHelper.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
-      testHelper.assertTextPresent(DELETE.getName(), message);
-      testHelper.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
-      testHelper.assertTextPresent(CATEGORY_TASK_WORKER, message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(DELETE_HISTORY.getName(), message);
+      testRule.assertTextPresent(ONE_TASK_PROCESS_KEY, message);
+      testRule.assertTextPresent(PROCESS_DEFINITION.resourceName(), message);
+      testRule.assertTextPresent(DELETE.getName(), message);
+      testRule.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
+      testRule.assertTextPresent(CATEGORY_TASK_WORKER, message);
     }
   }
 
+  @Test
   public void testDeleteEntryWithDeleteHistoryPermissionOnProcessDefinition() {
     // given
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
@@ -1599,6 +1686,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
   }
 
+  @Test
   public void testDeleteEntryWithDeleteHistoryPermissionOnAnyProcessDefinition() {
     // given
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
@@ -1619,6 +1707,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
   }
   
+  @Test
   public void testDeleteEntryWithDeletePermissionOnCategory() {
     // given
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
@@ -1639,6 +1728,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
   }
   
+  @Test
   public void testDeleteEntryWithDeletePermissionOnAnyCategory() {
     // given
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
@@ -1659,8 +1749,10 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
   }
 
+  @Test
   public void testDeleteEntryAfterDeletingDeployment() {
     // given
+    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     String processInstanceId = startProcessInstanceByKey(ONE_TASK_PROCESS_KEY).getId();
     String taskId = selectSingleTask().getId();
     createGrantAuthorization(PROCESS_DEFINITION, ONE_TASK_PROCESS_KEY, userId, READ_HISTORY, DELETE_HISTORY);
@@ -1688,6 +1780,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
 
   // delete user operation log (case) //////////////////////////////
 
+  @Test
   public void testCaseDeleteEntryWithoutAuthorization() {
     // given
     createCaseInstanceByKey(ONE_TASK_CASE_KEY);
@@ -1705,13 +1798,14 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(DELETE.getName(), message);
-      testHelper.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
-      testHelper.assertTextPresent(CATEGORY_TASK_WORKER, message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(DELETE.getName(), message);
+      testRule.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
+      testRule.assertTextPresent(CATEGORY_TASK_WORKER, message);
     }
   }
   
+  @Test
   public void testCaseDeleteEntryWithDeleteHistoryPermissionOnProcessDefinition() {
     // given
     createCaseInstanceByKey(ONE_TASK_CASE_KEY);
@@ -1731,13 +1825,14 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(DELETE.getName(), message);
-      testHelper.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
-      testHelper.assertTextPresent(CATEGORY_TASK_WORKER, message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(DELETE.getName(), message);
+      testRule.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
+      testRule.assertTextPresent(CATEGORY_TASK_WORKER, message);
     }
   }
   
+  @Test
   public void testCaseDeleteEntryWithDeleteHistoryPermissionOnAnyProcessDefinition() {
     // given
     createCaseInstanceByKey(ONE_TASK_CASE_KEY);
@@ -1757,13 +1852,14 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(DELETE.getName(), message);
-      testHelper.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
-      testHelper.assertTextPresent(CATEGORY_TASK_WORKER, message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(DELETE.getName(), message);
+      testRule.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
+      testRule.assertTextPresent(CATEGORY_TASK_WORKER, message);
     }
   }
   
+  @Test
   public void testCaseDeleteEntryWithDeletePermissionOnCategory() {
     // given
     createCaseInstanceByKey(ONE_TASK_CASE_KEY);
@@ -1783,6 +1879,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     assertNull(historyService.createUserOperationLogQuery().singleResult());
   }
   
+  @Test
   public void testCaseDeleteEntryWithDeletePermissionOnAnyCategory() {
     // given
     createCaseInstanceByKey(ONE_TASK_CASE_KEY);
@@ -1804,6 +1901,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
 
   // update user operation log //////////////////////////////
 
+  @Test
   public void testUpdateEntryWithUpdateHistoryPermissionOnProcessDefinition() {
     // given
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
@@ -1834,9 +1932,10 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
 
     // then
-    testHelper.assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
+    testRule.assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
   }
 
+  @Test
   public void testUpdateEntryWithUpdateHistoryPermissionOnAnyProcessDefinition() {
     // given
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
@@ -1867,10 +1966,11 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
 
     // then
-    testHelper.assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
+    testRule.assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
   }
 
 
+  @Test
   public void testUpdateEntryWithUpdateHistoryPermissionOnAnyProcessDefinition_Standalone() {
     // given
     createTask("aTaskId");
@@ -1894,16 +1994,17 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
-      testHelper.assertTextPresent(CATEGORY_TASK_WORKER, message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
+      testRule.assertTextPresent(CATEGORY_TASK_WORKER, message);
     }
 
     // cleanup
     deleteTask("aTaskId", true);
   }
 
+  @Test
   public void testUpdateEntryRelatedToProcessDefinitionWithUpdatePermissionOnCategory() {
     // given
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
@@ -1934,9 +2035,10 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
 
     // then
-    testHelper.assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
+    testRule.assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
   }
 
+  @Test
   public void testUpdateEntryRelatedToProcessDefinitionWithUpdatePermissionOnAnyCategory() {
     // given
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
@@ -1967,9 +2069,10 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
 
     // then
-    testHelper.assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
+    testRule.assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
   }
 
+  @Test
   public void testUpdateEntryWithoutAuthorization() {
     // given
     createTask("aTaskId");
@@ -1991,16 +2094,17 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent(userId, message);
-      testHelper.assertTextPresent(UPDATE.getName(), message);
-      testHelper.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
-      testHelper.assertTextPresent(CATEGORY_TASK_WORKER, message);
+      testRule.assertTextPresent(userId, message);
+      testRule.assertTextPresent(UPDATE.getName(), message);
+      testRule.assertTextPresent(OPERATION_LOG_CATEGORY.resourceName(), message);
+      testRule.assertTextPresent(CATEGORY_TASK_WORKER, message);
     }
 
     // cleanup
     deleteTask("aTaskId", true);
   }
 
+  @Test
   public void testUpdateEntryWithUpdatePermissionOnCategory() {
     // given
     createTask("aTaskId");
@@ -2028,12 +2132,13 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
 
     // then
-    testHelper.assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
+    testRule.assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
 
     // cleanup
     deleteTask("aTaskId", true);
   }
 
+  @Test
   public void testUpdateEntryWithUpdatePermissionOnAnyCategory() {
     // given
     createTask("aTaskId");
@@ -2061,7 +2166,7 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
     enableAuthorization();
 
     // then
-    testHelper.assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
+    testRule.assertTextPresent(userOperationLogEntry.getAnnotation(), "anAnnotation");
 
     // cleanup
     deleteTask("aTaskId", true);

@@ -31,6 +31,10 @@ import org.camunda.bpm.engine.impl.persistence.entity.JobEntity;
 import org.camunda.bpm.engine.impl.util.ClockUtil;
 import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.test.jobexecutor.ControllableJobExecutor;
+import org.camunda.bpm.engine.test.util.ProcessEngineProvider;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Tassilo Weidner
@@ -47,16 +51,17 @@ public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTest {
 
   protected ThreadControl acquisitionThread;
 
-  protected void setUp() throws Exception {
-    super.setUp();
-
+  @Before
+  public void setUp() throws Exception {
+    initializeProcessEngine();
     acquisitionThread = jobExecutor.getAcquisitionThreadControl();
     acquisitionThread.reportInterrupts();
 
     ClockUtil.setCurrentTime(CURRENT_DATE);
   }
 
-  protected void tearDown() throws Exception {
+  @After
+  public void tearDown() throws Exception {
     if (jobExecutor.isActive()) {
       jobExecutor.shutdown();
     }
@@ -66,8 +71,6 @@ public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTest {
     clearDatabase();
 
     ClockUtil.reset();
-
-    super.tearDown();
   }
 
   /**
@@ -83,6 +86,7 @@ public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTest {
    * THEN
    * The acquisition fails due to an Optimistic Locking Exception
    */
+  @Test
   public void testAcquiringEverLivingJobSucceeds() {
     // given
     jobExecutor.indicateOptimisticLockingException();
@@ -128,6 +132,7 @@ public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTest {
    * THEN
    * The cleanup scheduler fails to reschedule the job due to an Optimistic Locking Exception
    */
+  @Test
   public void testReschedulingEverLivingJobSucceeds() {
     // given
     String jobId = historyService.cleanUpHistoryAsync(true).getId();
@@ -179,8 +184,7 @@ public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTest {
   // helpers ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   protected void initializeProcessEngine() {
-    processEngineConfiguration = (ProcessEngineConfigurationImpl) ProcessEngineConfiguration
-      .createProcessEngineConfigurationFromResource("camunda.cfg.xml");
+    processEngineConfiguration = ProcessEngineProvider.createConfigurationFromResource("camunda.cfg.xml");
 
     jobExecutor.setMaxJobsPerAcquisition(1);
     processEngineConfiguration.setJobExecutor(jobExecutor);

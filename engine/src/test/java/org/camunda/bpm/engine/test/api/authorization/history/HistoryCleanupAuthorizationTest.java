@@ -16,6 +16,9 @@
  */
 package org.camunda.bpm.engine.test.api.authorization.history;
 
+import static org.camunda.bpm.engine.ProcessEngineConfiguration.HISTORY_CLEANUP_STRATEGY_END_TIME_BASED;
+import static org.camunda.bpm.engine.ProcessEngineConfiguration.HISTORY_CLEANUP_STRATEGY_REMOVAL_TIME_BASED;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -48,24 +51,33 @@ import org.camunda.bpm.engine.test.RequiredHistoryLevel;
 import org.camunda.bpm.engine.test.api.authorization.AuthorizationTest;
 import org.camunda.bpm.engine.test.dmn.businessruletask.TestPojo;
 import org.camunda.bpm.engine.variable.Variables;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-
-import static org.camunda.bpm.engine.ProcessEngineConfiguration.HISTORY_CLEANUP_STRATEGY_END_TIME_BASED;
-import static org.camunda.bpm.engine.ProcessEngineConfiguration.HISTORY_CLEANUP_STRATEGY_REMOVAL_TIME_BASED;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 @RequiredHistoryLevel(ProcessEngineConfiguration.HISTORY_FULL)
 public class HistoryCleanupAuthorizationTest extends AuthorizationTest {
 
+  @Before
   public void setUp() throws Exception {
-    super.setUp();
+
     processEngineConfiguration.setHistoryCleanupStrategy(HISTORY_CLEANUP_STRATEGY_END_TIME_BASED);
   }
 
   @Override
+  @After
   public void tearDown() {
     processEngineConfiguration.setHistoryCleanupStrategy(HISTORY_CLEANUP_STRATEGY_REMOVAL_TIME_BASED);
 
-    super.tearDown();
+
     clearDatabase();
     clearMetrics();
   }
@@ -105,7 +117,7 @@ public class HistoryCleanupAuthorizationTest extends AuthorizationTest {
     } catch (AuthorizationException e) {
       // then
       String message = e.getMessage();
-      testHelper.assertTextPresent("ENGINE-03029 Required admin authenticated group or user.", message);
+      testRule.assertTextPresent("ENGINE-03029 Required admin authenticated group or user.", message);
     }
   }
 
