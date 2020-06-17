@@ -89,7 +89,6 @@ public class RedeployDeploymentAuthorizationTest {
   @After
   public void tearDown() {
     authRule.deleteUsersAndGroups();
-
   }
 
   @Test

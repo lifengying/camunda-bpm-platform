@@ -16,14 +16,14 @@
  */
 package org.camunda.bpm.engine.test.concurrency;
 
-import static org.apache.commons.lang3.time.DateUtils.addDays;
-import static org.apache.commons.lang3.time.DateUtils.addSeconds;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.camunda.bpm.engine.impl.jobexecutor.historycleanup.HistoryCleanupJobHandlerConfiguration.START_DELAY;
-
-import java.util.Collections;
-import java.util.Date;
-
+import org.camunda.bpm.engine.HistoryService;
+import org.camunda.bpm.engine.ManagementService;
+import org.camunda.bpm.engine.ProcessEngine;
+import org.camunda.bpm.engine.ProcessEngineConfiguration;
+import org.camunda.bpm.engine.RepositoryService;
+import org.camunda.bpm.engine.RuntimeService;
+import org.camunda.bpm.engine.TaskService;
+import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.camunda.bpm.engine.impl.interceptor.Command;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.bpm.engine.impl.interceptor.CommandInterceptor;
@@ -31,15 +31,45 @@ import org.camunda.bpm.engine.impl.persistence.entity.JobEntity;
 import org.camunda.bpm.engine.impl.util.ClockUtil;
 import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.test.jobexecutor.ControllableJobExecutor;
-import org.camunda.bpm.engine.test.util.ProcessEngineProvider;
+import org.camunda.bpm.engine.test.util.ProcessEngineBootstrapRule;
+import org.camunda.bpm.engine.test.util.ProcessEngineTestRule;
+import org.camunda.bpm.engine.test.util.ProvidedProcessEngineRule;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.RuleChain;
+
+import java.util.Collections;
+import java.util.Date;
+
+import static org.apache.commons.lang3.time.DateUtils.addDays;
+import static org.apache.commons.lang3.time.DateUtils.addSeconds;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.camunda.bpm.engine.impl.jobexecutor.historycleanup.HistoryCleanupJobHandlerConfiguration.START_DELAY;
 
 /**
  * @author Tassilo Weidner
  */
-public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTest {
+public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTestTmp {
+
+  @ClassRule
+  public static ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule();
+
+  protected ProvidedProcessEngineRule engineRule = new ProvidedProcessEngineRule(bootstrapRule);
+  protected ProcessEngineTestRule testRule = new ProcessEngineTestRule(engineRule);
+
+  @Rule
+  public RuleChain ruleChain = RuleChain.outerRule(engineRule).around(testRule);
+
+  protected ProcessEngine processEngine;
+  protected ProcessEngineConfigurationImpl processEngineConfiguration;
+  protected RepositoryService repositoryService;
+  protected RuntimeService runtimeService;
+  protected TaskService taskService;
+  protected HistoryService historyService;
+  protected ManagementService managementService;
 
   protected final Date CURRENT_DATE = new Date(1363608000000L);
 
@@ -49,10 +79,18 @@ public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTest {
 
   protected ControllableJobExecutor jobExecutor = new ControllableJobExecutor();
 
-  protected ThreadControl acquisitionThread;
+  protected ConcurrencyTest.ThreadControl acquisitionThread;
 
   @Before
   public void setUp() throws Exception {
+
+    processEngineConfiguration = engineRule.getProcessEngineConfiguration();
+    repositoryService = engineRule.getRepositoryService();
+    runtimeService = engineRule.getRuntimeService();
+    taskService = engineRule.getTaskService();
+    historyService = engineRule.getHistoryService();
+    managementService = engineRule.getManagementService();
+
     initializeProcessEngine();
     acquisitionThread = jobExecutor.getAcquisitionThreadControl();
     acquisitionThread.reportInterrupts();
@@ -95,7 +133,7 @@ public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTest {
 
     lockEverLivingJob(jobId);
 
-    cleanupThread = executeControllableCommand(new CleanupThread(jobId));
+    cleanupThread = executeControllableCommand(new CleanupThread(jobId), processEngineConfiguration);
 
     cleanupThread.waitForSync(); // wait before flush of execution
     cleanupThread.makeContinueAndWaitForSync(); // flush execution and wait before flush of rescheduler
@@ -139,7 +177,7 @@ public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTest {
 
     lockEverLivingJob(jobId);
 
-    cleanupThread = executeControllableCommand(new CleanupThread(jobId));
+    cleanupThread = executeControllableCommand(new CleanupThread(jobId), processEngineConfiguration);
 
     cleanupThread.waitForSync(); // wait before flush of execution
     cleanupThread.makeContinueAndWaitForSync(); // flush execution and wait before flush of rescheduler
@@ -184,8 +222,6 @@ public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTest {
   // helpers ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   protected void initializeProcessEngine() {
-    processEngineConfiguration = ProcessEngineProvider.createConfigurationFromResource("camunda.cfg.xml");
-
     jobExecutor.setMaxJobsPerAcquisition(1);
     processEngineConfiguration.setJobExecutor(jobExecutor);
     processEngineConfiguration.setHistoryCleanupBatchWindowStartTime("12:00");
@@ -202,12 +238,10 @@ public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTest {
         return executed;
       }
     }));
-
-    processEngine = processEngineConfiguration.buildProcessEngine();
   }
 
   protected void clearDatabase() {
-    deleteHistoryCleanupJobs();
+    deleteHistoryCleanupJobs(processEngineConfiguration);
 
     processEngineConfiguration.getCommandExecutorTxRequired().execute(new Command<Void>() {
       public Void execute(CommandContext commandContext) {

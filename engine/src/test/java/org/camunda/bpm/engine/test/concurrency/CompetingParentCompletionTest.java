@@ -19,8 +19,10 @@ package org.camunda.bpm.engine.test.concurrency;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import org.camunda.bpm.engine.CaseService;
 import org.camunda.bpm.engine.OptimisticLockingException;
 import org.camunda.bpm.engine.impl.ProcessEngineLogger;
+import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.camunda.bpm.engine.impl.cmmn.cmd.CompleteCaseExecutionCmd;
 import org.camunda.bpm.engine.impl.cmmn.cmd.DisableCaseExecutionCmd;
 import org.camunda.bpm.engine.impl.cmmn.cmd.StateTransitionCaseExecutionCmd;
@@ -28,16 +30,41 @@ import org.camunda.bpm.engine.impl.cmmn.entity.runtime.CaseExecutionEntity;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
 import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
+import org.camunda.bpm.engine.test.util.ProcessEngineBootstrapRule;
+import org.camunda.bpm.engine.test.util.ProcessEngineTestRule;
+import org.camunda.bpm.engine.test.util.ProvidedProcessEngineRule;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.RuleChain;
 import org.slf4j.Logger;
 
 /**
  * @author Roman Smirnov
  *
  */
-public class CompetingParentCompletionTest extends PluggableProcessEngineTest {
+public class CompetingParentCompletionTest {
 
-private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
+  private static Logger LOG = ProcessEngineLogger.TEST_LOGGER.getLogger();
+
+  @ClassRule
+  public static ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule();
+  protected ProvidedProcessEngineRule engineRule = new ProvidedProcessEngineRule(bootstrapRule);
+  public ProcessEngineTestRule testRule = new ProcessEngineTestRule(engineRule);
+
+  @Rule
+  public RuleChain ruleChain = RuleChain.outerRule(engineRule).around(testRule);
+
+  protected ProcessEngineConfigurationImpl processEngineConfiguration;
+  protected CaseService caseService;
+
+
+  @Before
+  public void initializeServices() {
+    processEngineConfiguration = engineRule.getProcessEngineConfiguration();
+    caseService = engineRule.getCaseService();
+  }
 
   Thread testThread = Thread.currentThread();
   static ControllableThread activeThread;

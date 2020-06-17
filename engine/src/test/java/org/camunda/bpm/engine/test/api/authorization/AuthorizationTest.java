@@ -71,7 +71,7 @@ public abstract class AuthorizationTest extends PluggableProcessEngineTest {
   protected static final String VARIABLE_VALUE = "aVariableValue";
 
   @Before
-  public void setUp() throws Exception {
+  public void authorizationTestSetUp() throws Exception {
     user = createUser(userId);
     group = createGroup(groupId);
 
@@ -82,7 +82,7 @@ public abstract class AuthorizationTest extends PluggableProcessEngineTest {
   }
 
   @After
-  public void tearDown() {
+  public void authorizationTestTearDown() {
     processEngineConfiguration.setAuthorizationEnabled(false);
     for (User user : identityService.createUserQuery().list()) {
       identityService.deleteUser(user.getId());

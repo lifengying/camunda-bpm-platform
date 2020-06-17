@@ -68,15 +68,12 @@ public class HistoryCleanupAuthorizationTest extends AuthorizationTest {
 
   @Before
   public void setUp() throws Exception {
-
     processEngineConfiguration.setHistoryCleanupStrategy(HISTORY_CLEANUP_STRATEGY_END_TIME_BASED);
   }
 
-  @Override
   @After
   public void tearDown() {
     processEngineConfiguration.setHistoryCleanupStrategy(HISTORY_CLEANUP_STRATEGY_REMOVAL_TIME_BASED);
-
 
     clearDatabase();
     clearMetrics();

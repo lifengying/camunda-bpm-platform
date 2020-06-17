@@ -52,7 +52,6 @@ public class SingleProcessInstanceModificationAsyncAuthorizationTest extends Aut
 
   protected static final String PARALLEL_GATEWAY_PROCESS = "org/camunda/bpm/engine/test/api/runtime/ProcessInstanceModificationTest.parallelGateway.bpmn20.xml";
 
-  @Override
   @After
   public void tearDown() {
     disableAuthorization();
@@ -66,7 +65,6 @@ public class SingleProcessInstanceModificationAsyncAuthorizationTest extends Aut
       managementService.deleteJob(job.getId());
     }
     enableAuthorization();
-
   }
 
   @Deployment(resources = PARALLEL_GATEWAY_PROCESS)

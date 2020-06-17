@@ -1464,7 +1464,6 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   @Test
   public void testQueryDeleteVariableHistoryOperationOnStandaloneTask() {
     // given
-    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     Task task = taskService.newTask();
     taskService.saveTask(task);
     taskService.setVariable(task.getId(), "testVariable", "testValue");
@@ -1481,7 +1480,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
 
     UserOperationLogEntry logEntry = logQuery.singleResult();
     assertEquals(task.getId(), logEntry.getTaskId());
-    assertEquals(deploymentId, logEntry.getDeploymentId());
+    assertNull(logEntry.getDeploymentId());
     verifySingleVariableOperationPropertyChange("name", "testVariable", UserOperationLogEntry.OPERATION_TYPE_DELETE_HISTORY);
 
     taskService.deleteTask(task.getId(), true);

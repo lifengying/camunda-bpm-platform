@@ -391,7 +391,7 @@ public class HistoricIncidentTest extends PluggableProcessEngineTest {
     managementService.setJobRetriesByJobDefinitionId(jobDefinition.getId(), 2);
 
     // execute the available job (should fail again)
-    testRule.executeAvailableJobs(1);
+    testRule.executeAvailableJobs(false);
 
     // the incident still exists, there is no new incident, the incident still references the old log entry
     assertEquals(1, query.count());
@@ -402,7 +402,7 @@ public class HistoricIncidentTest extends PluggableProcessEngineTest {
     assertTrue(logsNew.size() > logs.size());
 
     // execute the available job (should fail again)
-    testRule.executeAvailableJobs(1);
+    testRule.executeAvailableJobs(false);
 
     // the incident still exists, there is no new incident, the incident references the new latest log entry
     assertEquals(1, query.count());
@@ -422,7 +422,7 @@ public class HistoricIncidentTest extends PluggableProcessEngineTest {
     Job job = managementService.createJobQuery().singleResult();
 
     ClockUtil.offset(2000L);
-    testRule.executeAvailableJobs(1);
+    testRule.executeAvailableJobs(false);
 
     List<HistoricJobLog> logs = getHistoricJobLogOrdered(job.getId());
     assertEquals(2, logs.size());
@@ -488,7 +488,7 @@ public class HistoricIncidentTest extends PluggableProcessEngineTest {
       runtimeService.startProcessInstanceByKey(key);
     }
 
-    testRule.executeAvailableJobs();
+    testRule.executeAvailableJobs(recursive);
   }
 
   protected List<HistoricJobLog> getHistoricJobLogOrdered(String jobId) {

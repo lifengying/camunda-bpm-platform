@@ -57,7 +57,7 @@ public class JdbcStatementTimeoutTest extends ConcurrencyTest {
   private ThreadControl thread2;
 
   @Before
-  protected void initializeProcessEngine() {
+  public void initializeProcessEngine() {
     processEngine = ProcessEngineProvider.createConfigurationFromResource("camunda.cfg.xml")
         .setJdbcStatementTimeout(STATEMENT_TIMEOUT_IN_SECONDS)
         .buildProcessEngine();
@@ -72,7 +72,7 @@ public class JdbcStatementTimeoutTest extends ConcurrencyTest {
   }
 
   @After
-  protected void closeDownProcessEngine() {
+  public void closeDownProcessEngine() {
     processEngine.close();
     processEngine = null;
   }

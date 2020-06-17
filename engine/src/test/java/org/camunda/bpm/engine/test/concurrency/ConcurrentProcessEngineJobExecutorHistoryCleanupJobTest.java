@@ -115,7 +115,7 @@ public class ConcurrentProcessEngineJobExecutorHistoryCleanupJobTest extends Con
   @Test
   public void testConcurrentHistoryCleanupJobReconfigurationExecution() throws InterruptedException {
 
-    getProcessEngine().getHistoryService().cleanUpHistoryAsync(true);
+    processEngine.getHistoryService().cleanUpHistoryAsync(true);
 
     ThreadControl thread1 = executeControllableCommand(new ControllableJobExecutionCommand());
     thread1.reportInterrupts();

@@ -643,8 +643,8 @@ public class SignalEventTest {
       "org/camunda/bpm/engine/test/bpmn/event/signal/SignalEventTests.catchAlertSignalBoundary.bpmn20.xml",
       "org/camunda/bpm/engine/test/bpmn/event/signal/SignalEventTests.throwAlertSignalAsync.bpmn20.xml"})
   @Test
-  @Ignore
-  public void FAILING_testAsyncSignalBoundary() {
+  @Ignore("CAM-6807")
+  public void testAsyncSignalBoundary() {
     runtimeService.startProcessInstanceByKey("catchSignal");
 
     // given a process instance that throws a signal asynchronously

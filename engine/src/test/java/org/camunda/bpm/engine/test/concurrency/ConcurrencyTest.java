@@ -21,27 +21,65 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.camunda.bpm.engine.HistoryService;
+import org.camunda.bpm.engine.ManagementService;
+import org.camunda.bpm.engine.ProcessEngine;
+import org.camunda.bpm.engine.RepositoryService;
+import org.camunda.bpm.engine.RuntimeService;
+import org.camunda.bpm.engine.TaskService;
+import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.camunda.bpm.engine.impl.interceptor.Command;
-import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
+import org.camunda.bpm.engine.impl.persistence.entity.JobEntity;
+import org.camunda.bpm.engine.runtime.Job;
+import org.camunda.bpm.engine.test.util.ProcessEngineBootstrapRule;
+import org.camunda.bpm.engine.test.util.ProcessEngineTestRule;
+import org.camunda.bpm.engine.test.util.ProvidedProcessEngineRule;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.rules.RuleChain;
 
 /**
  * @author Daniel Meyer
  *
  */
-public abstract class ConcurrencyTest extends PluggableProcessEngineTest {
+public abstract class ConcurrencyTest {
+
+  @ClassRule
+  public static ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule();
+
+  protected ProvidedProcessEngineRule engineRule = new ProvidedProcessEngineRule(bootstrapRule);
+  protected ProcessEngineTestRule testRule = new ProcessEngineTestRule(engineRule);
+
+  @Rule
+  public RuleChain ruleChain = RuleChain.outerRule(engineRule).around(testRule);
+
+  protected ProcessEngine processEngine;
+  protected ProcessEngineConfigurationImpl processEngineConfiguration;
+  protected RepositoryService repositoryService;
+  protected RuntimeService runtimeService;
+  protected TaskService taskService;
+  protected HistoryService historyService;
+  protected ManagementService managementService;
 
   protected List<ControllableCommand<?>> controllableCommands;
 
   @Before
-  public void setUp() throws Exception {
-    controllableCommands = new ArrayList<>();
+  public void init() {
+    processEngine = engineRule.getProcessEngine();
+    processEngineConfiguration = engineRule.getProcessEngineConfiguration();
+    repositoryService = engineRule.getRepositoryService();
+    runtimeService = engineRule.getRuntimeService();
+    taskService = engineRule.getTaskService();
+    historyService = engineRule.getHistoryService();
+    managementService = engineRule.getManagementService();
 
+    controllableCommands = new ArrayList<>();
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void cleanUp() throws Exception {
 
     // wait for all spawned threads to end
     for (ControllableCommand<?> controllableCommand : controllableCommands) {
@@ -52,8 +90,6 @@ public abstract class ConcurrencyTest extends PluggableProcessEngineTest {
 
     // clear the test thread's interruption state
     Thread.interrupted();
-
-
   }
 
   protected ThreadControl executeControllableCommand(final ControllableCommand<?> command) {
@@ -221,4 +257,13 @@ public abstract class ConcurrencyTest extends PluggableProcessEngineTest {
     }
   }
 
+  protected void deleteHistoryCleanupJobs() {
+    final List<Job> jobs = historyService.findHistoryCleanupJobs();
+    for (final Job job: jobs) {
+      processEngineConfiguration.getCommandExecutorTxRequired().execute((Command<Void>) commandContext -> {
+        commandContext.getJobManager().deleteJob((JobEntity) job);
+        return null;
+      });
+    }
+  }
 }
