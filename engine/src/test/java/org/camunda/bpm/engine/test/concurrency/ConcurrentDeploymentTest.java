@@ -45,6 +45,7 @@ import org.junit.Test;
  *
  * @author Daniel Meyer
  */
+@RequiredDatabase(excludes = DbSqlSessionFactory.H2)
 public class ConcurrentDeploymentTest extends ConcurrencyTest {
 
   private static String processResource;
@@ -60,7 +61,6 @@ public class ConcurrentDeploymentTest extends ConcurrencyTest {
    * @see <a href="https://app.camunda.com/jira/browse/CAM-2128">https://app.camunda.com/jira/browse/CAM-2128</a>
    */
   @Test
-  @RequiredDatabase(excludes = DbSqlSessionFactory.H2)
   public void testDuplicateFiltering() throws InterruptedException {
 
     deployOnTwoConcurrentThreads(

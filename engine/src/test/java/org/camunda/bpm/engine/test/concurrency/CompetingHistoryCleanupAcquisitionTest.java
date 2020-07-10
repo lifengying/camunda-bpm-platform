@@ -16,13 +16,18 @@
  */
 package org.camunda.bpm.engine.test.concurrency;
 
+import static org.apache.commons.lang3.time.DateUtils.addDays;
+import static org.apache.commons.lang3.time.DateUtils.addSeconds;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.camunda.bpm.engine.impl.jobexecutor.historycleanup.HistoryCleanupJobHandlerConfiguration.START_DELAY;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import org.camunda.bpm.engine.HistoryService;
 import org.camunda.bpm.engine.ManagementService;
-import org.camunda.bpm.engine.ProcessEngine;
-import org.camunda.bpm.engine.ProcessEngineConfiguration;
-import org.camunda.bpm.engine.RepositoryService;
-import org.camunda.bpm.engine.RuntimeService;
-import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.camunda.bpm.engine.impl.interceptor.Command;
 import org.camunda.bpm.engine.impl.interceptor.CommandContext;
@@ -36,62 +41,47 @@ import org.camunda.bpm.engine.test.util.ProcessEngineTestRule;
 import org.camunda.bpm.engine.test.util.ProvidedProcessEngineRule;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 
-import java.util.Collections;
-import java.util.Date;
-
-import static org.apache.commons.lang3.time.DateUtils.addDays;
-import static org.apache.commons.lang3.time.DateUtils.addSeconds;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.camunda.bpm.engine.impl.jobexecutor.historycleanup.HistoryCleanupJobHandlerConfiguration.START_DELAY;
-
 /**
  * @author Tassilo Weidner
  */
-public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTest {
+public class CompetingHistoryCleanupAcquisitionTest {
 
-  @ClassRule
-  public static ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule();
-
+  @Rule
+  public ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule(this::configureEngine);
   protected ProvidedProcessEngineRule engineRule = new ProvidedProcessEngineRule(bootstrapRule);
   protected ProcessEngineTestRule testRule = new ProcessEngineTestRule(engineRule);
 
   @Rule
   public RuleChain ruleChain = RuleChain.outerRule(engineRule).around(testRule);
 
-  protected ProcessEngine processEngine;
-  protected ProcessEngineConfigurationImpl processEngineConfiguration;
-  protected RepositoryService repositoryService;
-  protected RuntimeService runtimeService;
-  protected TaskService taskService;
-  protected HistoryService historyService;
-  protected ManagementService managementService;
 
   protected final Date CURRENT_DATE = new Date(1363608000000L);
 
-  protected static ThreadControl cleanupThread = null;
+  protected static ConcurrencyTest.ThreadControl cleanupThread = null;
 
   protected static ThreadLocal<Boolean> syncBeforeFlush = new ThreadLocal<>();
 
-  protected ControllableJobExecutor jobExecutor = new ControllableJobExecutor();
+  protected ControllableJobExecutor jobExecutor;
 
   protected ConcurrencyTest.ThreadControl acquisitionThread;
 
+  protected ProcessEngineConfigurationImpl processEngineConfiguration;
+  protected HistoryService historyService;
+  protected ManagementService managementService;
+
+  protected List<ConcurrencyTest.ControllableCommand<?>> controllableCommands;
+
   @Before
   public void setUp() throws Exception {
-
+    controllableCommands = new ArrayList<>();
     processEngineConfiguration = engineRule.getProcessEngineConfiguration();
-    repositoryService = engineRule.getRepositoryService();
-    runtimeService = engineRule.getRuntimeService();
-    taskService = engineRule.getTaskService();
     historyService = engineRule.getHistoryService();
     managementService = engineRule.getManagementService();
 
-    initializeProcessEngine();
     acquisitionThread = jobExecutor.getAcquisitionThreadControl();
     acquisitionThread.reportInterrupts();
 
@@ -111,6 +101,25 @@ public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTest {
     ClockUtil.reset();
   }
 
+  public void configureEngine(ProcessEngineConfigurationImpl configuration) {
+    jobExecutor = new ControllableJobExecutor();
+    jobExecutor.setMaxJobsPerAcquisition(1);
+    configuration.setJobExecutor(jobExecutor);
+    configuration.setHistoryCleanupBatchWindowStartTime("12:00");
+
+    configuration.setCustomPostCommandInterceptorsTxRequiresNew(Collections.<CommandInterceptor>singletonList(new org.camunda.bpm.engine.impl.interceptor.CommandInterceptor() {
+      @Override
+      public <T> T execute(Command<T> command) {
+
+        T executed = next.execute(command);
+        if(syncBeforeFlush.get() != null && syncBeforeFlush.get()) {
+          cleanupThread.sync();
+        }
+
+        return executed;
+      }
+    }));
+  }
   /**
    * Problem
    *
@@ -201,7 +210,7 @@ public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTest {
     assertThat(job.getDuedate()).isEqualTo(addSeconds(CURRENT_DATE, START_DELAY));
   }
 
-  public class CleanupThread extends ControllableCommand<Void> {
+  public class CleanupThread extends ConcurrencyTest.ControllableCommand<Void> {
 
     protected String jobId;
 
@@ -221,25 +230,6 @@ public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTest {
 
   // helpers ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  protected void initializeProcessEngine() {
-    jobExecutor.setMaxJobsPerAcquisition(1);
-    processEngineConfiguration.setJobExecutor(jobExecutor);
-    processEngineConfiguration.setHistoryCleanupBatchWindowStartTime("12:00");
-
-    processEngineConfiguration.setCustomPostCommandInterceptorsTxRequiresNew(Collections.<CommandInterceptor>singletonList(new CommandInterceptor() {
-      @Override
-      public <T> T execute(Command<T> command) {
-
-        T executed = next.execute(command);
-        if(syncBeforeFlush.get() != null && syncBeforeFlush.get()) {
-          cleanupThread.sync();
-        }
-
-        return executed;
-      }
-    }));
-  }
-
   protected void clearDatabase() {
     deleteHistoryCleanupJobs();
 
@@ -257,6 +247,16 @@ public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTest {
     });
   }
 
+  protected void deleteHistoryCleanupJobs() {
+    final List<Job> jobs = historyService.findHistoryCleanupJobs();
+    for (final Job job: jobs) {
+      processEngineConfiguration.getCommandExecutorTxRequired().execute((Command<Void>) commandContext -> {
+        commandContext.getJobManager().deleteJob((JobEntity) job);
+        return null;
+      });
+    }
+  }
+
   protected void lockEverLivingJob(final String jobId) {
     processEngineConfiguration.getCommandExecutorTxRequired().execute(new Command<Void>() {
       @Override
@@ -271,6 +271,28 @@ public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTest {
         return null;
       }
     });
+  }
+
+  protected ConcurrencyTest.ThreadControl executeControllableCommand(final ConcurrencyTest.ControllableCommand<?> command) {
+
+    final Thread controlThread = Thread.currentThread();
+
+    Thread thread = new Thread(() -> {
+      try {
+        processEngineConfiguration.getCommandExecutorTxRequiresNew().execute(command);
+      } catch(RuntimeException e) {
+        command.monitor.setException(e);
+        controlThread.interrupt();
+        throw e;
+      }
+    });
+
+    controllableCommands.add(command);
+    command.monitor.executingThread = thread;
+
+    thread.start();
+
+    return command.monitor;
   }
 
 }

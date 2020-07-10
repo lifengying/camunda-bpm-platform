@@ -16,9 +16,13 @@
  */
 package org.camunda.bpm.engine.test.concurrency;
 
+import static org.junit.Assert.assertNotNull;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.camunda.bpm.engine.history.HistoricJobLog;
+import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.camunda.bpm.engine.impl.context.Context;
 import org.camunda.bpm.engine.impl.db.entitymanager.DbEntityManager;
 import org.camunda.bpm.engine.impl.db.entitymanager.DbEntityManagerFactory;
@@ -29,39 +33,47 @@ import org.camunda.bpm.engine.impl.persistence.entity.JobEntity;
 import org.camunda.bpm.engine.impl.persistence.entity.MessageEntity;
 import org.camunda.bpm.engine.impl.test.RequiredDatabase;
 import org.camunda.bpm.engine.runtime.Job;
-import org.camunda.bpm.engine.test.util.DatabaseHelper;
-import org.camunda.bpm.engine.test.util.ProcessEngineProvider;
+import org.camunda.bpm.engine.test.util.ProcessEngineBootstrapRule;
+import org.camunda.bpm.engine.test.util.ProcessEngineTestRule;
+import org.camunda.bpm.engine.test.util.ProvidedProcessEngineRule;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import org.junit.rules.RuleChain;
 
 /**
  *  @author Philipp Ossler
  */
-public class JdbcStatementTimeoutTest extends ConcurrencyTest {
+public class JdbcStatementTimeoutTest {
 
   private static final int STATEMENT_TIMEOUT_IN_SECONDS = 1;
   // some databases (like mysql and oracle) need more time to cancel the statement
   private static final int TEST_TIMEOUT_IN_MILLIS = 10000;
   private static final String JOB_ENTITY_ID = "42";
 
-  private ThreadControl thread1;
-  private ThreadControl thread2;
+  @ClassRule
+  public static ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule(configuration ->
+          configuration.setJdbcStatementTimeout(STATEMENT_TIMEOUT_IN_SECONDS));
+  protected ProvidedProcessEngineRule engineRule = new ProvidedProcessEngineRule(bootstrapRule);
+  protected ProcessEngineTestRule testRule = new ProcessEngineTestRule(engineRule);
+
+  @Rule
+  public RuleChain ruleChain = RuleChain.outerRule(engineRule).around(testRule);
+
+  protected ProcessEngineConfigurationImpl processEngineConfiguration;
+  protected List<ConcurrencyTest.ControllableCommand<?>> controllableCommands;
+
+  private ConcurrencyTest.ThreadControl thread1;
+  private ConcurrencyTest.ThreadControl thread2;
 
   @Before
-  public void initializeProcessEngine() {
-    processEngine = ProcessEngineProvider.createConfigurationFromResource("camunda.cfg.xml")
-        .setJdbcStatementTimeout(STATEMENT_TIMEOUT_IN_SECONDS)
-        .buildProcessEngine();
+  public void setUp() {
+    processEngineConfiguration = engineRule.getProcessEngineConfiguration();
+    controllableCommands = new ArrayList<>();
   }
+
 
   @After
   public void tearDown() throws Exception {
@@ -69,12 +81,16 @@ public class JdbcStatementTimeoutTest extends ConcurrencyTest {
       thread1.waitUntilDone();
       deleteJobEntities();
     }
-  }
 
-  @After
-  public void closeDownProcessEngine() {
-    processEngine.close();
-    processEngine = null;
+    // wait for all spawned threads to end
+    for (ConcurrencyTest.ControllableCommand<?> controllableCommand : controllableCommands) {
+      ConcurrencyTest.ThreadControl threadControl = controllableCommand.monitor;
+      threadControl.executingThread.interrupt();
+      threadControl.executingThread.join();
+    }
+
+    // clear the test thread's interruption state
+    Thread.interrupted();
   }
 
   @Test
@@ -137,7 +153,29 @@ public class JdbcStatementTimeoutTest extends ConcurrencyTest {
     });
   }
 
-  static class UpdateJobCommand extends ControllableCommand<Void> {
+  protected ConcurrencyTest.ThreadControl executeControllableCommand(final ConcurrencyTest.ControllableCommand<?> command) {
+
+    final Thread controlThread = Thread.currentThread();
+
+    Thread thread = new Thread(() -> {
+      try {
+        processEngineConfiguration.getCommandExecutorTxRequiresNew().execute(command);
+      } catch(RuntimeException e) {
+        command.monitor.setException(e);
+        controlThread.interrupt();
+        throw e;
+      }
+    });
+
+    controllableCommands.add(command);
+    command.monitor.executingThread = thread;
+
+    thread.start();
+
+    return command.monitor;
+  }
+
+  static class UpdateJobCommand extends ConcurrencyTest.ControllableCommand<Void> {
 
     protected String lockOwner;
 
