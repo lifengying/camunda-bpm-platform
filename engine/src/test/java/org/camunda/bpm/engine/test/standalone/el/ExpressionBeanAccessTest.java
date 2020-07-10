@@ -29,6 +29,7 @@ import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.test.util.ProcessEngineBootstrapRule;
 import org.camunda.bpm.engine.test.util.ProvidedProcessEngineRule;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -38,8 +39,8 @@ import org.junit.Test;
  */
 public class ExpressionBeanAccessTest {
 
-  @Rule
-  public ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule(
+  @ClassRule
+  public static ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule(
       "org/camunda/bpm/engine/test/standalone/el/camunda.cfg.xml");
   @Rule
   public ProvidedProcessEngineRule engineRule = new ProvidedProcessEngineRule(bootstrapRule);

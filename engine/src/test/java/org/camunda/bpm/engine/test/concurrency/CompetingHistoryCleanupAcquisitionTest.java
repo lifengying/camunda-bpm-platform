@@ -52,7 +52,7 @@ import static org.camunda.bpm.engine.impl.jobexecutor.historycleanup.HistoryClea
 /**
  * @author Tassilo Weidner
  */
-public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTestTmp {
+public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTest {
 
   @ClassRule
   public static ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule();
@@ -133,7 +133,7 @@ public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTestTmp {
 
     lockEverLivingJob(jobId);
 
-    cleanupThread = executeControllableCommand(new CleanupThread(jobId), processEngineConfiguration);
+    cleanupThread = executeControllableCommand(new CleanupThread(jobId));
 
     cleanupThread.waitForSync(); // wait before flush of execution
     cleanupThread.makeContinueAndWaitForSync(); // flush execution and wait before flush of rescheduler
@@ -177,7 +177,7 @@ public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTestTmp {
 
     lockEverLivingJob(jobId);
 
-    cleanupThread = executeControllableCommand(new CleanupThread(jobId), processEngineConfiguration);
+    cleanupThread = executeControllableCommand(new CleanupThread(jobId));
 
     cleanupThread.waitForSync(); // wait before flush of execution
     cleanupThread.makeContinueAndWaitForSync(); // flush execution and wait before flush of rescheduler
@@ -241,7 +241,7 @@ public class CompetingHistoryCleanupAcquisitionTest extends ConcurrencyTestTmp {
   }
 
   protected void clearDatabase() {
-    deleteHistoryCleanupJobs(processEngineConfiguration);
+    deleteHistoryCleanupJobs();
 
     processEngineConfiguration.getCommandExecutorTxRequired().execute(new Command<Void>() {
       public Void execute(CommandContext commandContext) {

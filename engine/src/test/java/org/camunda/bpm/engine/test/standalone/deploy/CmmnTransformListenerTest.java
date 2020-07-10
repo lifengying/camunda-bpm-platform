@@ -37,6 +37,7 @@ import org.camunda.bpm.model.cmmn.instance.Stage;
 import org.camunda.bpm.model.cmmn.instance.Task;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -45,8 +46,8 @@ import org.junit.Test;
  */
 public class CmmnTransformListenerTest {
 
-  @Rule
-  public ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule(
+  @ClassRule
+  public static ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule(
       "org/camunda/bpm/engine/test/standalone/deploy/cmmn.transform.listener.camunda.cfg.xml");
   @Rule
   public ProvidedProcessEngineRule engineRule = new ProvidedProcessEngineRule(bootstrapRule);

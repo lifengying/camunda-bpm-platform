@@ -111,8 +111,8 @@ public class PluggableProcessEngineTest {
     decisionService = processEngine.getDecisionService();
   }
 
-  public static ProcessEngine getProcessEngine() {
-    return null;
+  public ProcessEngine getProcessEngine() {
+    return processEngine;
   }
 
   public boolean areJobsAvailable() {

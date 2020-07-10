@@ -35,6 +35,7 @@ import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ActivityStatisticsQueryTest extends PluggableProcessEngineTest {
@@ -626,6 +627,7 @@ public class ActivityStatisticsQueryTest extends PluggableProcessEngineTest {
     assertEquals(Incident.FAILED_JOB_HANDLER_TYPE, incidentStatistic.getIncidentType());
   }
 
+  @Ignore("CAM-126")
   @Test
   @Deployment(resources = "org/camunda/bpm/engine/test/api/mgmt/StatisticsTest.testStatisticsQuery.bpmn20.xml")
   public void FAILING_testActivityStatisticsQueryWithNoInstances() {

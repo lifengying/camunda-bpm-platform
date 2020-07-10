@@ -20,6 +20,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.camunda.bpm.engine.delegate.DelegateCaseExecution;
+import org.camunda.bpm.engine.repository.CaseDefinition;
+import org.camunda.bpm.engine.runtime.CaseInstance;
 import org.camunda.bpm.engine.test.api.multitenancy.listener.AssertingCaseExecutionListener;
 import org.camunda.bpm.engine.test.api.multitenancy.listener.AssertingCaseExecutionListener.DelegateCaseExecutionAsserter;
 import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
@@ -37,6 +39,11 @@ public class MultiTenancyDelegateCaseExecutionTest extends PluggableProcessEngin
 
   protected static final String TENANT_ID = "tenant1";
 
+  @After
+  public void tearDown() throws Exception {
+    AssertingCaseExecutionListener.clear();
+  }
+
   @Test
   public void testSingleExecution() {
     testRule.deployForTenant(TENANT_ID, HUMAN_TASK_CMMN_FILE);
@@ -53,13 +60,18 @@ public class MultiTenancyDelegateCaseExecutionTest extends PluggableProcessEngin
 
     AssertingCaseExecutionListener.addAsserts(hasTenantId("tenant1"));
 
-    createCaseInstance("oneCaseTaskCase");
+    createCaseInstanceByKey("oneCaseTaskCase");
   }
 
-  @After
-  public void tearDown() throws Exception {
-    AssertingCaseExecutionListener.clear();
+  @Override
+  protected CaseInstance createCaseInstance(String caseDefinitionKey) {
+    CaseDefinition caseDefinition = repositoryService
+            .createCaseDefinitionQuery()
+            .caseDefinitionKey(caseDefinitionKey)
+            .latestVersion()
+            .singleResult();
 
+    return caseService.createCaseInstanceById(caseDefinition.getId());
   }
 
   protected static DelegateCaseExecutionAsserter hasTenantId(final String expectedTenantId) {

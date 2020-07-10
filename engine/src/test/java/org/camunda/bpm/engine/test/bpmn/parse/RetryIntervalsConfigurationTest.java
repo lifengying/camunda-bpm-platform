@@ -25,8 +25,6 @@ import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.commons.lang3.time.DateUtils;
-import org.camunda.bpm.engine.ProcessEngineConfiguration;
-import org.camunda.bpm.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.camunda.bpm.engine.impl.util.ClockUtil;
 import org.camunda.bpm.engine.runtime.Job;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
@@ -41,7 +39,6 @@ import org.camunda.bpm.model.bpmn.Bpmn;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -53,8 +50,7 @@ public class RetryIntervalsConfigurationTest extends AbstractAsyncOperationsTest
   private static final String PROCESS_ID = "process";
   private static final String FAILING_CLASS = "this.class.does.not.Exist";
 
-  @ClassRule
-  public static ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule(configuration -> {
+  protected ProcessEngineBootstrapRule bootstrapRule = new ProcessEngineBootstrapRule(configuration -> {
     configuration.setFailedJobRetryTimeCycle("PT5M,PT20M, PT3M");
     configuration.setEnableExceptionsAfterUnhandledBpmnError(true);
   });
@@ -65,7 +61,7 @@ public class RetryIntervalsConfigurationTest extends AbstractAsyncOperationsTest
   public ExpectedException thrown = ExpectedException.none();
 
   @Rule
-  public RuleChain ruleChain = RuleChain.outerRule(engineRule).around(testRule);
+  public RuleChain ruleChain = RuleChain.outerRule(bootstrapRule).around(engineRule).around(testRule);
 
   @Before
   public void setUp() {
