@@ -45,6 +45,7 @@ public class EventSubscriptionAuthorizationTest extends AuthorizationTest {
     testRule.deploy(
         "org/camunda/bpm/engine/test/api/oneMessageBoundaryEventProcess.bpmn20.xml",
         "org/camunda/bpm/engine/test/api/authorization/signalBoundaryEventProcess.bpmn20.xml");
+    super.setUp();
   }
 
   @Test

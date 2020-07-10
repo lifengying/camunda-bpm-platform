@@ -58,10 +58,12 @@ public class HistoricExternalTaskLogAuthorizationTest extends AuthorizationTest 
     BpmnModelInstance defaultModel = createDefaultExternalTaskModel().build();
     BpmnModelInstance modifiedModel = createDefaultExternalTaskModel().processKey(ANOTHER_PROCESS_KEY).build();
     testRule.deploy(defaultModel, modifiedModel);
+    super.setUp();
   }
 
   @After
   public void tearDown() {
+    super.tearDown();
     processEngineConfiguration.setEnableHistoricInstancePermissions(false);
   }
 

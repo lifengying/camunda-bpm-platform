@@ -54,6 +54,7 @@ public class JobDefinitionAuthorizationTest extends AuthorizationTest {
     testRule.deploy(
         "org/camunda/bpm/engine/test/api/authorization/timerStartEventProcess.bpmn20.xml",
         "org/camunda/bpm/engine/test/api/authorization/timerBoundaryEventProcess.bpmn20.xml");
+    super.setUp();
   }
 
   // job definition query ///////////////////////////////////////

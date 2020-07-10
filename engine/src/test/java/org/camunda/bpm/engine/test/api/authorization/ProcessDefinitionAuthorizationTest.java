@@ -68,6 +68,7 @@ public class ProcessDefinitionAuthorizationTest extends AuthorizationTest {
     testRule.deploy(
         "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml",
         "org/camunda/bpm/engine/test/api/twoTasksProcess.bpmn20.xml");
+    super.setUp();
   }
 
   @Test

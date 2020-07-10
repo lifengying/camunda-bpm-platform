@@ -47,16 +47,22 @@ public class HistoricActivityInstanceAuthorizationTest extends AuthorizationTest
   protected static final String PROCESS_KEY = "oneTaskProcess";
   protected static final String MESSAGE_START_PROCESS_KEY = "messageStartProcess";
 
+  protected String deploymentId;
+
   @Before
   public void setUp() throws Exception {
-    testRule.deploy(
+    deploymentId = createDeployment(null,
         "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml",
-        "org/camunda/bpm/engine/test/api/authorization/messageStartEventProcess.bpmn20.xml");
+        "org/camunda/bpm/engine/test/api/authorization/messageStartEventProcess.bpmn20.xml")
+            .getId();
+    super.setUp();
   }
 
   @After
   public void tearDown() {
+    super.tearDown();
     processEngineConfiguration.setEnableHistoricInstancePermissions(false);
+    deleteDeployment(deploymentId);
   }
 
   // historic activity instance query /////////////////////////////////
@@ -181,7 +187,6 @@ public class HistoricActivityInstanceAuthorizationTest extends AuthorizationTest
   @Test
   public void testQueryAfterDeletingDeployment() {
     // given
-    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(PROCESS_KEY);
     startProcessInstanceByKey(PROCESS_KEY);
     startProcessInstanceByKey(PROCESS_KEY);
@@ -212,6 +217,7 @@ public class HistoricActivityInstanceAuthorizationTest extends AuthorizationTest
     enableAuthorization();
   }
 
+  @Test
   public void testCheckNonePermissionOnHistoricProcessInstance() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -229,6 +235,7 @@ public class HistoricActivityInstanceAuthorizationTest extends AuthorizationTest
     assertThat(query.list()).isEmpty();
   }
 
+  @Test
   public void testCheckReadPermissionOnHistoricProcessInstance() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -248,6 +255,7 @@ public class HistoricActivityInstanceAuthorizationTest extends AuthorizationTest
         .containsExactly(processInstanceId, processInstanceId);
   }
 
+  @Test
   public void testCheckReadPermissionOnCompletedHistoricProcessInstance() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -271,6 +279,7 @@ public class HistoricActivityInstanceAuthorizationTest extends AuthorizationTest
         .containsExactly(processInstanceId, processInstanceId, processInstanceId);
   }
 
+  @Test
   public void testCheckNoneOnHistoricProcessInstanceAndReadHistoryPermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -295,6 +304,7 @@ public class HistoricActivityInstanceAuthorizationTest extends AuthorizationTest
         .containsExactly(processInstanceId, processInstanceId, processInstanceId);
   }
 
+  @Test
   public void testCheckReadOnHistoricProcessInstanceAndNonePermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -320,6 +330,7 @@ public class HistoricActivityInstanceAuthorizationTest extends AuthorizationTest
         .containsExactly(processInstanceId, processInstanceId, processInstanceId);
   }
 
+  @Test
   public void testHistoricProcessInstancePermissionsAuthorizationDisabled() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);

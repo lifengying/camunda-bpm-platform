@@ -45,11 +45,6 @@ import org.camunda.bpm.engine.test.api.authorization.AuthorizationTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
@@ -66,18 +61,21 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
   protected static final String ONE_INCIDENT_PROCESS_KEY = "process";
 
   protected String batchId;
+  protected String deploymentId;
 
   @Before
   public void setUp() throws Exception {
-    testRule.deploy(
+    deploymentId = testRule.deploy(
         "org/camunda/bpm/engine/test/api/authorization/timerStartEventProcess.bpmn20.xml",
         "org/camunda/bpm/engine/test/api/authorization/timerBoundaryEventProcess.bpmn20.xml",
-        "org/camunda/bpm/engine/test/api/authorization/oneIncidentProcess.bpmn20.xml");
+        "org/camunda/bpm/engine/test/api/authorization/oneIncidentProcess.bpmn20.xml")
+            .getId();
+    super.setUp();
   }
 
   @After
   public void tearDown() {
-
+    super.tearDown();
     CommandExecutor commandExecutor = processEngineConfiguration.getCommandExecutorTxRequired();
     commandExecutor.execute(new Command<Object>() {
       public Object execute(CommandContext commandContext) {
@@ -259,7 +257,6 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
   @Test
   public void testQueryAfterStandaloneJob() {
     // given
-    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     disableAuthorization();
     repositoryService.suspendProcessDefinitionByKey(TIMER_BOUNDARY_PROCESS_KEY, true, new Date());
     enableAuthorization();
@@ -286,7 +283,6 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
   @Test
   public void testQueryAfterDeletingDeployment() {
     // given
-    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY);
     startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY);
     startProcessInstanceByKey(TIMER_BOUNDARY_PROCESS_KEY);
@@ -322,7 +318,6 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
   @Test
   public void testGetHistoricStandaloneJobLogExceptionStacktrace() {
     // given
-    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     disableAuthorization();
     repositoryService.suspendProcessDefinitionByKey(TIMER_BOUNDARY_PROCESS_KEY, true, new Date());
     enableAuthorization();

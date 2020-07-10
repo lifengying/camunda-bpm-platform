@@ -61,6 +61,7 @@ public class DelegationAuthorizationTest extends AuthorizationTest {
   public void setUp() throws Exception {
     MyDelegationService.clearProperties();
     processEngineConfiguration.setAuthorizationEnabledForCustomCode(false);
+    super.setUp();
   }
 
   @Deployment

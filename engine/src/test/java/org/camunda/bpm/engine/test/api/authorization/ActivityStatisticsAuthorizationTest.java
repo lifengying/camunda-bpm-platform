@@ -55,6 +55,7 @@ public class ActivityStatisticsAuthorizationTest extends AuthorizationTest {
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);
     startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY);
+    super.setUp();
   }
 
   // without any authorization

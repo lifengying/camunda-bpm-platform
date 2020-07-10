@@ -46,12 +46,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 /**
@@ -74,10 +68,13 @@ public class HistoricDecisionInstanceAuthorizationTest extends AuthorizationTest
     ResetDmnConfigUtil.reset(dmnEngineConfiguration)
         .enableFeelLegacyBehavior(true)
         .init();
+    super.setUp();
   }
 
   @After
   public void tearDown() {
+    super.tearDown();
+
     DefaultDmnEngineConfiguration dmnEngineConfiguration =
         processEngineConfiguration.getDmnEngineConfiguration();
 

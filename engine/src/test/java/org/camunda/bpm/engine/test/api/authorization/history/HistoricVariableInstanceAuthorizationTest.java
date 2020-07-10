@@ -44,12 +44,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 /**
@@ -64,19 +58,23 @@ public class HistoricVariableInstanceAuthorizationTest extends AuthorizationTest
   protected static final String CASE_KEY = "oneTaskCase";
 
   protected boolean ensureSpecificVariablePermission;
+  protected String deploymentId;
 
   @Before
   public void setUp() throws Exception {
-    testRule.deploy(
+    deploymentId = testRule.deploy(
         "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml",
         "org/camunda/bpm/engine/test/api/authorization/messageStartEventProcess.bpmn20.xml",
-        "org/camunda/bpm/engine/test/api/authorization/oneTaskCase.cmmn");
+        "org/camunda/bpm/engine/test/api/authorization/oneTaskCase.cmmn")
+            .getId();
 
     ensureSpecificVariablePermission = processEngineConfiguration.isEnforceSpecificVariablePermission();
+    super.setUp();
   }
 
   @After
   public void tearDown() {
+    super.tearDown();
     processEngineConfiguration.setEnableHistoricInstancePermissions(false);
     processEngineConfiguration.setEnforceSpecificVariablePermission(ensureSpecificVariablePermission);
   }
@@ -398,7 +396,6 @@ public class HistoricVariableInstanceAuthorizationTest extends AuthorizationTest
   @Test
   public void testQueryAfterDeletingDeployment() {
     // given
-    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(PROCESS_KEY, getVariables());
     startProcessInstanceByKey(PROCESS_KEY, getVariables());
     startProcessInstanceByKey(PROCESS_KEY, getVariables());
@@ -426,7 +423,6 @@ public class HistoricVariableInstanceAuthorizationTest extends AuthorizationTest
 
   @Test
   public void testQueryAfterDeletingDeploymentWithReadHistoryVariable() {
-    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     setReadHistoryVariableAsDefaultReadPermission();
 
     startProcessInstanceByKey(PROCESS_KEY, getVariables());
@@ -504,7 +500,6 @@ public class HistoricVariableInstanceAuthorizationTest extends AuthorizationTest
   @Test
   public void testDeleteHistoricProcessVariableInstanceAfterDeletingDeployment() {
     // given
-    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(PROCESS_KEY, getVariables());
     String taskId = selectSingleTask().getId();
     disableAuthorization();
@@ -613,7 +608,6 @@ public class HistoricVariableInstanceAuthorizationTest extends AuthorizationTest
   @Test
   public void testDeleteHistoricProcessVariableInstancesAfterDeletingDeployment() {
     // given
-    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     ProcessInstance instance = startProcessInstanceByKey(PROCESS_KEY, getVariables());
     String taskId = selectSingleTask().getId();
     disableAuthorization();

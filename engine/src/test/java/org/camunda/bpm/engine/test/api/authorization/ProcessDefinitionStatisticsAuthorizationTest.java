@@ -47,6 +47,7 @@ public class ProcessDefinitionStatisticsAuthorizationTest extends AuthorizationT
     testRule.deploy(
         "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml",
         "org/camunda/bpm/engine/test/api/authorization/oneIncidentProcess.bpmn20.xml").getId();
+    super.setUp();
   }
 
   // without running instances //////////////////////////////////////////////////////////

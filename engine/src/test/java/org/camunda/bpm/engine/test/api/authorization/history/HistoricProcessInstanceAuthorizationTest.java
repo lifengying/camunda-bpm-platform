@@ -64,15 +64,20 @@ public class HistoricProcessInstanceAuthorizationTest extends AuthorizationTest 
   protected static final String PROCESS_KEY = "oneTaskProcess";
   protected static final String MESSAGE_START_PROCESS_KEY = "messageStartProcess";
 
+  protected String deploymentId;
+
   @Before
   public void setUp() throws Exception {
-    testRule.deploy(
+    deploymentId = testRule.deploy(
         "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml",
-        "org/camunda/bpm/engine/test/api/authorization/messageStartEventProcess.bpmn20.xml");
+        "org/camunda/bpm/engine/test/api/authorization/messageStartEventProcess.bpmn20.xml")
+            .getId();
+    super.setUp();
   }
 
   @After
   public void tearDown() {
+    super.tearDown();
     processEngineConfiguration.setEnableHistoricInstancePermissions(false);
   }
 
@@ -206,7 +211,6 @@ public class HistoricProcessInstanceAuthorizationTest extends AuthorizationTest 
   @Test
   public void testQueryAfterDeletingDeployment() {
     // given
-    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(PROCESS_KEY);
     startProcessInstanceByKey(PROCESS_KEY);
     startProcessInstanceByKey(PROCESS_KEY);
@@ -313,7 +317,6 @@ public class HistoricProcessInstanceAuthorizationTest extends AuthorizationTest 
   @Test
   public void testDeleteHistoricProcessInstanceAfterDeletingDeployment() {
     // given
-    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();
     String taskId = selectSingleTask().getId();
     disableAuthorization();

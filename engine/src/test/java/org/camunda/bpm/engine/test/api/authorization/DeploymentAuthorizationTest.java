@@ -564,7 +564,7 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
     // given
     EmbeddedProcessApplication processApplication = new EmbeddedProcessApplication();
     ProcessApplicationReference reference = processApplication.getReference();
-    String deploymentId = testRule.deploy( FIRST_RESOURCE).getId();
+    String deploymentId = createDeployment(null, FIRST_RESOURCE).getId();
 
     try {
       // when
@@ -587,7 +587,7 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
 
     EmbeddedProcessApplication processApplication = new EmbeddedProcessApplication();
     ProcessApplicationReference reference = processApplication.getReference();
-    String deploymentId = testRule.deploy( FIRST_RESOURCE).getId();
+    String deploymentId = createDeployment(null, FIRST_RESOURCE).getId();
 
     // when
     ProcessApplicationRegistration registration = managementService.registerProcessApplication(deploymentId, reference);
@@ -605,7 +605,7 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
   public void testUnregisterProcessApplicationWithoutAuthorization() {
     // given
     EmbeddedProcessApplication processApplication = new EmbeddedProcessApplication();
-    String deploymentId = testRule.deploy( FIRST_RESOURCE).getId();
+    String deploymentId = createDeployment(null, FIRST_RESOURCE).getId();
     ProcessApplicationReference reference = processApplication.getReference();
     registerProcessApplication(deploymentId, reference);
 
@@ -629,7 +629,7 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
     identityService.setAuthentication(userId, Collections.singletonList(Groups.CAMUNDA_ADMIN));
 
     EmbeddedProcessApplication processApplication = new EmbeddedProcessApplication();
-    String deploymentId = testRule.deploy( FIRST_RESOURCE).getId();
+    String deploymentId = createDeployment(null, FIRST_RESOURCE).getId();
     ProcessApplicationReference reference = processApplication.getReference();
     registerProcessApplication(deploymentId, reference);
 
@@ -648,7 +648,7 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
   public void testGetProcessApplicationForDeploymentWithoutAuthorization() {
     // given
     EmbeddedProcessApplication processApplication = new EmbeddedProcessApplication();
-    String deploymentId = testRule.deploy( FIRST_RESOURCE).getId();
+    String deploymentId = createDeployment(null, FIRST_RESOURCE).getId();
     ProcessApplicationReference reference = processApplication.getReference();
     registerProcessApplication(deploymentId, reference);
 
@@ -672,7 +672,7 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
     identityService.setAuthentication(userId, Collections.singletonList(Groups.CAMUNDA_ADMIN));
 
     EmbeddedProcessApplication processApplication = new EmbeddedProcessApplication();
-    String deploymentId = testRule.deploy( FIRST_RESOURCE).getId();
+    String deploymentId = createDeployment(null, FIRST_RESOURCE).getId();
     ProcessApplicationReference reference = processApplication.getReference();
     registerProcessApplication(deploymentId, reference);
 
@@ -690,7 +690,7 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
   @Test
   public void testGetRegisteredDeploymentsWithoutAuthorization() {
     // given
-    String deploymentId = testRule.deploy( FIRST_RESOURCE).getId();
+    String deploymentId = createDeployment(null, FIRST_RESOURCE).getId();
 
     try {
       // when
@@ -711,7 +711,7 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
     // given
     identityService.setAuthentication(userId, Collections.singletonList(Groups.CAMUNDA_ADMIN));
 
-    String deploymentId = testRule.deploy( FIRST_RESOURCE).getId();
+    String deploymentId = createDeployment(null, FIRST_RESOURCE).getId();
 
     // when
     Set<String> deployments = managementService.getRegisteredDeployments();
@@ -727,7 +727,7 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
   @Test
   public void testRegisterDeploymentForJobExecutorWithoutAuthorization() {
     // given
-    String deploymentId = testRule.deploy( FIRST_RESOURCE).getId();
+    String deploymentId = createDeployment(null, FIRST_RESOURCE).getId();
 
     try {
       // when
@@ -748,7 +748,7 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
     // given
     identityService.setAuthentication(userId, Collections.singletonList(Groups.CAMUNDA_ADMIN));
 
-    String deploymentId = testRule.deploy( FIRST_RESOURCE).getId();
+    String deploymentId = createDeployment(null, FIRST_RESOURCE).getId();
 
     // when
     managementService.registerDeploymentForJobExecutor(deploymentId);
@@ -764,7 +764,7 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
   @Test
   public void testUnregisterDeploymentForJobExecutorWithoutAuthorization() {
     // given
-    String deploymentId = testRule.deploy( FIRST_RESOURCE).getId();
+    String deploymentId = createDeployment(null, FIRST_RESOURCE).getId();
 
     try {
       // when
@@ -785,7 +785,7 @@ public class DeploymentAuthorizationTest extends AuthorizationTest {
     // given
     identityService.setAuthentication(userId, Collections.singletonList(Groups.CAMUNDA_ADMIN));
 
-    String deploymentId = testRule.deploy( FIRST_RESOURCE).getId();
+    String deploymentId = createDeployment(null, FIRST_RESOURCE).getId();
 
     // when
     managementService.unregisterDeploymentForJobExecutor(deploymentId);

@@ -81,7 +81,6 @@ public class UserOperationIdTest {
     taskService = engineRule.getTaskService();
     formService = engineRule.getFormService();
     identityService = engineRule.getIdentityService();
-
   }
 
   @Test

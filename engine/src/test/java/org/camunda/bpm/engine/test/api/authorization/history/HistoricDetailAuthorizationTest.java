@@ -22,6 +22,7 @@ import static org.camunda.bpm.engine.authorization.Permissions.READ_HISTORY;
 import static org.camunda.bpm.engine.authorization.Resources.HISTORIC_PROCESS_INSTANCE;
 import static org.camunda.bpm.engine.authorization.Resources.HISTORIC_TASK;
 import static org.camunda.bpm.engine.authorization.Resources.PROCESS_DEFINITION;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
@@ -39,14 +40,6 @@ import org.camunda.bpm.engine.test.api.authorization.AuthorizationTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 /**
  * @author Roman Smirnov
@@ -59,16 +52,21 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
   protected static final String MESSAGE_START_PROCESS_KEY = "messageStartProcess";
   protected static final String CASE_KEY = "oneTaskCase";
 
+  protected String deploymentId;
+
   @Before
   public void setUp() throws Exception {
-    testRule.deploy(
+    deploymentId = testRule.deploy(
         "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml",
         "org/camunda/bpm/engine/test/api/authorization/messageStartEventProcess.bpmn20.xml",
-        "org/camunda/bpm/engine/test/api/authorization/oneTaskCase.cmmn");
+        "org/camunda/bpm/engine/test/api/authorization/oneTaskCase.cmmn")
+            .getId();
+    super.setUp();
   }
 
   @After
   public void tearDown() {
+    super.tearDown();
     processEngineConfiguration.setEnableHistoricInstancePermissions(false);
     processEngineConfiguration.setEnforceSpecificVariablePermission(false);
   }
@@ -630,7 +628,6 @@ public class HistoricDetailAuthorizationTest extends AuthorizationTest {
   @Test
   public void testQueryAfterDeletingDeployment() {
     // given
-    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(PROCESS_KEY);
     String taskId = selectSingleTask().getId();
     disableAuthorization();

@@ -32,11 +32,6 @@ import org.junit.Test;
  */
 public class SchemaLogQueryAuthorizationTest extends AuthorizationTest {
 
-  @After
-  public void tearDown() {
-
-  }
-
   @Test
   public void testSimpleQueryWithoutAuthorization() {
     // given

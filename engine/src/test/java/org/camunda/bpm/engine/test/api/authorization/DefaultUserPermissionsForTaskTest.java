@@ -56,7 +56,7 @@ public class DefaultUserPermissionsForTaskTest extends AuthorizationTest {
   public void tearDown() {
     // reset default permission
     processEngineConfiguration.setDefaultUserPermissionForTask(UPDATE);
-
+    super.tearDown();
   }
 
   @Test

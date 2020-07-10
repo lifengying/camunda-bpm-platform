@@ -56,16 +56,16 @@ public class VariableInstanceAuthorizationTest extends AuthorizationTest {
 
   @Before
   public void setUp() throws Exception {
-    testRule.deploy(
+    deploymentId = testRule.deploy(
         "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml",
         "org/camunda/bpm/engine/test/api/authorization/oneTaskCase.cmmn").getId();
     ensureSpecificVariablePermission = processEngineConfiguration.isEnforceSpecificVariablePermission();
-
+    super.setUp();
   }
 
   @After
   public void tearDown() {
-
+    super.tearDown();
     deleteDeployment(deploymentId);
     processEngineConfiguration.setEnforceSpecificVariablePermission(ensureSpecificVariablePermission);
   }

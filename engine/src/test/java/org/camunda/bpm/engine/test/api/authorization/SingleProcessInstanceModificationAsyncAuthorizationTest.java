@@ -65,6 +65,7 @@ public class SingleProcessInstanceModificationAsyncAuthorizationTest extends Aut
       managementService.deleteJob(job.getId());
     }
     enableAuthorization();
+    super.tearDown();
   }
 
   @Deployment(resources = PARALLEL_GATEWAY_PROCESS)

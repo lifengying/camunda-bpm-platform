@@ -24,17 +24,9 @@ import static org.camunda.bpm.engine.authorization.Resources.PROCESS_INSTANCE;
 
 import org.camunda.bpm.engine.externaltask.ExternalTaskQuery;
 import org.camunda.bpm.engine.test.api.authorization.AuthorizationTest;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 /**
  * @author Thorben Lindhauer
@@ -54,6 +46,7 @@ public class ExternalTaskQueryAuthorizationTest extends AuthorizationTest {
 
     instance1Id = startProcessInstanceByKey("oneExternalTaskProcess").getId();
     instance2Id = startProcessInstanceByKey("twoExternalTaskProcess").getId();
+    super.setUp();
   }
 
   @Test

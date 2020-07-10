@@ -60,11 +60,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
@@ -84,14 +79,17 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
 
   @Before
   public void setUp() throws Exception {
-    testRule.deploy(
+    deploymentId = testRule.deploy(
         "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml",
         "org/camunda/bpm/engine/test/api/authorization/oneTaskCase.cmmn",
-        "org/camunda/bpm/engine/test/api/authorization/timerBoundaryEventProcess.bpmn20.xml");
+        "org/camunda/bpm/engine/test/api/authorization/timerBoundaryEventProcess.bpmn20.xml")
+            .getId();
+    super.setUp();
   }
 
   @After
   public void tearDown() {
+    super.tearDown();
     processEngineConfiguration.setEnableHistoricInstancePermissions(false);
 
     if (taskId != null) {
@@ -1362,7 +1360,6 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
   @Test
   public void testQueryAfterDeletingDeploymentWithoutAuthorization() {
     // given
-    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
     String taskId = selectSingleTask().getId();
     setAssignee(taskId, "demo");
@@ -1390,7 +1387,6 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
   @Test
   public void testQueryAfterDeletingDeploymentWithReadHistoryPermissionOnProcessDefinition() {
     // given
-    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
     String taskId = selectSingleTask().getId();
     setAssignee(taskId, "demo");
@@ -1419,7 +1415,6 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
   @Test
   public void testQueryAfterDeletingDeploymentWithReadHistoryPermissionOnAnyProcessDefinition() {
     // given
-    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
     String taskId = selectSingleTask().getId();
     setAssignee(taskId, "demo");
@@ -1448,7 +1443,6 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
   @Test
   public void testQueryAfterDeletingDeploymentWithReadPermissionOnCategory() {
     // given
-    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
     String taskId = selectSingleTask().getId();
     setAssignee(taskId, "demo");
@@ -1483,7 +1477,6 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
   @Test
   public void testQueryAfterDeletingDeploymentWithReadPermissionOnAnyCategory() {
     // given
-    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     startProcessInstanceByKey(ONE_TASK_PROCESS_KEY);
     String taskId = selectSingleTask().getId();
     setAssignee(taskId, "demo");
@@ -1752,7 +1745,6 @@ public class UserOperationLogAuthorizationTest extends AuthorizationTest {
   @Test
   public void testDeleteEntryAfterDeletingDeployment() {
     // given
-    String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
     String processInstanceId = startProcessInstanceByKey(ONE_TASK_PROCESS_KEY).getId();
     String taskId = selectSingleTask().getId();
     createGrantAuthorization(PROCESS_DEFINITION, ONE_TASK_PROCESS_KEY, userId, READ_HISTORY, DELETE_HISTORY);
