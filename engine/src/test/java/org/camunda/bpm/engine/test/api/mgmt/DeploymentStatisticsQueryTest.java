@@ -296,6 +296,7 @@ public class DeploymentStatisticsQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/api/mgmt/StatisticsTest.testFailedTimerStartEvent.bpmn20.xml")
+  @Test
   public void testQueryByIncidentsWithFailedTimerStartEvent() {
 
     testRule.executeAvailableJobs();
@@ -324,6 +325,7 @@ public class DeploymentStatisticsQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/api/mgmt/StatisticsTest.testFailedTimerStartEvent.bpmn20.xml")
+  @Test
   public void testQueryByIncidentTypeWithFailedTimerStartEvent() {
 
     testRule.executeAvailableJobs();
@@ -352,6 +354,7 @@ public class DeploymentStatisticsQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/api/mgmt/StatisticsTest.testFailedTimerStartEvent.bpmn20.xml")
+  @Test
   public void testQueryByFailedJobsWithFailedTimerStartEvent() {
 
     testRule.executeAvailableJobs();
@@ -373,6 +376,7 @@ public class DeploymentStatisticsQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/api/mgmt/StatisticsTest.testFailedTimerStartEvent.bpmn20.xml")
+  @Test
   public void testQueryByFailedJobsAndIncidentsWithFailedTimerStartEvent() {
 
     testRule.executeAvailableJobs();

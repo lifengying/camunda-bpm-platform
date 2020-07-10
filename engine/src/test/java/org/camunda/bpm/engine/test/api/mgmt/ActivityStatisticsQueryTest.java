@@ -440,6 +440,7 @@ public class ActivityStatisticsQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/api/mgmt/StatisticsTest.testNonInterruptingBoundaryEventStatisticsQuery.bpmn20.xml")
+  @Test
   public void testNonInterruptingBoundaryEventActivityStatisticsQuery() {
     // given
     ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("process");
@@ -467,6 +468,7 @@ public class ActivityStatisticsQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/api/mgmt/StatisticsTest.testAsyncInterruptingEventSubProcessStatisticsQuery.bpmn20.xml")
+  @Test
   public void testAsyncInterruptingEventSubProcessActivityStatisticsQuery() {
     // given
     ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("process");
@@ -494,6 +496,7 @@ public class ActivityStatisticsQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/api/mgmt/StatisticsTest.testFailedTimerStartEvent.bpmn20.xml")
+  @Test
   public void testQueryByIncidentsWithFailedTimerStartEvent() {
 
     ProcessDefinition definition =
@@ -530,6 +533,7 @@ public class ActivityStatisticsQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/api/mgmt/StatisticsTest.testFailedTimerStartEvent.bpmn20.xml")
+  @Test
   public void testQueryByIncidentTypeWithFailedTimerStartEvent() {
 
     ProcessDefinition definition =
@@ -564,6 +568,7 @@ public class ActivityStatisticsQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/api/mgmt/StatisticsTest.testFailedTimerStartEvent.bpmn20.xml")
+  @Test
   public void testQueryByFailedJobsWithFailedTimerStartEvent() {
 
     ProcessDefinition definition =
@@ -591,6 +596,7 @@ public class ActivityStatisticsQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/api/mgmt/StatisticsTest.testFailedTimerStartEvent.bpmn20.xml")
+  @Test
   public void testQueryByFailedJobsAndIncidentsWithFailedTimerStartEvent() {
 
     ProcessDefinition definition =

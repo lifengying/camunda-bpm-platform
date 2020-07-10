@@ -398,6 +398,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
     assertNotNull(stacktrace);
   }
 
+  @Test
   public void testCheckNonePermissionOnHistoricProcessInstance() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -415,6 +416,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
     assertThat(query.list()).isEmpty();
   }
 
+  @Test
   public void testCheckReadPermissionOnHistoricProcessInstance() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -439,6 +441,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
         );
   }
 
+  @Test
   public void testCheckNoneOnHistoricProcessInstanceAndReadHistoryPermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -464,6 +467,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
         );
   }
 
+  @Test
   public void testCheckReadOnHistoricProcessInstanceAndNonePermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -490,6 +494,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
         );
   }
 
+  @Test
   public void testHistoricProcessInstancePermissionsAuthorizationDisabled() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -514,6 +519,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
         );
   }
 
+  @Test
   public void testSkipAuthOnNonProcessJob() {
     // given
     String processInstanceId = startProcessAndExecuteJob(ONE_INCIDENT_PROCESS_KEY)
@@ -534,6 +540,7 @@ public class HistoricJobLogAuthorizationTest extends AuthorizationTest {
         .containsExactly(tuple("batch-seed-job", null));
   }
 
+  @Test
   public void testSkipAuthOnNonProcessJob_HistoricInstancePermissionsEnabled() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);

@@ -1017,6 +1017,7 @@ public class HistoricTaskInstanceAuthorizationTest extends AuthorizationTest {
     taskService.deleteTask(taskId);
   }
 
+  @Test
   public void testCheckNonePermissionOnHistoricProcessInstance() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -1033,6 +1034,7 @@ public class HistoricTaskInstanceAuthorizationTest extends AuthorizationTest {
     assertThat(query.list()).isEmpty();
   }
 
+  @Test
   public void testCheckReadPermissionOnHistoricProcessInstance() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -1051,6 +1053,7 @@ public class HistoricTaskInstanceAuthorizationTest extends AuthorizationTest {
         .containsExactly(processInstanceId);
   }
 
+  @Test
   public void testCheckReadPermissionOnCompletedHHistoricProcessInstance() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -1073,6 +1076,7 @@ public class HistoricTaskInstanceAuthorizationTest extends AuthorizationTest {
         .containsExactly(processInstanceId);
   }
 
+  @Test
   public void testCheckNoneOnHistoricProcessInstanceAndReadHistoryPermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -1096,6 +1100,7 @@ public class HistoricTaskInstanceAuthorizationTest extends AuthorizationTest {
         .containsExactly(processInstanceId);
   }
 
+  @Test
   public void testCheckReadPermissionOnHistoricProcessInstanceAndNonePermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);

@@ -482,6 +482,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryProcessDefinitionOperationsById_createsTwoLogEntries() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -526,6 +527,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryProcessDefinitionOperationsById_includeProcessInstancesEntries() {
     // given
     String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
@@ -576,6 +578,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryProcessDefinitionOperationsById_excludeProcessInstancesEntries() {
     // given
     String deploymentId = repositoryService.createDeploymentQuery().singleResult().getId();
@@ -626,6 +629,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryProcessDefinitionOperationsByKey_createsTwoLogEntries() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -670,6 +674,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryProcessDefinitionOperationsByKey_includeProcessInstancesEntries() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -719,6 +724,7 @@ public class UserOperationLogQueryTest extends AbstractUserOperationLogTest {
   }
 
   @Deployment(resources = {ONE_TASK_PROCESS})
+  @Test
   public void testQueryProcessDefinitionOperationsByKey_excludeProcessInstancesEntries() {
     // given
     process = runtimeService.startProcessInstanceByKey("oneTaskProcess");

@@ -197,8 +197,8 @@ public class FetchExternalTaskAuthorizationTest extends AuthorizationTest {
     // then
     assertEquals(2, tasks.size());
   }
-  
 
+  @Test
   public void testFetchWithMultipleMatchingAuthorizations() {
     // given
     createGrantAuthorization(PROCESS_INSTANCE, ANY, userId, READ, UPDATE);

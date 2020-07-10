@@ -674,6 +674,7 @@ public class ProcessDefinitionStatisticsQueryTest extends PluggableProcessEngine
     }
   }
 
+  @Test
   public void testProcessDefinitionStatisticsProperties() {
     String resourceName = "org/camunda/bpm/engine/test/api/mgmt/ProcessDefinitionStatisticsQueryTest.testProcessDefinitionStatisticsProperties.bpmn20.xml";
     String deploymentId = testRule.deployForTenant("tenant1", resourceName).getId();

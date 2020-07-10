@@ -30,6 +30,7 @@ import org.camunda.bpm.engine.task.IdentityLink;
 import org.camunda.bpm.engine.test.Deployment;
 import org.camunda.bpm.engine.test.RequiredHistoryLevel;
 import org.camunda.bpm.engine.test.util.PluggableProcessEngineTest;
+import org.junit.Test;
 
 @RequiredHistoryLevel(ProcessEngineConfiguration.HISTORY_FULL)
 public class HistoricIdentityLinkLogTestByXml extends PluggableProcessEngineTest {
@@ -52,6 +53,7 @@ public class HistoricIdentityLinkLogTestByXml extends PluggableProcessEngineTest
   protected static final String CANDIDATE_STARTER_GROUPS = "org/camunda/bpm/engine/test/api/repository/ProcessDefinitionCandidateTest.testCandidateStarterGroups.bpmn20.xml";
 
   @Deployment(resources = { "org/camunda/bpm/engine/test/api/runtime/OneTaskProcessWithCandidateUser.bpmn20.xml" })
+  @Test
   public void testShouldAddTaskCandidateforAddIdentityLinkUsingXml() {
 
     // Pre test
@@ -69,6 +71,7 @@ public class HistoricIdentityLinkLogTestByXml extends PluggableProcessEngineTest
   }
 
   @Deployment(resources = { "org/camunda/bpm/engine/test/api/runtime/OneTaskProcessWithTaskAssignee.bpmn20.xml" })
+  @Test
   public void testShouldAddTaskAssigneeforAddIdentityLinkUsingXml() {
 
     // Pre test
@@ -88,6 +91,7 @@ public class HistoricIdentityLinkLogTestByXml extends PluggableProcessEngineTest
   }
 
   @Deployment(resources = { "org/camunda/bpm/engine/test/api/runtime/OneTaskProcessWithCandidateGroups.bpmn20.xml" })
+  @Test
   public void testShouldAddTaskCandidateGroupforAddIdentityLinkUsingXml() {
 
     // Pre test
@@ -105,6 +109,7 @@ public class HistoricIdentityLinkLogTestByXml extends PluggableProcessEngineTest
   }
 
   @Deployment(resources = { "org/camunda/bpm/engine/test/api/runtime/OneTaskProcessWithCandidateStarterUsers.bpmn20.xml" })
+  @Test
   public void testShouldAddProcessCandidateStarterUserforAddIdentityLinkUsingXml() {
 
     // Pre test - Historical identity link is added as part of deployment
@@ -149,6 +154,7 @@ public class HistoricIdentityLinkLogTestByXml extends PluggableProcessEngineTest
     assertEquals(query.groupId(XML_GROUP).count(), 1);
   }
 
+  @Test
   public void testPropagateTenantIdToCandidateStarterUser() {
     // when
     org.camunda.bpm.engine.repository.Deployment deployment = repositoryService.createDeployment()
@@ -167,6 +173,7 @@ public class HistoricIdentityLinkLogTestByXml extends PluggableProcessEngineTest
     repositoryService.deleteDeployment(deployment.getId(), true);
   }
 
+  @Test
   public void testPropagateTenantIdToCandidateStarterUsers() {
     // when
     org.camunda.bpm.engine.repository.Deployment deployment = repositoryService.createDeployment()
@@ -186,6 +193,7 @@ public class HistoricIdentityLinkLogTestByXml extends PluggableProcessEngineTest
     repositoryService.deleteDeployment(deployment.getId(), true);
   }
 
+  @Test
   public void testPropagateTenantIdToCandidateStarterGroup() {
     // when
     org.camunda.bpm.engine.repository.Deployment deployment = repositoryService.createDeployment()
@@ -204,6 +212,7 @@ public class HistoricIdentityLinkLogTestByXml extends PluggableProcessEngineTest
       repositoryService.deleteDeployment(deployment.getId(), true);
   }
 
+  @Test
   public void testPropagateTenantIdToCandidateStarterGroups() {
     // when
     org.camunda.bpm.engine.repository.Deployment deployment = repositoryService.createDeployment()

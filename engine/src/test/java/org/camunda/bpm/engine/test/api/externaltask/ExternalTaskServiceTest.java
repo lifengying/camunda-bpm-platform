@@ -3412,6 +3412,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = { "org/camunda/bpm/engine/test/api/externaltask/ExternalTaskServiceTest.testFetchAndLockWithExtensionProperties.bpmn20.xml" })
+  @Test
   public void testFetchAndLockWithExtensionProperties_shouldReturnProperties() {
     // given
     runtimeService.startProcessInstanceByKey("oneExternalTaskWithCustomProperties");
@@ -3427,6 +3428,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = { "org/camunda/bpm/engine/test/api/externaltask/ExternalTaskServiceTest.testFetchAndLockWithoutExtensionProperties.bpmn20.xml" })
+  @Test
   public void testFetchAndLockWithExtensionProperties_shouldReturnEmptyMap() {
     // given
     runtimeService.startProcessInstanceByKey("oneExternalTaskWithoutCustomProperties");
@@ -3441,6 +3443,7 @@ public class ExternalTaskServiceTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = { "org/camunda/bpm/engine/test/api/externaltask/ExternalTaskServiceTest.testFetchAndLockWithExtensionProperties.bpmn20.xml" })
+  @Test
   public void testFetchAndLockWithoutExtensionProperties_shouldReturnEmptyMap() {
     // given
     runtimeService.startProcessInstanceByKey("oneExternalTaskWithCustomProperties");

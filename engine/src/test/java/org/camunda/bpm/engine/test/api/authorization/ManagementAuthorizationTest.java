@@ -267,6 +267,7 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
 
   // configure telemetry /////////////////////////////////////
 
+  @Test
   public void testTelemetryEnabledWithoutAutorization() {
     // given
 
@@ -280,6 +281,7 @@ public class ManagementAuthorizationTest extends AuthorizationTest {
     }
   }
 
+  @Test
   public void testTelemetryEnabledAsCamundaAdmin() {
     // given
     disableAuthorization();

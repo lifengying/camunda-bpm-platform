@@ -276,6 +276,7 @@ public class HistoricActivityInstanceTest extends PluggableProcessEngineTest {
 
   @Deployment(resources = { "org/camunda/bpm/engine/test/history/calledProcessWaiting.bpmn20.xml",
   "org/camunda/bpm/engine/test/history/HistoricActivityInstanceTest.testCallSimpleSubProcess.bpmn20.xml" })
+  @Test
   public void testHistoricActivityInstanceCalledProcessIdWithWaitState() {
     // given
     runtimeService.startProcessInstanceByKey("callSimpleSubProcess");

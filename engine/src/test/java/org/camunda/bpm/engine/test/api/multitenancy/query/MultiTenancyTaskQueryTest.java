@@ -115,6 +115,7 @@ public class MultiTenancyTaskQueryTest extends PluggableProcessEngineTest {
     }
   }
 
+  @Test
   public void testQuerySortingAsc() {
     // exclude tasks without tenant id because of database-specific ordering
     List<Task> tasks = taskService.createTaskQuery()
@@ -128,6 +129,7 @@ public class MultiTenancyTaskQueryTest extends PluggableProcessEngineTest {
     assertThat(tasks.get(1).getTenantId(), is(TENANT_TWO));
   }
 
+  @Test
   public void testQuerySortingDesc() {
     // exclude tasks without tenant id because of database-specific ordering
     List<Task> tasks = taskService.createTaskQuery()
@@ -141,6 +143,7 @@ public class MultiTenancyTaskQueryTest extends PluggableProcessEngineTest {
     assertThat(tasks.get(1).getTenantId(), is(TENANT_ONE));
   }
 
+  @Test
   public void testQueryNoAuthenticatedTenants() {
     identityService.setAuthentication("user", null, null);
 
@@ -148,6 +151,7 @@ public class MultiTenancyTaskQueryTest extends PluggableProcessEngineTest {
     assertThat(query.count(), is(1L));
   }
 
+  @Test
   public void testQueryAuthenticatedTenant() {
     identityService.setAuthentication("user", null, Arrays.asList(TENANT_ONE));
 
@@ -159,6 +163,7 @@ public class MultiTenancyTaskQueryTest extends PluggableProcessEngineTest {
     assertThat(query.tenantIdIn(TENANT_ONE, TENANT_TWO).count(), is(1L));
   }
 
+  @Test
   public void testQueryAuthenticatedTenants() {
     identityService.setAuthentication("user", null, Arrays.asList(TENANT_ONE, TENANT_TWO));
 
@@ -170,6 +175,7 @@ public class MultiTenancyTaskQueryTest extends PluggableProcessEngineTest {
     assertThat(query.withoutTenantId().count(), is(1L));
   }
 
+  @Test
   public void testQueryDisabledTenantCheck() {
     processEngineConfiguration.setTenantCheckEnabled(false);
     identityService.setAuthentication("user", null, null);

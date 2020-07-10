@@ -231,6 +231,7 @@ public class HistoricExternalTaskLogAuthorizationTest extends AuthorizationTest 
     assertEquals(ERROR_DETAILS, stacktrace);
   }
 
+  @Test
   public void testCheckNonePermissionOnHistoricProcessInstance() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -248,6 +249,7 @@ public class HistoricExternalTaskLogAuthorizationTest extends AuthorizationTest 
     assertThat(query.list()).isEmpty();
   }
 
+  @Test
   public void testCheckReadPermissionOnHistoricProcessInstance() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -267,6 +269,7 @@ public class HistoricExternalTaskLogAuthorizationTest extends AuthorizationTest 
         .containsExactly(processInstanceId);
   }
 
+  @Test
   public void testCheckNoneOnHistoricProcessInstanceAndReadHistoryPermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -288,6 +291,7 @@ public class HistoricExternalTaskLogAuthorizationTest extends AuthorizationTest 
         .containsExactly(processInstanceId);
   }
 
+  @Test
   public void testCheckReadOnHistoricProcessInstanceAndNonePermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -309,6 +313,7 @@ public class HistoricExternalTaskLogAuthorizationTest extends AuthorizationTest 
         .containsExactly(processInstanceId);
   }
 
+  @Test
   public void testHistoricProcessInstancePermissionsAuthorizationDisabled() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);

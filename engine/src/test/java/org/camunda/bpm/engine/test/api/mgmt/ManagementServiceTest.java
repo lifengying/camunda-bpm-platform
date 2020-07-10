@@ -871,6 +871,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
     taskService.deleteTasks(taskIds, true);
   }
 
+  @Test
   public void testFetchTelemetryConfiguration() {
     // given default configuration
     boolean expectedTelemetryValue = Boolean.parseBoolean(getTelemetryProperty(processEngineConfiguration).getValue());
@@ -882,6 +883,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
     assertThat(actualTelemetryValue).isEqualTo(expectedTelemetryValue);
   }
 
+  @Test
   public void testTelemetryEnabled() {
     // given default configuration
 
@@ -895,6 +897,7 @@ public class ManagementServiceTest extends PluggableProcessEngineTest {
     managementService.toggleTelemetry(false);
   }
 
+  @Test
   public void testTelemetryDisabled() {
     // given
     managementService.toggleTelemetry(true);

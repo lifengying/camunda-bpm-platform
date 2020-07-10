@@ -35,6 +35,7 @@ import java.util.Map;
 
 import org.camunda.bpm.engine.impl.util.CollectionUtil;
 import org.camunda.bpm.engine.test.Deployment;
+import org.junit.Test;
 import org.subethamail.wiser.WiserMessage;
 
 /**
@@ -44,6 +45,7 @@ import org.subethamail.wiser.WiserMessage;
 public class EmailSendTaskTest extends EmailTestCase {
 
   @Deployment
+  @Test
   public void testSimpleTextMail() throws Exception {
     runtimeService.startProcessInstanceByKey("simpleTextOnly");
 
@@ -56,6 +58,7 @@ public class EmailSendTaskTest extends EmailTestCase {
   }
 
   @Deployment
+  @Test
   public void testSimpleTextMailMultipleRecipients() {
     runtimeService.startProcessInstanceByKey("simpleTextOnlyMultipleRecipients");
 
@@ -76,6 +79,7 @@ public class EmailSendTaskTest extends EmailTestCase {
   }
 
   @Deployment
+  @Test
   public void testTextMailExpressions() throws Exception {
 
     String sender = "mispiggy@activiti.org";
@@ -100,6 +104,7 @@ public class EmailSendTaskTest extends EmailTestCase {
   }
 
   @Deployment
+  @Test
   public void testCcAndBcc() throws Exception {
     runtimeService.startProcessInstanceByKey("ccAndBcc");
 
@@ -113,6 +118,7 @@ public class EmailSendTaskTest extends EmailTestCase {
   }
 
   @Deployment
+  @Test
   public void testHtmlMail() throws Exception {
     runtimeService.startProcessInstanceByKey("htmlMail", CollectionUtil.singletonMap("gender", "male"));
 
@@ -122,6 +128,7 @@ public class EmailSendTaskTest extends EmailTestCase {
   }
 
   @Deployment
+  @Test
   public void testSendEmail() throws Exception {
 
     String from = "ordershipping@activiti.org";

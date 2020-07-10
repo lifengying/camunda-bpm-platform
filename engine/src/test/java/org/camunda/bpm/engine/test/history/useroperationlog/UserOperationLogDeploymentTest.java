@@ -358,7 +358,7 @@ public class UserOperationLogDeploymentTest extends AbstractUserOperationLogTest
     assertNull(log.getCaseDefinitionId());
   }
 
-
+  @Test
   public void testDeleteProcessDefinitionCascadingShouldKeepCreateUserOperationLog() {
     // given
     Deployment deployment = repositoryService
@@ -384,6 +384,7 @@ public class UserOperationLogDeploymentTest extends AbstractUserOperationLogTest
     assertEquals(1, query.count());
   }
 
+  @Test
   public void testDeleteProcessDefinitiontWithoutCascadingShouldKeepCreateUserOperationLog() {
     // given
     Deployment deployment = repositoryService
@@ -409,6 +410,7 @@ public class UserOperationLogDeploymentTest extends AbstractUserOperationLogTest
     assertEquals(1, query.count());
   }
 
+  @Test
   public void testDeleteProcessDefinition() {
     // given
     Deployment deployment = repositoryService
@@ -455,6 +457,7 @@ public class UserOperationLogDeploymentTest extends AbstractUserOperationLogTest
     assertNull(log.getCaseDefinitionId());
   }
 
+  @Test
   public void testDeleteProcessDefinitionCascading() {
     // given
     Deployment deployment = repositoryService

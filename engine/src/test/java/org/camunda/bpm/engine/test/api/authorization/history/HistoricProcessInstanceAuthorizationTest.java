@@ -652,6 +652,7 @@ public class HistoricProcessInstanceAuthorizationTest extends AuthorizationTest 
     assertEquals(0, reportResults.size());
   }
 
+  @Test
   public void testCheckAllHistoricProcessInstancePermissions() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -671,6 +672,7 @@ public class HistoricProcessInstanceAuthorizationTest extends AuthorizationTest 
         HistoricProcessInstancePermissions.ALL, Resources.HISTORIC_PROCESS_INSTANCE)).isTrue();
   }
 
+  @Test
   public void testCheckReadHistoricProcessInstancePermissions() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -690,6 +692,7 @@ public class HistoricProcessInstanceAuthorizationTest extends AuthorizationTest 
         HistoricProcessInstancePermissions.ALL, Resources.HISTORIC_PROCESS_INSTANCE)).isFalse();
   }
 
+  @Test
   public void testCheckNoneHistoricProcessInstancePermission() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -709,6 +712,7 @@ public class HistoricProcessInstanceAuthorizationTest extends AuthorizationTest 
         HistoricProcessInstancePermissions.ALL, Resources.HISTORIC_PROCESS_INSTANCE)).isFalse();
   }
 
+  @Test
   public void testCheckNonePermissionOnHistoricProcessInstance() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -725,6 +729,7 @@ public class HistoricProcessInstanceAuthorizationTest extends AuthorizationTest 
     assertThat(query.list()).isEmpty();
   }
 
+  @Test
   public void testCheckReadPermissionOnHistoricProcessInstance() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -743,6 +748,7 @@ public class HistoricProcessInstanceAuthorizationTest extends AuthorizationTest 
         .containsExactly(processInstanceId);
   }
 
+  @Test
   public void testCheckReadPermissionOnCompletedHistoricProcessInstance() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -765,6 +771,7 @@ public class HistoricProcessInstanceAuthorizationTest extends AuthorizationTest 
         .containsExactly(processInstanceId);
   }
 
+  @Test
   public void testCheckNoneOnHistoricProcessInstanceAndReadHistoryPermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -788,6 +795,7 @@ public class HistoricProcessInstanceAuthorizationTest extends AuthorizationTest 
         .containsExactly(processInstanceId);
   }
 
+  @Test
   public void testCheckReadOnHistoricProcessInstanceAndNonePermissionOnProcessDefinition() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -812,6 +820,7 @@ public class HistoricProcessInstanceAuthorizationTest extends AuthorizationTest 
         .containsExactly(processInstanceId);
   }
 
+  @Test
   public void testHistoricProcessInstancePermissionsAuthorizationDisabled() {
     // given
     processEngineConfiguration.setEnableHistoricInstancePermissions(true);
@@ -829,6 +838,7 @@ public class HistoricProcessInstanceAuthorizationTest extends AuthorizationTest 
         .containsExactly(processInstanceId);
   }
 
+  @Test
   public void testDeleteHistoricAuthorizationRelatedToHistoricProcessInstance() {
     // given
     String processInstanceId = startProcessInstanceByKey(PROCESS_KEY).getId();

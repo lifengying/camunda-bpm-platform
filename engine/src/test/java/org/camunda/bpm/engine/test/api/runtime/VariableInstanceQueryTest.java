@@ -2304,6 +2304,7 @@ public class VariableInstanceQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment
+  @Test
   public void testSimpleSubProcessVariables() {
     // given
     Map<String, Object> processVariables = new HashMap<String, Object>();
@@ -2686,8 +2687,8 @@ public class VariableInstanceQueryTest extends PluggableProcessEngineTest {
     }
   }
 
-
   @Deployment
+  @Test
   public void testSequentialMultiInstanceSubProcess() {
     // given a process instance in sequential MI
     ProcessInstance instance = runtimeService.startProcessInstanceByKey("miSequentialSubprocess");
@@ -2712,6 +2713,7 @@ public class VariableInstanceQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment
+  @Test
   public void testParallelMultiInstanceSubProcess() {
     // given a process instance in sequential MI
     ProcessInstance instance = runtimeService.startProcessInstanceByKey("miSequentialSubprocess");

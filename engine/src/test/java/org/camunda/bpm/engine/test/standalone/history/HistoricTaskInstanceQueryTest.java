@@ -58,6 +58,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml")
+  @Test
   public void testProcessVariableValueEqualsNumber() throws Exception {
     // long
     runtimeService.startProcessInstanceByKey("oneTaskProcess",
@@ -106,6 +107,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml")
+  @Test
   public void testProcessVariableValueLike() throws Exception {
     runtimeService.startProcessInstanceByKey("oneTaskProcess",
             Collections.<String, Object>singletonMap("requester", "vahid alizadeh"));
@@ -128,6 +130,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml")
+  @Test
   public void testProcessVariableValueGreaterThan() throws Exception {
     runtimeService.startProcessInstanceByKey("oneTaskProcess",
             Collections.<String, Object>singletonMap("requestNumber", 123));
@@ -136,6 +139,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml")
+  @Test
   public void testProcessVariableValueGreaterThanOrEqual() throws Exception {
     runtimeService.startProcessInstanceByKey("oneTaskProcess",
             Collections.<String, Object>singletonMap("requestNumber", 123));
@@ -145,6 +149,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml")
+  @Test
   public void testProcessVariableValueLessThan() throws Exception {
     runtimeService.startProcessInstanceByKey("oneTaskProcess",
             Collections.<String, Object>singletonMap("requestNumber", 123));
@@ -153,6 +158,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml")
+  @Test
   public void testProcessVariableValueLessThanOrEqual() throws Exception {
     runtimeService.startProcessInstanceByKey("oneTaskProcess",
             Collections.<String, Object>singletonMap("requestNumber", 123));
@@ -293,6 +299,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml")
+  @Test
   public void testTaskVariableValueEqualsNumber() throws Exception {
     runtimeService.startProcessInstanceByKey("oneTaskProcess");
     runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -323,6 +330,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
   }
 
   @Deployment(resources = "org/camunda/bpm/engine/test/api/oneTaskProcess.bpmn20.xml")
+  @Test
   public void testTaskVariableValueEqualsNumberIgnoreCase() {
     // given
     ProcessInstance instance = runtimeService.startProcessInstanceByKey("oneTaskProcess");
@@ -388,6 +396,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
     assertThat(eqNameLCValueNE).isEmpty();
   }
 
+  @Test
   @RequiredHistoryLevel(ProcessEngineConfiguration.HISTORY_FULL)
   @Deployment(resources = { "org/camunda/bpm/engine/test/api/runtime/oneTaskProcess.bpmn20.xml" })
   public void testTaskInvolvedUser() {
@@ -410,6 +419,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
     taskService.deleteTask("newTask",true);
   }
 
+  @Test
   @RequiredHistoryLevel(ProcessEngineConfiguration.HISTORY_FULL)
   @Deployment(resources = { "org/camunda/bpm/engine/test/api/runtime/oneTaskProcess.bpmn20.xml" })
   public void testTaskInvolvedGroup() {
@@ -430,6 +440,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
     taskService.deleteTask("newTask",true);
   }
 
+  @Test
   @RequiredHistoryLevel(ProcessEngineConfiguration.HISTORY_FULL)
   @Deployment(resources = { "org/camunda/bpm/engine/test/api/runtime/oneTaskProcess.bpmn20.xml" })
   public void testTaskHadCandidateUser() {
@@ -452,6 +463,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
     taskService.deleteTask("newTask",true);
   }
 
+  @Test
   @RequiredHistoryLevel(ProcessEngineConfiguration.HISTORY_FULL)
   @Deployment(resources = { "org/camunda/bpm/engine/test/api/runtime/oneTaskProcess.bpmn20.xml" })
   public void testTaskHadCandidateGroup() {
@@ -469,6 +481,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
     taskService.deleteTask("newTask",true);
   }
 
+  @Test
   @RequiredHistoryLevel(ProcessEngineConfiguration.HISTORY_FULL)
   @Deployment(resources = { "org/camunda/bpm/engine/test/api/runtime/oneTaskProcess.bpmn20.xml" })
   public void testWithCandidateGroups() {
@@ -487,6 +500,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
     taskService.deleteTask("newTask", true);
   }
 
+  @Test
   @RequiredHistoryLevel(ProcessEngineConfiguration.HISTORY_FULL)
   @Deployment(resources = { "org/camunda/bpm/engine/test/api/runtime/oneTaskProcess.bpmn20.xml" })
   public void testWithoutCandidateGroups() {
@@ -507,6 +521,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
     taskService.deleteTask("newTask", true);
   }
 
+  @Test
   @RequiredHistoryLevel(ProcessEngineConfiguration.HISTORY_FULL)
   @Deployment(resources = { "org/camunda/bpm/engine/test/api/runtime/oneTaskProcess.bpmn20.xml" })
   public void testGroupTaskQuery() {
@@ -550,6 +565,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
     taskService.deleteTask("taskThree",true);
   }
 
+  @Test
   @RequiredHistoryLevel(ProcessEngineConfiguration.HISTORY_FULL)
   @Deployment(resources = { "org/camunda/bpm/engine/test/api/runtime/oneTaskProcess.bpmn20.xml" })
   public void testTaskWasAssigned() {
@@ -578,6 +594,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
     taskService.deleteTask("taskThree",true);
   }
 
+  @Test
   @RequiredHistoryLevel(ProcessEngineConfiguration.HISTORY_FULL)
   @Deployment(resources = { "org/camunda/bpm/engine/test/api/runtime/oneTaskProcess.bpmn20.xml" })
   public void testTaskWasUnassigned() {
@@ -606,6 +623,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
     taskService.deleteTask("taskThree",true);
   }
 
+  @Test
   @RequiredHistoryLevel(ProcessEngineConfiguration.HISTORY_FULL)
   @Deployment(resources = { "org/camunda/bpm/engine/test/api/runtime/oneTaskProcess.bpmn20.xml" })
   public void testTaskReturnedBeforeEndTime() {
@@ -633,6 +651,7 @@ public class HistoricTaskInstanceQueryTest extends PluggableProcessEngineTest {
     ClockUtil.reset();
   }
 
+  @Test
   @RequiredHistoryLevel(ProcessEngineConfiguration.HISTORY_FULL)
   @Deployment(resources = { "org/camunda/bpm/engine/test/api/runtime/oneTaskProcess.bpmn20.xml" })
   public void testTaskNotReturnedAfterEndTime() {

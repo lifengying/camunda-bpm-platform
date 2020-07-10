@@ -58,6 +58,7 @@ public class ShellTaskTest extends PluggableProcessEngineTest {
   }
 
   @Deployment
+  @Test
   public void testEchoShellWindows() {
     if (osType == OsType.WINDOWS) {
 
@@ -70,6 +71,7 @@ public class ShellTaskTest extends PluggableProcessEngineTest {
   }
 
   @Deployment
+  @Test
   public void testEchoShellLinux() {
     if (osType == OsType.LINUX) {
 
@@ -82,6 +84,7 @@ public class ShellTaskTest extends PluggableProcessEngineTest {
   }
   
   @Deployment
+  @Test
   public void testEchoShellMac() {
     if (osType == OsType.MAC) {
 
